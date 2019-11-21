@@ -17,41 +17,12 @@ import java.util.Scanner;
 
 public class AlgorithmRun
 {   
-    //SHINE Variables
-    public final static int Generation_Size = 20;
+	IllumConfig config = new IllumConfig();
+	
+	//SHINE Variables
     private int Num_Generations;
-    public final static int Max_Tree_Depth = 6;
-    public final static int Max_Vertex_Reps = 10;
-    
     //MAP Elites Variables (Each iteration = new new offspring due to crossover operation)
     private int Num_Iterations;
-    
-    //Mutation chances - Shared between both ME and SHINE
-    public final static float Dupe_Remove_Chance = 0.5F;
-    public final static float Tile_Mutation_Chance = 0.005F;
-    public final static float Crossover_Chance = .2F;
-    
-    //Parameters for generating random noise levels
-    public final static float max_tile_chance = 0.3f;
-    public final static int fixed_width = 100;
-    
-    //Size of Map Elites map (Maps always square)
-    public final static int mapSize = 10;
-    
-    //Level parameters for map generation
-    public final static float minBlockCount = 200f;
-    public final static float maxBlockCount = 550f;
-    public final static float minLevelWidth = 50;
-    public final static float maxLevelWidth = 150;
-    public final static float minJumpEnt = 0.01f;
-    public final static float maxJumpEnt = 0.2f;
-    public final static float minSpeed = 0.07f;
-    public final static float maxSpeed = 0.18f;
-    public final static float minTime = 0.0f;
-    public final static float maxTime = 30.0f;
-    public final static float minContig = 100f;
-    public final static float maxContig = 1000f;
-    public final static float fitnessThresshold = 1.00f;
     
     //Storage for the parameters used in current run
     private static float param1Min;
@@ -60,19 +31,6 @@ public class AlgorithmRun
     private static float param2Max;
     
     //Seed used for generating initial population
-    private static int initialSeed = 100;
-    
-    //Algorithms
-    protected static final int Algo_MapElites   = 1;
-    protected static final int Algo_Shine   = 2;
-    
-    //Configuration types - Define level characteristics used in current run
-    protected static final int Config_JEvsBC    = 1;
-    protected static final int Config_JEvsWidth = 2;
-    protected static final int Config_JEvsSpeed = 3;
-    protected static final int Config_JEvsContig = 4;
-    protected static final int Config_SpeedvsContig = 5;
-    
     private int algoType;
     private int runConfigType;
     private Path outputFolder;
@@ -91,15 +49,13 @@ public class AlgorithmRun
     }
     
     public void run() {
-        
-        
-        if (algoType == Algo_MapElites) {
+        if (algoType == config.Algo_MapElites) {
             System.out.println("Starting map elites run of config type: " + runConfigType + " running for " + Num_Iterations + " iterations");
 
             init_mapelites();
             
         }
-        else if (algoType == Algo_Shine) {
+        else if (algoType == config.Algo_Shine) {
             
             init_shine();
         }
@@ -118,7 +74,7 @@ public class AlgorithmRun
        // System.out.println("Params set");
         
         //List<LevelWrap> init_pop = initPopFromFolder(Input_Files);
-        List<LevelWrap> init_pop = initRandomPop(runConfigType, initialSeed);
+        List<LevelWrap> init_pop = initRandomPop(runConfigType, config.initialSeed);
         System.out.println("Population fully initialised");
         //Store initial levels used
         try {
@@ -130,7 +86,7 @@ public class AlgorithmRun
         
         System.out.println("Population stored");
         
-        ShineTree tree = new ShineTree(Max_Tree_Depth, Max_Vertex_Reps, param1Min, param1Max, param2Min, param2Max);
+        ShineTree tree = new ShineTree(config.Max_Tree_Depth, config.Max_Vertex_Reps, param1Min, param1Max, param2Min, param2Max);
         int Gen_Count = 0;
         
         ArrayList<String> runHistory = new ArrayList<String>();
@@ -195,7 +151,7 @@ public class AlgorithmRun
         setParams();
         
         //List<LevelWrap> init_pop = initPopFromFolder(Input_Files);
-        List<LevelWrap> init_pop = initRandomPop(runConfigType, initialSeed);
+        List<LevelWrap> init_pop = initRandomPop(runConfigType, config.initialSeed);
         
         
         try {
@@ -209,7 +165,7 @@ public class AlgorithmRun
         
         ArrayList<String> runHistory = new ArrayList<String>();
         
-        ElitesMap map = new ElitesMap(mapSize, param1Min, param1Max, param2Min, param2Max);
+        ElitesMap map = new ElitesMap(config.mapSize, param1Min, param1Max, param2Min, param2Max);
 
         for (int i = 0; i< init_pop.size(); i++) {
             map.addLevel(init_pop.get(i));          
@@ -263,35 +219,35 @@ public class AlgorithmRun
     
     //Setting the parameters of current run based on config type
     public void setParams() {
-        if (runConfigType == Config_JEvsBC) {
-            param1Min = minBlockCount;
-            param1Max = maxBlockCount;
-            param2Min = minJumpEnt;
-            param2Max = maxJumpEnt;
+        if (runConfigType == config.config_runType_JEvsBC) {
+            param1Min = config.config_map_minBC;
+            param1Max = config.config_map_maxBC;
+            param2Min = config.config_map_minJE;
+            param2Max = config.config_map_maxJE;
         }
-        else if (runConfigType == Config_JEvsWidth) {
-            param1Min = minLevelWidth;
-            param1Max = maxLevelWidth;
-            param2Min = minJumpEnt;
-            param2Max = maxJumpEnt;
+        else if (runConfigType == config.config_runType_JEvsWidth) {
+            param1Min = config.config_map_minLW;
+            param1Max = config.config_map_maxLW;
+            param2Min = config.config_map_minJE;
+            param2Max = config.config_map_maxJE;
         }
-        else if (runConfigType == Config_JEvsSpeed) {
-            param1Min = minSpeed;
-            param1Max = maxSpeed;
-            param2Min = minJumpEnt;
-            param2Max = maxJumpEnt;
+        else if (runConfigType == config.config_runType_JEvsSpeed) {
+            param1Min = config.config_map_minSpeed;
+            param1Max = config.config_map_maxSpeed;
+            param2Min = config.config_map_minJE;
+            param2Max = config.config_map_maxJE;
         }
-        else if (runConfigType == Config_JEvsContig) {
-            param1Min = minContig;
-            param1Max = maxContig;
-            param2Min = minJumpEnt;
-            param2Max = maxJumpEnt;
+        else if (runConfigType == config.config_runType_JEvsContig) {
+            param1Min = config.config_map_minContig;
+            param1Max = config.config_map_maxContig;
+            param2Min = config.config_map_minJE;
+            param2Max = config.config_map_maxJE;
         }
-        else if (runConfigType == Config_SpeedvsContig) {
-            param1Min = minContig;
-            param1Max = maxContig;
-            param2Min = minSpeed;
-            param2Max = maxSpeed;
+        else if (runConfigType == config.config_runType_SpeedvsContig) {
+            param1Min = config.config_map_minContig;
+            param1Max = config.config_map_maxContig;
+            param2Min = config.config_map_minSpeed;
+            param2Max = config.config_map_maxSpeed;
         }
     }
     
@@ -314,7 +270,7 @@ public class AlgorithmRun
             selectedPair[1] = inputArchive.get(second);
             inputArchive.remove(second);
             
-            if (random.nextFloat()<Crossover_Chance) {
+            if (random.nextFloat()<config.Crossover_Chance) {
                 selectedPair = selectedPair[0].crossover(selectedPair[1]);
                 //System.out.println("Crossover fired");
             }
@@ -337,7 +293,7 @@ public class AlgorithmRun
         Random random = new Random();
         for (int y = 5; y < inputLevel.getWidth()-1; y++) {
         
-            if (random.nextFloat()<Dupe_Remove_Chance) {
+            if (random.nextFloat()<config.Dupe_Remove_Chance) {
                 inputLevel.mutate_removeColumn();
                 inputLevel.mutate_dupeColInPlace(y);
             }
@@ -349,7 +305,7 @@ public class AlgorithmRun
         Random random = new Random();
         for (int y = 1; y < inputLevel.getHeight(); y++) {
             for (int x = 5; x < inputLevel.getWidth(); x++) {
-                if (random.nextFloat()<Tile_Mutation_Chance){
+                if (random.nextFloat()<config.Tile_Mutation_Chance){
                     inputLevel.mutate_blockUnblockCell(x, y);
                 }
             }
@@ -366,7 +322,7 @@ public class AlgorithmRun
         //Initialise the random number generator from seed that will be used to create all levels
         Random fixedRandom = new Random(seed);
                 
-        for (int i = 0; i<Generation_Size; i++) {
+        for (int i = 0; i<config.Generation_Size; i++) {
             
             //IllumMarioLevel levelToAdd = genRandLevel(fixed_width, fixedRandom);
             LevelWrap sLevelToAdd = new LevelWrap(("Level " + i),configType, fixedRandom);
@@ -399,7 +355,7 @@ public class AlgorithmRun
         
         ArrayList<LevelWrap> outputArchive = new ArrayList<>();
         
-        while (outputArchive.size()<Generation_Size) {
+        while (outputArchive.size()<config.Generation_Size) {
             
             LevelWrap r1 = inputArchive.get(random.nextInt(iSize));
             LevelWrap r2 = inputArchive.get(random.nextInt(iSize));
@@ -486,7 +442,7 @@ public class AlgorithmRun
         
         ArrayList<LevelWrap> allLevels = tree.root.getAllChildLevels();
         
-        return new ElitesMap(allLevels, mapSize, param1Min, param1Max, param2Min, param2Max);
+        return new ElitesMap(allLevels, config.mapSize, param1Min, param1Max, param2Min, param2Max);
         
         
     }
@@ -518,16 +474,16 @@ public class AlgorithmRun
             //Create overall output 
             PrintWriter mapwriter = new PrintWriter((dataFolderPath + "/" +dataFolder+"-Data.txt"), "UTF-8");
             mapwriter.println("Data for run: " + dataFolder);
-            mapwriter.println("Map Size " + mapSize);
+            mapwriter.println("Map Size " + config.mapSize);
             mapwriter.println("Map Coverage: " + sMap.getCoverage());
             mapwriter.println("Map Reliability: " + sMap.getReliability());
             mapwriter.println("Map Avg Fitness: " + sMap.getAvgFitness());
             mapwriter.println("Run Time (hrs): " + ((System.nanoTime()- runStartT)/(1000000000f*60f*60f)));
             mapwriter.println("");
-            if (algoType == Algo_Shine) {
+            if (algoType == config.Algo_Shine) {
                 mapwriter.println("SHINE tree parameters-");
-                mapwriter.println("Max Vertex Reps: " + Max_Vertex_Reps);
-                mapwriter.println("Max Tree Depth: " + Max_Tree_Depth);
+                mapwriter.println("Max Vertex Reps: " + config.Max_Vertex_Reps);
+                mapwriter.println("Max Tree Depth: " + config.Max_Tree_Depth);
                 mapwriter.println("");
             }
             mapwriter.println("Parameter 1 min: " + param1Min);
@@ -536,11 +492,11 @@ public class AlgorithmRun
             mapwriter.println("Parameter 2 max: " + param2Max);
             mapwriter.println("");
             mapwriter.println("Algorithm parameters-");
-            mapwriter.println("Generation size: " + Generation_Size);
+            mapwriter.println("Generation size: " + config.Generation_Size);
             mapwriter.println("Number of generations: " + Num_Generations);
-            mapwriter.println("Chance of grow/shrink mutations: " + Dupe_Remove_Chance);
-            mapwriter.println("Chance of tile flip mutations: " + Tile_Mutation_Chance);
-            mapwriter.println("Chance of crossover: " + Crossover_Chance);
+            mapwriter.println("Chance of grow/shrink mutations: " + config.Dupe_Remove_Chance);
+            mapwriter.println("Chance of tile flip mutations: " + config.Tile_Mutation_Chance);
+            mapwriter.println("Chance of crossover: " + config.Crossover_Chance);
             mapwriter.println("");
             mapwriter.println("Algorithm ID: " + algoType);
             mapwriter.println("Configuration: " + runConfigType);
