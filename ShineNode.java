@@ -27,7 +27,6 @@ public class ShineNode {
     private float repBCMin = 10000f;
     private float repBCMax = 0f;
 
-
     private ArrayList < ShineNode > children = new ArrayList < > ();
 
     private ShineNode  parent;
@@ -155,7 +154,6 @@ public class ShineNode {
             }
         }
         //If we have more than max reps at level, add sorted (By Fitness or Novelty) levels until we are at max
-        
         else if (LevelWraps.size() > maxReps) {
             //System.out.println("Max Reps: " + maxReps + ". Current reps at vertex: " + LevelWraps.size()+ ". Node depth: "+ depth);
             setLevelsNovelty();
@@ -183,10 +181,7 @@ public class ShineNode {
             }
             
         }
-        
-        //System.out.println("Returning archive of size: "+ archiveReps.size());
         return archiveReps;
-        
     }
     
     public void setMinMaxRepValues() {
@@ -297,16 +292,6 @@ public class ShineNode {
         float param1Val = level.getParam1();
         float param2Val = level.getParam2();
         
-        //float bc = level.getBlockCount();
-        //float je = level.getJumpEntropy();
-        //float width = level.getLevel().getWidth();
-        
-        //For BC vs JE
-        /*
-        if ( bc<this.blockCountMax && bc>this.blockCountMin&&je<this.jumpEntMax&&je>this.jumpEntMin) {
-            return true;
-        }
-        */
         if ( param1Val<=param1Max && param1Val>param1Min&&param2Val<=this.param2Max&&param2Val>this.param2Min) {
             return true;
         }

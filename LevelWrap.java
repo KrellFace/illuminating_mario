@@ -8,20 +8,10 @@ import engine.core.MarioResult;
 
 public class LevelWrap implements Comparable<LevelWrap>{
 
-    protected static final int Config_JEvsBC	= 1;
-    protected static final int Config_JEvsWidth	= 2;
-    protected static final int Config_JEvsSpeed	= 3;
-    protected static final int Config_JEvsContig	= 4;
-    protected static final int Config_SpeedvsContig = 5;
-    
-    //Parameters for generating random noise levels
-    public final static float max_tile_chance = 0.3f;
-    public final static int fixed_width = 100;
-    
-    private int ticksPerRun = 100;
-    
+	IllumConfig config = new IllumConfig();
+
+	//Storage for all level parameters for the level stored in the Level Wrap
     private int configType;
-    
 	private String name;
 	private IllumMarioLevel level;
 	private float fitness;
@@ -33,36 +23,16 @@ public class LevelWrap implements Comparable<LevelWrap>{
 	private int heightCells;
 	private float timeTaken;
 	private float marioSpeed;
-	
 	private MarioResult result;
 	
 	//Used for storing the novelty within SHINECell
 	private double novelty;
-	
-	public static final int minWidth = 146;
-	public static final int maxWidth = 444;
-	
-	//Constructor used for creating with all parameters, facilitating cloning
-	public LevelWrap(String name, int configType, IllumMarioLevel level, Float fitness, Integer blockCount, Float jumpEntropy, Float selectionChoice, int width, float timeTaken, float marioSpeed) {
-		
-		this.name = name;
-		this.selectionChance = 0;
-		this.level = level;
-		this.fitness = fitness;
-		this.setLinearityScore();
-		this.jumpEntropy = jumpEntropy;
-		this.widthCells = level.tileWidth;
-		this.heightCells = level.tileHeight;
-		this.configType = configType;
-		this.marioSpeed = marioSpeed;
-		this.updateLevelFeatures();
-	}
-	
+
+	//Constructor for creating with a specified unevaluated level
 	public LevelWrap(String name, int configType, IllumMarioLevel level) {
 		this.name = name;
 		this.level = level;
 		this.fitness = 0f;
-		this.setLinearityScore();
 		this.widthCells = level.tileWidth;
 		this.heightCells = level.tileHeight;
 		this.configType = configType;
@@ -73,27 +43,36 @@ public class LevelWrap implements Comparable<LevelWrap>{
 	//Constructor for random noise level
 	public LevelWrap(String name, int configType, Random random){
 		
-		this.level = new IllumMarioLevel(genNoiseLevel(fixed_width, random), true);
+		this.level = new IllumMarioLevel(genNoiseLevel(config.fixed_width, random), true);
 		this.name = name;
 		this.fitness = 0f;
-		this.setLinearityScore();
 		this.widthCells = level.tileWidth;
 		this.heightCells = level.tileHeight;
 		this.configType = configType;
 		this.updateLevelFeatures();
 	}
 	
+	//Constructor used for creating with all parameters, facilitating cloning
+	public LevelWrap(String name, int configType, IllumMarioLevel level, Float fitness, Integer blockCount, Float jumpEntropy, Float selectionChoice, int width, float timeTaken, float marioSpeed) {
+		
+		this.name = name;
+		this.selectionChance = 0;
+		this.level = level;
+		this.fitness = fitness;
+		this.jumpEntropy = jumpEntropy;
+		this.widthCells = level.tileWidth;
+		this.heightCells = level.tileHeight;
+		this.configType = configType;
+		this.marioSpeed = marioSpeed;
+		this.updateLevelFeatures();
+	}
+	
 	
 	public char[][] charRep(String stringRep){
 		
-		//System.out.println("Level heightcells and widthcells: " + heightCells + "/" + widthCells);
 		String[] lines = stringRep.split("\n");
 		
 		char[][] charRep = new char[lines.length][lines[0].length()];
-		
-		
-		//System.out.println("Widthcells: " + widthCells + " First string line length: " + lines[0].length());
-		//System.out.println("Heightcells: " + heightCells + " Number of lines: " + lines.length);
       
         for (int y = 0; y < charRep.length; y++) {
             for (int x = 0; x < charRep[y].length; x++) {
@@ -164,7 +143,7 @@ public class LevelWrap implements Comparable<LevelWrap>{
         }
             
         //Randomly tile
-        float tile_chance = random.nextFloat()*max_tile_chance;
+        float tile_chance = random.nextFloat()*config.max_tile_chance;
         
         for (int i = 1; i<charRep.length; i++) {
             for (int j = platformSize; j<charRep[0].length; j++) {
@@ -189,14 +168,14 @@ public class LevelWrap implements Comparable<LevelWrap>{
 		char[][] thisLevelRep = charRep(this.level.getStringRep());
 		char[][] inputLevelRep = charRep(inputLevel.getLevel().getStringRep());
 		
+		//Initialise a copy of input level 1 (caller)
 		char[][] output1 = new char[thisLevelRep.length][thisLevelRep[0].length];
-		
 		for (int i = 0; i<output1.length; i++) {
 			output1[i] = thisLevelRep[i].clone();
 		}
 		
+		//Initialise a copy of input level 2 (input)
 		char[][] output2 =  new char[thisLevelRep.length][thisLevelRep[0].length];
-		
 		for (int i = 0; i<output2.length; i++) {
 			output2[i] = inputLevelRep[i].clone();
 		}
@@ -224,7 +203,6 @@ public class LevelWrap implements Comparable<LevelWrap>{
 					//System.out.println("This level y,x: " + thisLevelRep[y][x]);
 					
 				}
-					
 			}
 		}
 		
@@ -238,13 +216,19 @@ public class LevelWrap implements Comparable<LevelWrap>{
 		return output;		
 	}
 	
+	//Remove random column
 	public void mutate_removeColumn() {
 		
 		Random random = new Random();
 		int colRemove = (random.nextInt(widthCells-5)+5);
-
-		//System.out.println("Mutate remove column being run " + colRemove);	
-		//System.out.println("Input level: " + level.getStringRep());
+		mutate_removeColumn(colRemove);
+	}
+	
+	//Remove specified column
+	public void mutate_removeColumn(int toRemove) {
+		
+		//Only run if we are not below our min level size of 146
+		int colRemove = toRemove;
 			
 		char[][] levelRep = charRep(level.getStringRep());
 		char[][] newLevel = new char[levelRep.length][levelRep[0].length-1];
@@ -261,107 +245,61 @@ public class LevelWrap implements Comparable<LevelWrap>{
 					
 			}
 		}
-		
-		//System.out.println("Creating new IllumLevel post mutation:");
-		//System.out.println(stringRep(newLevel));
-		//System.out.println("New level total characters" + stringRep(newLevel).length());
-		//System.out.println("New level width: " + newLevel[0].length + " New level height: " + newLevel.length);
 		//Create new level based on updated map
-		level = new IllumMarioLevel(stringRep(newLevel), true);			
-		//System.out.println("BC before column remove: " + oldBC + ". After: " + level.getBlockCount());
+		level = new IllumMarioLevel(stringRep(newLevel), true);
 		updateLevelFeatures();
-		//System.out.println("Level mutated and features updated");
-		
-	}
-	
-	public void mutate_removeColumn(int toRemove) {
-		
-		//Only run if we are not below our min level size of 146
-		if (widthCells > minWidth) {
-			int colRemove = toRemove;
-			
-			char[][] levelRep = charRep(level.getStringRep());
-			char[][] newLevel = new char[levelRep.length][levelRep[0].length-1];
-			for (int y = 0; y<levelRep.length; y++) {
-				
-				int col = 0;
-				for (int x = 0; x <levelRep[0].length;x++) {
-					
-					//Skip the column we are removing
-					if (x!=colRemove) {
-						newLevel[y][col]=levelRep[y][x];
-						col+=1;
-					}
-					
-				}
-			}
-			//Create new level based on updated map
-			level = new IllumMarioLevel(stringRep(newLevel), true);
-			updateLevelFeatures();
-		}
 	}
 	
 	public void mutate_addColumn() {
 		float oldBC = this.blockCount;
-		//Only run if we are not above our max size
-		if (widthCells < maxWidth) {
-			System.out.println("Mutate add column being run");
-			System.out.println("Input level: " + level.getStringRep());
-			Random random = new Random();
-			int colDupe = random.nextInt(widthCells);
-			//System.out.println("Duplicating column" + colDupe + ". Values to duplicate:");
+		System.out.println("Mutate add column being run");
+		System.out.println("Input level: " + level.getStringRep());
+		Random random = new Random();
+		int colDupe = random.nextInt(widthCells);
+		//System.out.println("Duplicating column" + colDupe + ". Values to duplicate:");
 			
-			char[][] levelRep = charRep(level.getStringRep());
-			char[][] newLevel = new char[levelRep.length][levelRep[0].length+1];
+		char[][] levelRep = charRep(level.getStringRep());
+		char[][] newLevel = new char[levelRep.length][levelRep[0].length+1];
 			
-			for (int y = 0; y<levelRep.length; y++) {
+		for (int y = 0; y<levelRep.length; y++) {
 				
-				for (int x = 0; x <levelRep[0].length;x++) {
+			for (int x = 0; x <levelRep[0].length;x++) {
 					newLevel[y][x]=levelRep[y][x];
 					
-				}
 			}
-			//Adding last column
-			for (int y = 0; y<levelRep.length; y++) {
-				newLevel[y][newLevel[0].length-1]=levelRep[y][colDupe];
-
-			}
-			//Create new level based on updated map
-			level = new IllumMarioLevel(stringRep(newLevel), true);
-			updateLevelFeatures();
-			//System.out.println("BC before column add: " + oldBC + ". After: " + level.getBlockCount());
-			
 		}
+		//Adding last column
+		for (int y = 0; y<levelRep.length; y++) {
+			newLevel[y][newLevel[0].length-1]=levelRep[y][colDupe];
+
+		}
+		//Create new level based on updated map
+		level = new IllumMarioLevel(stringRep(newLevel), true);
+		updateLevelFeatures();
+		//System.out.println("BC before column add: " + oldBC + ". After: " + level.getBlockCount());
 	}
 
 	
 	public void mutate_addColumn(int toAdd) {
-		//Only run if we are not above our max size
-		if (widthCells < maxWidth) {
-			int colDupe = toAdd;
+		int colDupe = toAdd;
 			
-			char[][] levelRep = charRep(level.getStringRep());
-			char[][] newLevel = new char[levelRep.length][levelRep[0].length+1];
-			for (int y = 0; y<levelRep.length; y++) {
+		char[][] levelRep = charRep(level.getStringRep());
+		char[][] newLevel = new char[levelRep.length][levelRep[0].length+1];
+		for (int y = 0; y<levelRep.length; y++) {
 				
-				for (int x = 0; x <levelRep[0].length;x++) {
-					newLevel[y][x]=levelRep[y][x];
-					
-				}
+			for (int x = 0; x <levelRep[0].length;x++) {
+				newLevel[y][x]=levelRep[y][x];
 			}
-			//Adding last column
-			
-			for (int y = 0; y<levelRep.length; y++) {
-				
-				newLevel[y][newLevel[0].length-1]=levelRep[y][colDupe];
-
-			}
-			
-			//Create new level based on updated map
-			//System.out.println("Creating new IllumLevel post mutation:");
-			level = new IllumMarioLevel(stringRep(newLevel), true);
-			updateLevelFeatures();
 		}
+		//Adding last column
+			
+		for (int y = 0; y<levelRep.length; y++) {
+			newLevel[y][newLevel[0].length-1]=levelRep[y][colDupe];
+		}
+		//Create new level based on updated map
+		//System.out.println("Creating new IllumLevel post mutation:");
+		level = new IllumMarioLevel(stringRep(newLevel), true);
+		updateLevelFeatures();
 	}
 	 
 	
@@ -372,47 +310,43 @@ public class LevelWrap implements Comparable<LevelWrap>{
 	
 	public void mutate_dupeColInPlace(int colDupe) {
 		float oldBC = this.blockCount;
-		//Only run if we are not above our max size
-		if (widthCells < maxWidth) {
-			//System.out.println("Dupe in place on column " + colDupe + ". On " + toString());
-			//System.out.println("Duplicating column" + colDupe + ". Values to duplicate:");
+		//System.out.println("Dupe in place on column " + colDupe + ". On " + toString());
 			
-			char[][] levelRep = charRep(level.getStringRep());
-			char[][] newLevel = new char[levelRep.length][levelRep[0].length+1];
+		char[][] levelRep = charRep(level.getStringRep());
+		char[][] newLevel = new char[levelRep.length][levelRep[0].length+1];
 			
 			
-			for (int y = 0; y<newLevel.length; y++) {
+		for (int y = 0; y<newLevel.length; y++) {
 				
-				boolean dupeSet = false;
+			boolean dupeSet = false;
 				
-				for (int x = 0; x <newLevel[0].length;x++) {
+			for (int x = 0; x <newLevel[0].length;x++) {
 					
-					//System.out.println("Duplicating cell " + x+ "," + y);
+				//System.out.println("Duplicating cell " + x+ "," + y);
 					
-					if (x == colDupe+1) {
-						newLevel[y][x]=levelRep[y][x-1];
-						dupeSet = true;
-					}
-					
-					else if(!dupeSet){
-							newLevel[y][x]=levelRep[y][x];
-					}
-					else {
-						newLevel[y][x]=levelRep[y][x-1];
-					}
-					
+				if (x == colDupe+1) {
+					newLevel[y][x]=levelRep[y][x-1];
+					dupeSet = true;
 				}
+					
+				else if(!dupeSet){
+						newLevel[y][x]=levelRep[y][x];
+				}
+				else {
+					newLevel[y][x]=levelRep[y][x-1];
+				}
+					
 			}
-			//Adding last column
-			for (int y = 0; y<levelRep.length; y++) {
-				newLevel[y][newLevel[0].length-1]=levelRep[y][colDupe];
-
-			}
-			//Create new level based on updated map
-			level = new IllumMarioLevel(stringRep(newLevel), true);
-			//System.out.println("BC before column add: " + oldBC + ". After: " + level.getBlockCount());
-			updateLevelFeatures();
 		}
+		//Adding last column
+		for (int y = 0; y<levelRep.length; y++) {
+			newLevel[y][newLevel[0].length-1]=levelRep[y][colDupe];
+
+		}
+		//Create new level based on updated map
+		level = new IllumMarioLevel(stringRep(newLevel), true);
+		//System.out.println("BC before column add: " + oldBC + ". After: " + level.getBlockCount());
+		updateLevelFeatures();
 	}
 	
 	public void mutate_flipCell() {
@@ -495,11 +429,6 @@ public class LevelWrap implements Comparable<LevelWrap>{
 	public void setBlockCount(int blockCount) {
 		this.blockCount = blockCount;
 	}
-	
-	public void setLinearityScore() {
-		//this.contigScore = level.getContigScore();
-	}
-	
 	public void updateLevelFeatures() {
 		//this.blockCount = level.getBlockCount();
 		char[][] charRep = charRep(level.getStringRep());
@@ -554,7 +483,7 @@ public class LevelWrap implements Comparable<LevelWrap>{
 		
 		jumpEntropy = (float)result.getNumJumps()/(float)result.getAgentEvents().size();
 		//System.out.println("Time spent (in ticks): " + (ticksPerRun-(result.getRemainingTime()/1000)) + " Completion percentage: " + result.getCompletionPercentage() + " Mario speed: " + result.getCompletionPercentage()/(ticksPerRun-(result.getRemainingTime()/1000)));
-		marioSpeed = (result.getCompletionPercentage()/(ticksPerRun-(result.getRemainingTime()/1000)));
+		marioSpeed = (result.getCompletionPercentage()/(config.ticksPerRun-(result.getRemainingTime()/1000)));
 		fitness = result.getCompletionPercentage();
 		
 	}
@@ -576,7 +505,7 @@ public class LevelWrap implements Comparable<LevelWrap>{
 	public void runAgent(Agent agent) {
 
 		//System.out.println("Running runGame " + System.currentTimeMillis());
-		result = new MarioGame().runGame(agent, level.getStringRep(), ticksPerRun);
+		result = new MarioGame().runGame(agent, level.getStringRep(), config.ticksPerRun);
 		
 		updateResultFeatures(result);
 		//System.out.println("Result features updated");
@@ -590,19 +519,19 @@ public class LevelWrap implements Comparable<LevelWrap>{
 	
 	public float getParam1() {
 		
-		if (configType == Config_JEvsBC) {
+		if (configType == config.config_runType_JEvsBC) {
 			return blockCount;
 		}
-		else if (configType == Config_JEvsWidth) {
+		else if (configType == config.config_runType_JEvsWidth) {
 			return (float) widthCells;
 		}
-		else if (configType == Config_JEvsSpeed){
+		else if (configType == config.config_runType_JEvsSpeed){
 			return (Float) marioSpeed;
 		}
-		else if (configType == Config_JEvsContig){
+		else if (configType == config.config_runType_JEvsContig){
 			return (Float) contigScore;
 		}
-		else if (configType ==   Config_SpeedvsContig){
+		else if (configType == config.config_runType_SpeedvsContig){
 			return (Float) contigScore;
 		}
 		else {
@@ -613,19 +542,19 @@ public class LevelWrap implements Comparable<LevelWrap>{
 	
 	public float getParam2() {
 		//System.out.println("Get param2 ran with config type: " + this.configType);
-		if (configType == Config_JEvsBC) {
+		if (configType == config.config_runType_JEvsBC) {
 			return jumpEntropy;
 		}
-		else if (configType == Config_JEvsWidth) {
+		else if (configType == config.config_runType_JEvsWidth) {
 			return jumpEntropy;
 		}
-		else if (configType == Config_JEvsSpeed){
+		else if (configType == config.config_runType_JEvsSpeed){
 			return jumpEntropy;
 		}
-		else if (configType == Config_JEvsContig){
+		else if (configType == config.config_runType_JEvsContig){
 			return jumpEntropy;
 		}
-		else if (configType ==   Config_SpeedvsContig){
+		else if (configType == config.config_runType_SpeedvsContig){
 			return marioSpeed;
 		}
 		else {
