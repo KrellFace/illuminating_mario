@@ -13,8 +13,6 @@ public class IllumMarioLevel extends MarioLevel {
 		
 	}
 	
-	
-	
 	public IllumMarioLevel clone() {
 		IllumMarioLevel level = (IllumMarioLevel) super.clone();
 		level.setStringRep(levelRep);

@@ -232,7 +232,7 @@ public class ElitesMap {
                         lvlwriter.println("Level Block Count: " + level.getBlockCount());
                         lvlwriter.println("Level Speed: " + level.getSpeed());
                         lvlwriter.println("Level Time Taken: " + level.getTimeTaken());
-                        lvlwriter.println("Linearity score: " + level.getContigScore());
+                        lvlwriter.println("Level Contiguity Score: " + level.getContigScore());
                         lvlwriter.close();                          
                     }
                 }

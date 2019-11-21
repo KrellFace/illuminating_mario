@@ -1,11 +1,8 @@
 package illumsearch;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-
 
 public class ShineNode {
 
@@ -287,7 +284,6 @@ public class ShineNode {
     }
     
     public boolean checkBelongs(LevelWrap level) {
-        
         
         float param1Val = level.getParam1();
         float param2Val = level.getParam2();

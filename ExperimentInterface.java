@@ -27,7 +27,8 @@ public class ExperimentInterface {
     private int algotype = config.Algo_MapElites;
     private int numberofruns = 1;
     private int numberoffspring = defaultoffspring;
-    private int configtype = config.config_runType_JEvsBC;
+    private int config_param1 = 1;
+    private int config_param2 = 2;
     private String batchRunName;
 
     public static void main(String[] args) {
@@ -68,7 +69,7 @@ public class ExperimentInterface {
         submitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Form submitted. Initialising Experiments");
-                System.out.println("Algorithm type: " + algotype + ". Num Runs: " + numberofruns + " Config type" + configtype);
+                System.out.println("Algorithm type: " + algotype + ". Num Runs: " + numberofruns + " param1: " + config_param1 + " and param2" + config_param2 );
 
                 mainFrame.dispatchEvent(new WindowEvent(mainFrame, WindowEvent.WINDOW_CLOSING));
 
@@ -84,7 +85,7 @@ public class ExperimentInterface {
                         e1.printStackTrace();
                     }
 
-                    AlgorithmRun currRun = new AlgorithmRun(algotype, numberoffspring, configtype, runPath, runName);
+                    AlgorithmRun currRun = new AlgorithmRun(algotype, numberoffspring, config_param1, config_param2, runPath, runName);
                     currRun.run();
                     currRun = null;
 
@@ -261,51 +262,81 @@ public class ExperimentInterface {
         f1.setText("Run Configuration:");
         f1.setEditable(false);
         runtypePanel.add(f1);
-        JPanel f2 = new JPanel();
-        CheckboxGroup rtGrp = new CheckboxGroup();
-
-        Checkbox jevsbc = new Checkbox("Jump Entropy vs Block Count", rtGrp, true);
-        jevsbc.addItemListener(new ItemListener() {
+        JPanel f2 = new JPanel();     
+        
+        //Initialise selection option for parameter 1
+        JPanel f2_param1 = new JPanel();
+        CheckboxGroup param1_rtGrp = new CheckboxGroup();
+        Checkbox param1_je = new Checkbox("Jump Entropy", param1_rtGrp, true);
+        param1_je.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                System.out.println("JEvsBC Selected");
-                configtype = config.config_runType_JEvsBC;
+                System.out.println("Jump Entropy Param 1 selected");
+                config_param1 = config.config_paramJE;
 
             }
         });
 
-        Checkbox jevscontig = new Checkbox("Jump Entropy vs Contiguity Score", rtGrp, true);
-        jevscontig.addItemListener(new ItemListener() {
+        Checkbox param1_speed = new Checkbox("Speed", param1_rtGrp, true);
+        param1_speed.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                System.out.println("JE vs Contig selected");
-                configtype = config.config_runType_JEvsContig;
+                System.out.println("Speed Param 1 selected");
+                config_param1 = config.config_paramSpeed;
 
             }
         });
 
-        Checkbox jevsspeed = new Checkbox("Jump Entropy vs Speed", rtGrp, true);
-        jevsspeed.addItemListener(new ItemListener() {
+        Checkbox param1_contig = new Checkbox("Contiguity", param1_rtGrp, true);
+        param1_contig.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                System.out.println("JE vs Speed selected");
-                configtype = config.config_runType_JEvsSpeed;
+                System.out.println("Contiguity Param 1 selected");
+                config_param1 = config.config_paramContig;
 
             }
         });
 
-        Checkbox speedvscontig = new Checkbox("Speed vs Contig", rtGrp, true);
-        speedvscontig.addItemListener(new ItemListener() {
+        param1_rtGrp.setSelectedCheckbox(param1_je);
+        f2_param1.add(param1_je);
+        f2_param1.add(param1_contig);
+        f2_param1.add(param1_speed);
+        f2.add(f2_param1);
+        
+        //Initialise selection option for parameter 2
+        JPanel f2_param2 = new JPanel();
+        CheckboxGroup param2_rtGrp = new CheckboxGroup();
+        Checkbox param2_je = new Checkbox("Jump Entropy", param2_rtGrp, true);
+        param1_je.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                System.out.println("Speed vs Contig selected");
-                configtype = config.config_runType_SpeedvsContig;
+                System.out.println("Jump Entropy Param 2 selected");
+                config_param2 = config.config_paramJE;
 
             }
         });
 
-        rtGrp.setSelectedCheckbox(jevsbc);
+        Checkbox param2_speed = new Checkbox("Speed", param2_rtGrp, true);
+        param1_speed.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                System.out.println("Speed Param 2 selected");
+                config_param2 = config.config_paramSpeed;
 
-        f2.add(jevsbc);
-        f2.add(jevscontig);
-        f2.add(jevsspeed);
-        f2.add(speedvscontig);
+            }
+        });
+
+        Checkbox param2_contig = new Checkbox("Contiguity", param2_rtGrp, true);
+        param1_contig.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                System.out.println("Contiguity Param 2 selected");
+                config_param2 = config.config_paramContig;
+
+            }
+        });
+
+        param1_rtGrp.setSelectedCheckbox(param1_je);
+        f2_param2.add(param2_je);
+        f2_param2.add(param2_contig);
+        f2_param2.add(param2_speed);
+           
+        f2.add(f2_param2);
+        
         runtypePanel.add(f2);
         return runtypePanel;
     }

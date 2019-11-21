@@ -6,11 +6,11 @@ public class IllumConfig {
     public final int Algo_Shine = 2;
 	
     //Config options for each run
-    public final int config_runType_JEvsBC	= 1;
-    public final int config_runType_JEvsWidth	= 2;
-    public final int config_runType_JEvsSpeed	= 3;
-    public final int config_runType_JEvsContig	= 4;
-    public final int config_runType_SpeedvsContig = 5;
+    public final int config_paramJE	= 0;
+    public final int config_paramWidth	= 1;
+    public final int config_paramSpeed	= 2;
+    public final int config_paramContig	= 3;
+    public final int config_paramBC	= 4;
     
     //Level parameters for map generation
     public final float config_map_minBC = 200f;
@@ -26,6 +26,10 @@ public class IllumConfig {
     public final float config_map_minContig = 100f;
     public final float config_map_maxContig = 1000f;
     public final float config_map_fitnessThresshold = 1.00f;
+    
+    //Creating map for min max values. Used in initialisation in AlgoRUn
+
+    
     
     //Parameters for each level run
     public final int ticksPerRun = 100;

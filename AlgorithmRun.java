@@ -32,15 +32,17 @@ public class AlgorithmRun
     
     //Seed used for generating initial population
     private int algoType;
-    private int runConfigType;
+    private int runConfig_param1;
+    private int runConfig_param2;
     private Path outputFolder;
     private String runName;
     
     
-    public AlgorithmRun(int algoType, int numOffspring, int runConfig, Path outputFolder, String runName) {
+    public AlgorithmRun(int algoType, int numOffspring, int param1, int param2, Path outputFolder, String runName) {
         
         this.algoType = algoType;
-        this.runConfigType = runConfig;
+        this.runConfig_param1 = param1;
+        this.runConfig_param2 = param2;
         this.Num_Iterations = (numOffspring/2);
         this.Num_Generations = (numOffspring/20);
         this.outputFolder = outputFolder;
@@ -50,7 +52,7 @@ public class AlgorithmRun
     
     public void run() {
         if (algoType == config.Algo_MapElites) {
-            System.out.println("Starting map elites run of config type: " + runConfigType + " running for " + Num_Iterations + " iterations");
+            System.out.println("Starting map elites run with param1: " + runConfig_param1 + " and param2" + runConfig_param2 + " running for " + Num_Iterations + " iterations");
 
             init_mapelites();
             
@@ -74,7 +76,7 @@ public class AlgorithmRun
        // System.out.println("Params set");
         
         //List<LevelWrap> init_pop = initPopFromFolder(Input_Files);
-        List<LevelWrap> init_pop = initRandomPop(runConfigType, config.initialSeed);
+        List<LevelWrap> init_pop = initRandomPop(runConfig_param1, runConfig_param2, config.initialSeed);
         System.out.println("Population fully initialised");
         //Store initial levels used
         try {
@@ -151,7 +153,7 @@ public class AlgorithmRun
         setParams();
         
         //List<LevelWrap> init_pop = initPopFromFolder(Input_Files);
-        List<LevelWrap> init_pop = initRandomPop(runConfigType, config.initialSeed);
+        List<LevelWrap> init_pop = initRandomPop(runConfig_param1, runConfig_param2, config.initialSeed);
         
         
         try {
@@ -219,33 +221,38 @@ public class AlgorithmRun
     
     //Setting the parameters of current run based on config type
     public void setParams() {
-        if (runConfigType == config.config_runType_JEvsBC) {
+    	//Set param1
+        if (runConfig_param1 == config.config_paramJE) {
+            param1Min = config.config_map_minJE;
+            param1Max = config.config_map_maxJE;
+        }
+        else if (runConfig_param1 == config.config_paramBC) {
             param1Min = config.config_map_minBC;
             param1Max = config.config_map_maxBC;
-            param2Min = config.config_map_minJE;
-            param2Max = config.config_map_maxJE;
         }
-        else if (runConfigType == config.config_runType_JEvsWidth) {
-            param1Min = config.config_map_minLW;
-            param1Max = config.config_map_maxLW;
-            param2Min = config.config_map_minJE;
-            param2Max = config.config_map_maxJE;
+        else if (runConfig_param1 == config.config_paramContig) {
+            param1Min = config.config_map_minContig;
+            param1Max = config.config_map_maxContig;
         }
-        else if (runConfigType == config.config_runType_JEvsSpeed) {
+        else if (runConfig_param1 == config.config_paramSpeed) {
             param1Min = config.config_map_minSpeed;
             param1Max = config.config_map_maxSpeed;
+        }
+        
+        //Set param 2
+        if (runConfig_param2 == config.config_paramJE) {
             param2Min = config.config_map_minJE;
             param2Max = config.config_map_maxJE;
         }
-        else if (runConfigType == config.config_runType_JEvsContig) {
-            param1Min = config.config_map_minContig;
-            param1Max = config.config_map_maxContig;
-            param2Min = config.config_map_minJE;
-            param2Max = config.config_map_maxJE;
+        else if (runConfig_param2 == config.config_paramBC) {
+            param2Min = config.config_map_minBC;
+            param2Max = config.config_map_maxBC;
         }
-        else if (runConfigType == config.config_runType_SpeedvsContig) {
-            param1Min = config.config_map_minContig;
-            param1Max = config.config_map_maxContig;
+        else if (runConfig_param2 == config.config_paramContig) {
+            param2Min = config.config_map_minContig;
+            param2Max = config.config_map_maxContig;
+        }
+        else if (runConfig_param2 == config.config_paramSpeed) {
             param2Min = config.config_map_minSpeed;
             param2Max = config.config_map_maxSpeed;
         }
@@ -313,7 +320,7 @@ public class AlgorithmRun
     }
     
     
-    public ArrayList<LevelWrap> initRandomPop(int configType, int seed){
+    public ArrayList<LevelWrap> initRandomPop(int param1, int param2, int seed){
     	
     	System.out.println("Init random pop started");
         
@@ -325,7 +332,7 @@ public class AlgorithmRun
         for (int i = 0; i<config.Generation_Size; i++) {
             
             //IllumMarioLevel levelToAdd = genRandLevel(fixed_width, fixedRandom);
-            LevelWrap sLevelToAdd = new LevelWrap(("Level " + i),configType, fixedRandom);
+            LevelWrap sLevelToAdd = new LevelWrap(("Level " + i),param1,param2, fixedRandom);
             //System.out.println("Run agent about to be run in AR");
             sLevelToAdd.runAgent();
             
@@ -499,7 +506,7 @@ public class AlgorithmRun
             mapwriter.println("Chance of crossover: " + config.Crossover_Chance);
             mapwriter.println("");
             mapwriter.println("Algorithm ID: " + algoType);
-            mapwriter.println("Configuration: " + runConfigType);
+            mapwriter.println("Configuration param1: " + runConfig_param1 + " param 2: " + runConfig_param2);
             mapwriter.close();
     
             //Create output files from each level in map

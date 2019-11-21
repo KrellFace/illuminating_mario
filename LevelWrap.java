@@ -11,7 +11,8 @@ public class LevelWrap implements Comparable<LevelWrap>{
 	IllumConfig config = new IllumConfig();
 
 	//Storage for all level parameters for the level stored in the Level Wrap
-    private int configType;
+    private int config_param1;
+    private int config_param2;
 	private String name;
 	private IllumMarioLevel level;
 	private float fitness;
@@ -29,31 +30,33 @@ public class LevelWrap implements Comparable<LevelWrap>{
 	private double novelty;
 
 	//Constructor for creating with a specified unevaluated level
-	public LevelWrap(String name, int configType, IllumMarioLevel level) {
+	public LevelWrap(String name, int param1, int param2,  IllumMarioLevel level) {
 		this.name = name;
 		this.level = level;
 		this.fitness = 0f;
 		this.widthCells = level.tileWidth;
 		this.heightCells = level.tileHeight;
-		this.configType = configType;
+		this.config_param1 = param1;
+		this.config_param2 = param2;
 		this.updateLevelFeatures();
 		
 	}
 	
 	//Constructor for random noise level
-	public LevelWrap(String name, int configType, Random random){
+	public LevelWrap(String name, int param1, int param2, Random random){
 		
 		this.level = new IllumMarioLevel(genNoiseLevel(config.fixed_width, random), true);
 		this.name = name;
 		this.fitness = 0f;
 		this.widthCells = level.tileWidth;
 		this.heightCells = level.tileHeight;
-		this.configType = configType;
+		this.config_param1 = param1;
+		this.config_param2 = param2;
 		this.updateLevelFeatures();
 	}
 	
 	//Constructor used for creating with all parameters, facilitating cloning
-	public LevelWrap(String name, int configType, IllumMarioLevel level, Float fitness, Integer blockCount, Float jumpEntropy, Float selectionChoice, int width, float timeTaken, float marioSpeed) {
+	public LevelWrap(String name, int param1, int param2, IllumMarioLevel level, Float fitness, Integer blockCount, Float jumpEntropy, Float selectionChoice, int width, float timeTaken, float marioSpeed) {
 		
 		this.name = name;
 		this.selectionChance = 0;
@@ -62,7 +65,8 @@ public class LevelWrap implements Comparable<LevelWrap>{
 		this.jumpEntropy = jumpEntropy;
 		this.widthCells = level.tileWidth;
 		this.heightCells = level.tileHeight;
-		this.configType = configType;
+		this.config_param1 = param1;
+		this.config_param2 = param2;
 		this.marioSpeed = marioSpeed;
 		this.updateLevelFeatures();
 	}
@@ -210,8 +214,8 @@ public class LevelWrap implements Comparable<LevelWrap>{
 		
 		//System.out.println("Creating new IllumLevel post crossover:");
 		
-		output[0] = new LevelWrap("Output1", this.configType, new IllumMarioLevel(stringRep(output1), true));
-		output[1] = new LevelWrap("Output2", this.configType, new IllumMarioLevel(stringRep(output2), true));
+		output[0] = new LevelWrap("Output1", this.config_param1, this.config_param2, new IllumMarioLevel(stringRep(output1), true));
+		output[1] = new LevelWrap("Output2", this.config_param1, this.config_param2, new IllumMarioLevel(stringRep(output2), true));
 		
 		return output;		
 	}
@@ -513,26 +517,26 @@ public class LevelWrap implements Comparable<LevelWrap>{
 	
 	public LevelWrap clone() {
 		
-		return new LevelWrap(this.name, this.configType, this.level, this.fitness, this.blockCount, this.jumpEntropy, this.selectionChance, this.widthCells, this.timeTaken, this.marioSpeed);
+		return new LevelWrap(this.name, this.config_param1, this.config_param2, this.level, this.fitness, this.blockCount, this.jumpEntropy, this.selectionChance, this.widthCells, this.timeTaken, this.marioSpeed);
 
 	}
 	
 	public float getParam1() {
 		
-		if (configType == config.config_runType_JEvsBC) {
+		if (config_param1 == config.config_paramBC) {
 			return blockCount;
 		}
-		else if (configType == config.config_runType_JEvsWidth) {
+		else if (config_param1 == config.config_paramWidth) {
 			return (float) widthCells;
 		}
-		else if (configType == config.config_runType_JEvsSpeed){
+		else if (config_param1 == config.config_paramSpeed){
 			return (Float) marioSpeed;
 		}
-		else if (configType == config.config_runType_JEvsContig){
+		else if (config_param1 == config.config_paramContig){
 			return (Float) contigScore;
 		}
-		else if (configType == config.config_runType_SpeedvsContig){
-			return (Float) contigScore;
+		else if (config_param1 == config.config_paramJE){
+			return (Float) jumpEntropy;
 		}
 		else {
 			return (Float) null;
@@ -542,20 +546,20 @@ public class LevelWrap implements Comparable<LevelWrap>{
 	
 	public float getParam2() {
 		//System.out.println("Get param2 ran with config type: " + this.configType);
-		if (configType == config.config_runType_JEvsBC) {
-			return jumpEntropy;
+		if (config_param2 == config.config_paramBC) {
+			return blockCount;
 		}
-		else if (configType == config.config_runType_JEvsWidth) {
-			return jumpEntropy;
+		else if (config_param2 == config.config_paramWidth) {
+			return (float) widthCells;
 		}
-		else if (configType == config.config_runType_JEvsSpeed){
-			return jumpEntropy;
+		else if (config_param2 == config.config_paramSpeed){
+			return (Float) marioSpeed;
 		}
-		else if (configType == config.config_runType_JEvsContig){
-			return jumpEntropy;
+		else if (config_param2 == config.config_paramContig){
+			return (Float) contigScore;
 		}
-		else if (configType == config.config_runType_SpeedvsContig){
-			return marioSpeed;
+		else if (config_param2 == config.config_paramJE){
+			return (Float) jumpEntropy;
 		}
 		else {
 			return (Float) null;
