@@ -233,16 +233,23 @@ public class ElitesMap {
                         lvlwriter.println("Level Speed: " + level.getSpeed());
                         lvlwriter.println("Level Time Taken: " + level.getTimeTaken());
                         lvlwriter.println("Linearity score: " + level.getContigScore());
-                        lvlwriter.close();                          
+                        lvlwriter.close();
+                    
+                        
                     }
                 }
                 else {
                     heatMap.append( "0");
                 }
-                heatMap.append( ", ");    
-            }     
-            heatMap.append("\n");            
-        } 
+                
+                heatMap.append( ", ");
+                
+            }
+            
+            heatMap.append("\n");
+                
+        }
+        
         heatMap.flush();
         heatMap.close();
     }

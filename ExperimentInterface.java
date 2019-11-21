@@ -13,21 +13,31 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 public class ExperimentInterface {
 
-	IllumConfig config = new IllumConfig();
 
     //Instantiate objects we'll need
     JFrame mainFrame;
     JPanel mainPanel;
+
+    protected static final int Algo_MapElites = 1;
+    protected static final int Algo_Shine = 2;
+
+    //Configuration types - Define level characteristics used in current runs
+    protected static final int Config_JEvsBC = 1;
+    protected static final int Config_JEvsWidth = 2;
+    protected static final int Config_JEvsSpeed = 3;
+    protected static final int Config_JEvsContig = 4;
+    protected static final int Config_SpeedvsContig = 5;
+
 
     //Set destination of output folders here
     private static File Output_Location;
 
     private int defaultoffspring = 20000;
 
-    private int algotype = config.Algo_MapElites;
+    private int algotype = Algo_MapElites;
     private int numberofruns = 1;
     private int numberoffspring = defaultoffspring;
-    private int configtype = config.config_runType_JEvsBC;
+    private int configtype = Config_JEvsBC;
     private String batchRunName;
 
     public static void main(String[] args) {
@@ -166,7 +176,7 @@ public class ExperimentInterface {
         me.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 System.out.println("Map Elites Selected");
-                algotype = config.Algo_MapElites;
+                algotype = Algo_MapElites;
 
             }
         });
@@ -175,7 +185,7 @@ public class ExperimentInterface {
         shine.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 System.out.println("Shine selected");
-                algotype = config.Algo_Shine;
+                algotype = Algo_Shine;
 
             }
         });
@@ -268,7 +278,7 @@ public class ExperimentInterface {
         jevsbc.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 System.out.println("JEvsBC Selected");
-                configtype = config.config_runType_JEvsBC;
+                configtype = Config_JEvsBC;
 
             }
         });
@@ -277,7 +287,7 @@ public class ExperimentInterface {
         jevscontig.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 System.out.println("JE vs Contig selected");
-                configtype = config.config_runType_JEvsContig;
+                configtype = Config_JEvsContig;
 
             }
         });
@@ -286,7 +296,7 @@ public class ExperimentInterface {
         jevsspeed.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 System.out.println("JE vs Speed selected");
-                configtype = config.config_runType_JEvsSpeed;
+                configtype = Config_JEvsSpeed;
 
             }
         });
@@ -295,7 +305,7 @@ public class ExperimentInterface {
         speedvscontig.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 System.out.println("Speed vs Contig selected");
-                configtype = config.config_runType_SpeedvsContig;
+                configtype = Config_SpeedvsContig;
 
             }
         });
