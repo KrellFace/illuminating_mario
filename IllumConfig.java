@@ -11,6 +11,7 @@ public class IllumConfig {
     public final int config_paramSpeed	= 2;
     public final int config_paramContig	= 3;
     public final int config_paramBC	= 4;
+    public final int config_paramClearRows = 5;
     
     //Level parameters for map generation
     public final float config_map_minBC = 200f;
@@ -23,16 +24,18 @@ public class IllumConfig {
     public final float config_map_maxSpeed = 0.18f;
     public final float config_map_minRTime = 0.0f;
     public final float config_map_maxRTime = 30.0f;
-    public final float config_map_minContig = 100f;
-    public final float config_map_maxContig = 1000f;
+    public final float config_map_minContig = 0f;
+    public final float config_map_maxContig = 2000f;
+    public final float config_map_minClearRows = -0.1f;
+    public final float config_map_maxClearRows = 16;
     public final float config_map_fitnessThresshold = 1.00f;
     
     //Creating map for min max values. Used in initialisation in AlgoRUn
 
-    
+     
     
     //Parameters for each level run
-    public final int ticksPerRun = 100;
+    public final int ticksPerRun = 10;
     
     //Mutation chances - Shared between both ME and SHINE
     public final float Dupe_Remove_Chance = 0.5F;
@@ -49,7 +52,7 @@ public class IllumConfig {
     public final int Max_Vertex_Reps = 10;
     
     //Size of Map Elites map (Maps always square)
-    public final int mapSize = 10;
+    public final int mapSize = 20;
     
     //Seed used for generating initial population
     public final int initialSeed = 100;

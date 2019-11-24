@@ -12,6 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 public class ExperimentInterface {
+	
+	private static String Default_Output_Location = "C:/Users/Ollie/Documents/MSc Studying/Project/Output Data/";
 
 	IllumConfig config = new IllumConfig();
 
@@ -44,6 +46,7 @@ public class ExperimentInterface {
 
 
         mainFrame = new JFrame();
+        mainFrame.setTitle("Run Initiator");
         mainPanel = new JPanel();
 
         //Setting the gridlayout of interface
@@ -69,7 +72,7 @@ public class ExperimentInterface {
         submitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Form submitted. Initialising Experiments");
-                System.out.println("Algorithm type: " + algotype + ". Num Runs: " + numberofruns + " param1: " + config_param1 + " and param2" + config_param2 );
+                System.out.println("Algorithm type: " + algotype + ". Num Runs: " + numberofruns + " param1: " + config_param1 + " and param2: " + config_param2 );
 
                 mainFrame.dispatchEvent(new WindowEvent(mainFrame, WindowEvent.WINDOW_CLOSING));
 
@@ -113,15 +116,17 @@ public class ExperimentInterface {
 
     public JPanel outLocPanel() {
         JPanel outLocPanel = new JPanel();
-        JTextField currFolder = new JTextField();
-        currFolder.setText("Current folder: NULL");
-        currFolder.setEditable(false);
+        GridLayout layout = new GridLayout(0,2);
+        outLocPanel.setLayout(layout);
+        JTextField panelText = new JTextField();
+        panelText.setText("Choose output folder");
+        panelText.setEditable(false);
         JButton selectB = new JButton();
-        selectB.setText("Choose Output Folder");
+        selectB.setText("Please Select");
         selectB.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 JFileChooser chooser = new JFileChooser();
-                chooser.setCurrentDirectory(new java.io.File("."));
+                chooser.setCurrentDirectory(new java.io.File(Default_Output_Location));
                 chooser.setDialogTitle("Select Output Folder");
                 chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 //
@@ -137,7 +142,7 @@ public class ExperimentInterface {
                         chooser.getSelectedFile());
 
                     Output_Location = chooser.getSelectedFile();
-                    currFolder.setText("Current folder: " + Output_Location);
+                    selectB.setText("Current folder: " + Output_Location.getName());
                 } else {
                     System.out.println("No Selection ");
                 }
@@ -145,9 +150,10 @@ public class ExperimentInterface {
 
             }
         });
-
+        
+        outLocPanel.add(panelText);
         outLocPanel.add(selectB);
-        outLocPanel.add(currFolder);
+        
 
         return outLocPanel;
 
@@ -156,12 +162,19 @@ public class ExperimentInterface {
 
 
     public JPanel algoPanel() {
-        JPanel algoPanel = new JPanel();
-        JTextField f1 = new JTextField();
-        f1.setText("Select algorithm:");
-        f1.setEditable(false);
-        algoPanel.add(f1);
-        JPanel f2 = new JPanel();
+    	//Overall panel
+        JPanel algoPanelWrap = new JPanel();
+        GridLayout twoCol = new GridLayout(0,2);
+        algoPanelWrap.setLayout(twoCol);
+        //Left hand text sub-panel
+        JTextField panelText = new JTextField();
+        panelText.setText("Select algorithm:");
+        panelText.setEditable(false);
+        algoPanelWrap.add(panelText);
+        //Right hand algorithm options panel
+        JPanel panelAlgoOpts = new JPanel();
+        GridLayout oneCol = new GridLayout(0,1);
+        panelAlgoOpts.setLayout(oneCol);
         CheckboxGroup algoGrp = new CheckboxGroup();
         Checkbox me = new Checkbox("MAP-Elites", algoGrp, true);
         me.addItemListener(new ItemListener() {
@@ -180,22 +193,25 @@ public class ExperimentInterface {
 
             }
         });
-
+        //Set default
         algoGrp.setSelectedCheckbox(me);
-
-        f2.add(me);
-        f2.add(shine);
-        algoPanel.add(f2);
-        return algoPanel;
+        panelAlgoOpts.add(me);
+        panelAlgoOpts.add(shine);
+        algoPanelWrap.add(panelAlgoOpts);
+        
+        return algoPanelWrap;
     }
 
+    
     public JPanel numrunPanel() {
         JPanel numrunPanel = new JPanel();
-        JTextField f1 = new JTextField();
-        f1.setText("Number of full runs: ");
-        f1.setEditable(false);
-        numrunPanel.add(f1);
-        JPanel f2 = new JPanel();
+        JTextField textPanel = new JTextField();
+        GridLayout twoCol = new GridLayout(0,2);
+        numrunPanel.setLayout(twoCol);
+        textPanel.setText("Number of full runs: ");
+        textPanel.setEditable(false);
+        numrunPanel.add(textPanel);
+        JPanel selectPanel = new JPanel();
 
 
         Choice runOpts = new Choice();
@@ -210,48 +226,59 @@ public class ExperimentInterface {
         });
 
 
-        f2.add(runOpts);
-        numrunPanel.add(f2);
+        selectPanel.add(runOpts);
+        numrunPanel.add(selectPanel);
         return numrunPanel;
 
 
     }
 
     public JPanel numoffspringPanel() {
-        JPanel numrunPanel = new JPanel();
-        JTextField f1 = new JTextField();
-        f1.setText("Number of offspring per run: ");
-        f1.setEditable(false);
-        numrunPanel.add(f1);
+        JPanel numoffspringPanelWrapper = new JPanel();
+        GridLayout oneCol = new GridLayout(0,1);
+        numoffspringPanelWrapper.setLayout(oneCol);
+        JTextField topTextPanel = new JTextField();
+        topTextPanel.setText("Number of offspring per run: ");
+        topTextPanel.setEditable(false);
+        numoffspringPanelWrapper.add(topTextPanel);
 
         //Storage for slider
-        JPanel f2 = new JPanel();
+        JPanel sliderPanel = new JPanel();
         //Storage for current slider value
-        JTextField f3 = new JTextField();
         JSlider offspringSlider = new JSlider(JSlider.HORIZONTAL, 0, 200000, defaultoffspring);
         offspringSlider.setMajorTickSpacing(10000);
         offspringSlider.setMinorTickSpacing(5000);
         offspringSlider.setPaintTicks(true);
         offspringSlider.setSnapToTicks(true);
-
+        offspringSlider.setSize(numoffspringPanelWrapper.getSize());
+        JTextArea offspringDeetsPanel = new JTextArea();
 
         offspringSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent arg0) {
                 numberoffspring = offspringSlider.getValue();
-                f3.setText(Integer.toString(offspringSlider.getValue()));
+                offspringDeetsPanel.setText("Offspring Count: " + Integer.toString(offspringSlider.getValue()));
+                if (algotype == config.Algo_MapElites) {
+                	String s = offspringDeetsPanel.getText();
+                	s+=("\n" + "MAP Elites Iterations: " + Integer.toString(offspringSlider.getValue()/2));
+                	offspringDeetsPanel.setText(s);
+                }
+                else if (algotype == config.Algo_Shine){
+                	String s = offspringDeetsPanel.getText();
+                	s+=("\n" + "SHINE Gens (Size: " + config.Generation_Size + "): " + Integer.toString(offspringSlider.getValue()/config.Generation_Size));
+                	offspringDeetsPanel.setText(s);
+                }
             }
         });
+        
 
-        f2.add(offspringSlider);
-        numrunPanel.add(f2);
+        sliderPanel.add(offspringSlider);
+        numoffspringPanelWrapper.add(sliderPanel);
 
+        offspringDeetsPanel.setEditable(false);
+        numoffspringPanelWrapper.add(offspringDeetsPanel);
 
-        f3.setText(Integer.toString(offspringSlider.getValue()));
-        f3.setEditable(false);
-        numrunPanel.add(f3);
-
-        return numrunPanel;
+        return numoffspringPanelWrapper;
 
 
     }
@@ -266,6 +293,8 @@ public class ExperimentInterface {
         
         //Initialise selection option for parameter 1
         JPanel f2_param1 = new JPanel();
+        GridLayout oneCol = new GridLayout(0,1);
+        f2_param1.setLayout(oneCol);
         CheckboxGroup param1_rtGrp = new CheckboxGroup();
         Checkbox param1_je = new Checkbox("Jump Entropy", param1_rtGrp, true);
         param1_je.addItemListener(new ItemListener() {
@@ -293,18 +322,39 @@ public class ExperimentInterface {
 
             }
         });
+        
+        Checkbox param1_clearrows = new Checkbox("Clear Rows", param1_rtGrp, true);
+        param1_clearrows.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                System.out.println("Clear Rows Param 1 selected");
+                config_param1 = config.config_paramClearRows;
+
+            }
+        });
+
+        Checkbox param1_bc = new Checkbox("Block Count", param1_rtGrp, true);
+        param1_bc.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                System.out.println("Block count Param 1 selected");
+                config_param1 = config.config_paramBC;
+
+            }
+        });
 
         param1_rtGrp.setSelectedCheckbox(param1_je);
         f2_param1.add(param1_je);
         f2_param1.add(param1_contig);
         f2_param1.add(param1_speed);
+        f2_param1.add(param1_clearrows);
+        f2_param1.add(param1_bc);
         f2.add(f2_param1);
         
         //Initialise selection option for parameter 2
         JPanel f2_param2 = new JPanel();
+        f2_param2.setLayout(oneCol);
         CheckboxGroup param2_rtGrp = new CheckboxGroup();
         Checkbox param2_je = new Checkbox("Jump Entropy", param2_rtGrp, true);
-        param1_je.addItemListener(new ItemListener() {
+        param2_je.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 System.out.println("Jump Entropy Param 2 selected");
                 config_param2 = config.config_paramJE;
@@ -313,7 +363,7 @@ public class ExperimentInterface {
         });
 
         Checkbox param2_speed = new Checkbox("Speed", param2_rtGrp, true);
-        param1_speed.addItemListener(new ItemListener() {
+        param2_speed.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 System.out.println("Speed Param 2 selected");
                 config_param2 = config.config_paramSpeed;
@@ -322,18 +372,38 @@ public class ExperimentInterface {
         });
 
         Checkbox param2_contig = new Checkbox("Contiguity", param2_rtGrp, true);
-        param1_contig.addItemListener(new ItemListener() {
+        param2_contig.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 System.out.println("Contiguity Param 2 selected");
                 config_param2 = config.config_paramContig;
 
             }
         });
+        
+        Checkbox param2_clearrows = new Checkbox("Clear Rows", param2_rtGrp, true);
+        param2_clearrows.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                System.out.println("Clear Rows Param 2 selected");
+                config_param2 = config.config_paramClearRows;
 
-        param1_rtGrp.setSelectedCheckbox(param1_je);
+            }
+        });
+        
+        Checkbox param2_bc = new Checkbox("Block Count", param2_rtGrp, true);
+        param2_bc.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                System.out.println("Block count Param 2 selected");
+                config_param2 = config.config_paramBC;
+
+            }
+        });
+
+        param2_rtGrp.setSelectedCheckbox(param2_je);
         f2_param2.add(param2_je);
         f2_param2.add(param2_contig);
         f2_param2.add(param2_speed);
+        f2_param2.add(param2_clearrows);
+        f2_param2.add(param2_bc);
            
         f2.add(f2_param2);
         

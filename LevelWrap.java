@@ -18,6 +18,7 @@ public class LevelWrap implements Comparable<LevelWrap>{
 	private float fitness;
 	private Integer blockCount;
 	private float contigScore;
+	private Integer clearRows;
 	private float jumpEntropy;
 	private float selectionChance;
 	private int widthCells;
@@ -25,6 +26,8 @@ public class LevelWrap implements Comparable<LevelWrap>{
 	private float timeTaken;
 	private float marioSpeed;
 	private MarioResult result;
+	
+	private int platformSize = 5;
 	
 	//Used for storing the novelty within SHINECell
 	private double novelty;
@@ -56,7 +59,7 @@ public class LevelWrap implements Comparable<LevelWrap>{
 	}
 	
 	//Constructor used for creating with all parameters, facilitating cloning
-	public LevelWrap(String name, int param1, int param2, IllumMarioLevel level, Float fitness, Integer blockCount, Float jumpEntropy, Float selectionChoice, int width, float timeTaken, float marioSpeed) {
+	public LevelWrap(String name, int param1, int param2, IllumMarioLevel level, Float fitness, Integer blockCount, Integer clearRows, Float jumpEntropy, Float selectionChoice, int width, float timeTaken, float marioSpeed) {
 		
 		this.name = name;
 		this.selectionChance = 0;
@@ -65,6 +68,8 @@ public class LevelWrap implements Comparable<LevelWrap>{
 		this.jumpEntropy = jumpEntropy;
 		this.widthCells = level.tileWidth;
 		this.heightCells = level.tileHeight;
+		this.blockCount = blockCount;
+		this.clearRows = clearRows;
 		this.config_param1 = param1;
 		this.config_param2 = param2;
 		this.marioSpeed = marioSpeed;
@@ -122,7 +127,6 @@ public class LevelWrap implements Comparable<LevelWrap>{
 		
 		
         char[][] charRep = new char[14][size];
-        int platformSize = 5;
         
         String space = "-";
         String block = "X";
@@ -438,14 +442,18 @@ public class LevelWrap implements Comparable<LevelWrap>{
 		char[][] charRep = charRep(level.getStringRep());
 		int bc = 0;
 		int contig = 0;
+		int clearRows = 0;
 		//Store floor value
 		String floor = "X";
         for (int y = 0; y < charRep.length; y++) {
-            for (int x = 0; x < charRep[y].length; x++) {
+        	Boolean rowClear = true;
+            for (int x = platformSize; x < charRep[y].length; x++) {
             	
             	//Increment block count
             	if(charRep[y][x]==floor.charAt(0)){
             		bc+=1;
+            		//Set the flag for this row being clear to false
+            		rowClear = false;
             		
             		//Increment contiguity score
             		char [] adjacentVals = new char[4];
@@ -476,9 +484,14 @@ public class LevelWrap implements Comparable<LevelWrap>{
             	}
                 
             }
+            if (rowClear) {
+            	clearRows+=1;
+            }
+           
         }
         this.blockCount = bc;
         this.contigScore = contig;
+        this.clearRows = clearRows;
 	}
 	
 	public void updateResultFeatures(MarioResult result) {
@@ -509,15 +522,18 @@ public class LevelWrap implements Comparable<LevelWrap>{
 	public void runAgent(Agent agent) {
 
 		//System.out.println("Running runGame " + System.currentTimeMillis());
+		long startTime = System.currentTimeMillis();
+		//System.out.println(level.getStringRep());
 		result = new MarioGame().runGame(agent, level.getStringRep(), config.ticksPerRun);
 		
 		updateResultFeatures(result);
-		//System.out.println("Result features updated");
+		//System.out.println(this.toString());
+		//System.out.println("Agent run took " + ((System.currentTimeMillis()-startTime)/1000f)  + " seconds to complete");
 	}
 	
 	public LevelWrap clone() {
 		
-		return new LevelWrap(this.name, this.config_param1, this.config_param2, this.level, this.fitness, this.blockCount, this.jumpEntropy, this.selectionChance, this.widthCells, this.timeTaken, this.marioSpeed);
+		return new LevelWrap(this.name, this.config_param1, this.config_param2, this.level, this.fitness, this.blockCount, this.clearRows, this.jumpEntropy, this.selectionChance, this.widthCells, this.timeTaken, this.marioSpeed);
 
 	}
 	
@@ -537,6 +553,9 @@ public class LevelWrap implements Comparable<LevelWrap>{
 		}
 		else if (config_param1 == config.config_paramJE){
 			return (Float) jumpEntropy;
+		}
+		else if (config_param1 == config.config_paramClearRows){
+			return clearRows;
 		}
 		else {
 			return (Float) null;
@@ -560,6 +579,9 @@ public class LevelWrap implements Comparable<LevelWrap>{
 		}
 		else if (config_param2 == config.config_paramJE){
 			return (Float) jumpEntropy;
+		}
+		else if (config_param2 == config.config_paramClearRows){
+			return clearRows;
 		}
 		else {
 			return (Float) null;
@@ -611,6 +633,10 @@ public class LevelWrap implements Comparable<LevelWrap>{
 		return contigScore;
 	}
 	
+	public float getClearRows() {
+		return clearRows;
+	}
+	
 	public char[][] getCharRep(){
 		return charRep(this.level.getStringRep());
 	}
@@ -620,7 +646,7 @@ public class LevelWrap implements Comparable<LevelWrap>{
 	}
 	
 	public String toString() {
-		return ("LevelWrap- LevelName: " + name + ". LevelFitness: " + fitness +"Level Block count: " + blockCount + ". LevelContig: " + contigScore + ". JE: " + jumpEntropy + " LevelSpeed: " + marioSpeed);
+		return ("LevelWrap- LevelName: " + name + ". LevelFitness: " + fitness +"Level Block count: " + blockCount + ". LevelContig: " + contigScore + ". JE: " + jumpEntropy + " LevelSpeed: " + marioSpeed + " Clear rows: " + this.clearRows);
 	}
 	
 	

@@ -238,6 +238,10 @@ public class AlgorithmRun
             param1Min = config.config_map_minSpeed;
             param1Max = config.config_map_maxSpeed;
         }
+        else if (runConfig_param1 == config.config_paramClearRows){
+            param1Min = config.config_map_minClearRows;
+            param1Max = config.config_map_maxClearRows;
+        }
         
         //Set param 2
         if (runConfig_param2 == config.config_paramJE) {
@@ -255,6 +259,10 @@ public class AlgorithmRun
         else if (runConfig_param2 == config.config_paramSpeed) {
             param2Min = config.config_map_minSpeed;
             param2Max = config.config_map_maxSpeed;
+        }
+        else if (runConfig_param2 == config.config_paramClearRows){
+            param2Min = config.config_map_minClearRows;
+            param2Max = config.config_map_maxClearRows;
         }
     }
     
@@ -345,7 +353,7 @@ public class AlgorithmRun
             sLevelToAdd.setJumpEntropy(rand.nextFloat()/10);
             */
             
-            System.out.println("Algo Run - Level Added to init pop: " + sLevelToAdd.toString());
+            //System.out.println("Algo Run - Level Added to init pop: " + sLevelToAdd.toString());
             //System.out.println("ShinemAN - Level generated with widith " + sLevelToAdd.getWidth());
             outputlevels.add(sLevelToAdd.clone());      
         }
@@ -554,6 +562,7 @@ public class AlgorithmRun
             lvlwriter.println("Level Contiguity Score: " + level.getContigScore());
             lvlwriter.println("Level Speed: " + level.getSpeed());
             lvlwriter.println("Level Time Taken: " + level.getTimeTaken());
+            lvlwriter.println("Level Clear Rows: " + level.getClearRows());
             lvlwriter.close();
             
         }

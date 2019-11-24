@@ -75,7 +75,7 @@ public class ShineNode {
     //Method for adding levels to the ShineNode
     public void addLevel(LevelWrap level) {
         
-        //System.out.println("ShineNode- Param1 min/max = " + this.param1Min+"/"+this.param1Max+ ". Pram2 min/max"+ this.param2Min+"/"+this.param2Max);
+        //System.out.println("ShineNode- Param1 min/max = " + this.param1Min+"/"+this.param1Max+ ". Param2 min/max"+ this.param2Min+"/"+this.param2Max);
         //System.out.println("ShineNode- Added " + level.toString());   
         //System.out.println("Level inputted as param1: " + level.getParam1()+ " and param2: " +level.getParam2());
         //If node has no children, and has the appropriate parameters, add it to levelbucket
@@ -287,6 +287,8 @@ public class ShineNode {
         
         float param1Val = level.getParam1();
         float param2Val = level.getParam2();
+        
+        //System.out.println("Comparing input param 1 " + level.getParam1() + ", param2: " + level.getParam2() + " with param1 min/max " + param1Min + "/" + param1Max+ " and param2 min/max " + param2Min + "/" + param2Max);
         
         if ( param1Val<=param1Max && param1Val>param1Min&&param2Val<=this.param2Max&&param2Val>this.param2Min) {
             return true;

@@ -233,6 +233,7 @@ public class ElitesMap {
                         lvlwriter.println("Level Speed: " + level.getSpeed());
                         lvlwriter.println("Level Time Taken: " + level.getTimeTaken());
                         lvlwriter.println("Level Contiguity Score: " + level.getContigScore());
+                        lvlwriter.println("Level Clear Rows: " + level.getClearRows());
                         lvlwriter.close();                          
                     }
                 }
