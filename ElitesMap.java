@@ -10,6 +10,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.io.File;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ElitesMap {
@@ -191,7 +203,7 @@ public class ElitesMap {
         
     }
     
-    public void createOutputFiles(Path rootPath, String runName, boolean onlyFit) throws IOException {
+    public void createOutputFiles(Path rootPath, String runName, boolean onlyFit) throws Exception {
         
         FileWriter heatMap = new FileWriter((rootPath + "/" +runName+"- HeatMap.csv"));
 
@@ -218,23 +230,11 @@ public class ElitesMap {
                     
                     //Only create if the level is fully fit, or if we are printing all levels
                     if (!onlyFit||map.get(cell).getFitness()>=1.0f) {
+                    	
+                    	Path levelFolder = Paths.get(rootPath + "/" + cell);
 
-                        Path cellPath = Paths.get(rootPath + "/Cell" + (i < 10 ? "0" : "")+i+(j < 10 ? "0" : "")+j+ "/");
-                        Files.createDirectory(cellPath);    
-                        new ImageGen((level.getName()),cellPath,level.getCharRep());
-                    
-                        //Create level stats file
-                        PrintWriter lvlwriter = new PrintWriter((cellPath + "/" +level.getName()+"-Data.txt"), "UTF-8");
-                        lvlwriter.println("Level derived from: " + level.getName());
-                        lvlwriter.println("Level Fitness: " + level.getFitness());
-                        lvlwriter.println("Level Width: " + level.getWidth());
-                        lvlwriter.println("Level Jump Entropy: " + level.getJumpEntropy());
-                        lvlwriter.println("Level Block Count: " + level.getBlockCount());
-                        lvlwriter.println("Level Speed: " + level.getSpeed());
-                        lvlwriter.println("Level Time Taken: " + level.getTimeTaken());
-                        lvlwriter.println("Level Contiguity Score: " + level.getContigScore());
-                        lvlwriter.println("Level Clear Rows: " + level.getClearRows());
-                        lvlwriter.close();                          
+                    	level.createLevelFiles(levelFolder);
+                    	
                     }
                 }
                 else {

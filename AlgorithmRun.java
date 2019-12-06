@@ -17,8 +17,6 @@ import java.util.Scanner;
 
 public class AlgorithmRun
 {   
-	IllumConfig config = new IllumConfig();
-	
 	//SHINE Variables
     private int Num_Generations;
     //MAP Elites Variables (Each iteration = new new offspring due to crossover operation)
@@ -30,6 +28,8 @@ public class AlgorithmRun
     private static float param2Min;
     private static float param2Max;
     
+    private IllumConfig config;
+    
     //Seed used for generating initial population
     private int algoType;
     private int runConfig_param1;
@@ -38,13 +38,14 @@ public class AlgorithmRun
     private String runName;
     
     
-    public AlgorithmRun(int algoType, int numOffspring, int param1, int param2, Path outputFolder, String runName) {
+    public AlgorithmRun(int algoType, int numOffspring, IllumConfig config, int param1, int param2, Path outputFolder, String runName) {
         
         this.algoType = algoType;
+        this.config = config;
         this.runConfig_param1 = param1;
         this.runConfig_param2 = param2;
         this.Num_Iterations = (numOffspring/2);
-        this.Num_Generations = (numOffspring/20);
+        this.Num_Generations = (numOffspring/config.Generation_Size);
         this.outputFolder = outputFolder;
         this.runName = runName;     
         
@@ -52,7 +53,7 @@ public class AlgorithmRun
     
     public void run() {
         if (algoType == config.Algo_MapElites) {
-            System.out.println("Starting map elites run with param1: " + runConfig_param1 + " and param2" + runConfig_param2 + " running for " + Num_Iterations + " iterations");
+            System.out.println("Starting map elites run with param1: " + runConfig_param1 + " and param2 " + runConfig_param2 + " running for " + Num_Iterations + " iterations");
 
             init_mapelites();
             
@@ -81,7 +82,7 @@ public class AlgorithmRun
         //Store initial levels used
         try {
             levelsToFiles(init_pop, "Initial Population" );
-        } catch (IOException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -133,7 +134,9 @@ public class AlgorithmRun
             ElitesMap currMap = eval_CreateMap(tree);
             System.out.println(currMap.toString());
             runHistory.add(Gen_Count +", " + currMap.getCoverage() + ", " + currMap.getReliability() + ", " + currMap.getAvgFitness());
-            mapOutput(currMap, runHistory, runName+" - Snapshot"+Gen_Count, runStartTime, true);
+            if (Gen_Count%10==0) {
+            	mapOutput(currMap, runHistory, runName+" - Generation "+Gen_Count, runStartTime, true);
+            }
 
             
         }
@@ -158,7 +161,7 @@ public class AlgorithmRun
         
         try {
             levelsToFiles(init_pop, "Initial Population" );
-        } catch (IOException e) {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -219,6 +222,7 @@ public class AlgorithmRun
         
     }
     
+    
     //Setting the parameters of current run based on config type
     public void setParams() {
     	//Set param1
@@ -242,6 +246,10 @@ public class AlgorithmRun
             param1Min = config.config_map_minClearRows;
             param1Max = config.config_map_maxClearRows;
         }
+        else if (runConfig_param1 == config.config_paramAgrSmooth){
+            param1Min = config.config_map_minAgrSmooth;
+            param1Max = config.config_map_maxAgrSmooth;
+        }
         
         //Set param 2
         if (runConfig_param2 == config.config_paramJE) {
@@ -264,6 +272,11 @@ public class AlgorithmRun
             param2Min = config.config_map_minClearRows;
             param2Max = config.config_map_maxClearRows;
         }
+        else if (runConfig_param2 == config.config_paramAgrSmooth){
+            param2Min = config.config_map_minAgrSmooth;
+            param2Max = config.config_map_maxAgrSmooth;
+        }
+        
     }
     
     
@@ -340,7 +353,7 @@ public class AlgorithmRun
         for (int i = 0; i<config.Generation_Size; i++) {
             
             //IllumMarioLevel levelToAdd = genRandLevel(fixed_width, fixedRandom);
-            LevelWrap sLevelToAdd = new LevelWrap(("Level " + i),param1,param2, fixedRandom);
+            LevelWrap sLevelToAdd = new LevelWrap(("Level " + i),this.config, param1,param2, fixedRandom);
             //System.out.println("Run agent about to be run in AR");
             sLevelToAdd.runAgent();
             
@@ -353,8 +366,7 @@ public class AlgorithmRun
             sLevelToAdd.setJumpEntropy(rand.nextFloat()/10);
             */
             
-            //System.out.println("Algo Run - Level Added to init pop: " + sLevelToAdd.toString());
-            //System.out.println("ShinemAN - Level generated with widith " + sLevelToAdd.getWidth());
+            System.out.println("Algo Run - Level Added to init pop: " + sLevelToAdd.toString());
             outputlevels.add(sLevelToAdd.clone());      
         }
         
@@ -465,18 +477,12 @@ public class AlgorithmRun
     public void mapOutput(ElitesMap sMap, ArrayList<String> runHistory, String dataFolder, long runStartT, boolean onlyFit) {
     	
     	//System.out.println("MapOutput running with imperfect levels flag: " + impefectLevels);
-        
-        HashMap<List<Integer>, LevelWrap> map = sMap.getMap();
-        
+ 
         Path dataFolderPath = Paths.get(outputFolder+"\\"+dataFolder);
         
         //In case we havent updated the run name, we dont want to lose the data
         try {
             if (!Files.exists(dataFolderPath)) {
-                //Random rand = new Random();
-                //rootPath = Paths.get(Output_Location+runName+rand.nextInt(1000));
-                //Files.createDirectory(rootPath);
-                
                 //System.out.println("Output folder does not exist when it should");
                 Files.createDirectory(dataFolderPath);
                 
@@ -541,30 +547,14 @@ public class AlgorithmRun
         }
     }
     
-    public void levelsToFiles(List<LevelWrap> init_pop, String folder) throws IOException {
+    public void levelsToFiles(List<LevelWrap> init_pop, String folder) throws Exception {
         
-        Path rootPath = Paths.get(outputFolder+"/"+folder); 
+        Path rootPath = Paths.get(outputFolder+"/"+folder);  
         Files.createDirectory(rootPath);
         
         for (LevelWrap level : init_pop) {
-            
-            Path levelPath = Paths.get(rootPath + "/"+level.getName() +"/");
-            Files.createDirectory(levelPath);   
-            new ImageGen((level.getName()),levelPath,level.getCharRep());
-            
-            //Create level stats file
-            PrintWriter lvlwriter = new PrintWriter((levelPath + "/" +level.getName()+"-Data.txt"), "UTF-8");
-            lvlwriter.println("Level Name: " + level.getName());
-            lvlwriter.println("Level Fitness: " + level.getFitness());
-            lvlwriter.println("Level Width: " + level.getWidth());
-            lvlwriter.println("Level Jump Entropy: " + level.getJumpEntropy());
-            lvlwriter.println("Level Block Count: " + level.getBlockCount());
-            lvlwriter.println("Level Contiguity Score: " + level.getContigScore());
-            lvlwriter.println("Level Speed: " + level.getSpeed());
-            lvlwriter.println("Level Time Taken: " + level.getTimeTaken());
-            lvlwriter.println("Level Clear Rows: " + level.getClearRows());
-            lvlwriter.close();
-            
+        	Path levelFolder = Paths.get(rootPath + "/" + level.getName());
+        	level.createLevelFiles(levelFolder);
         }
         
     }

@@ -12,6 +12,7 @@ public class IllumConfig {
     public final int config_paramContig	= 3;
     public final int config_paramBC	= 4;
     public final int config_paramClearRows = 5;
+    public final int config_paramAgrSmooth = 6;
     
     //Level parameters for map generation
     public final float config_map_minBC = 200f;
@@ -28,11 +29,14 @@ public class IllumConfig {
     public final float config_map_maxContig = 2000f;
     public final float config_map_minClearRows = -0.1f;
     public final float config_map_maxClearRows = 16;
+    public final float config_map_minAgrSmooth = 0;
+    public final float config_map_maxAgrSmooth = 300;
+    
+    
     public final float config_map_fitnessThresshold = 1.00f;
     
     //Creating map for min max values. Used in initialisation in AlgoRUn
 
-     
     
     //Parameters for each level run
     public final int ticksPerRun = 10;

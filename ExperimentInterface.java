@@ -15,7 +15,7 @@ public class ExperimentInterface {
 	
 	private static String Default_Output_Location = "C:/Users/Ollie/Documents/MSc Studying/Project/Output Data/";
 
-	IllumConfig config = new IllumConfig();
+	private IllumConfig config = new IllumConfig();
 
     //Instantiate objects we'll need
     JFrame mainFrame;
@@ -32,6 +32,8 @@ public class ExperimentInterface {
     private int config_param1 = 1;
     private int config_param2 = 2;
     private String batchRunName;
+    
+    private float minutesPerLevel = 0.035f;
 
     public static void main(String[] args) {
 
@@ -47,7 +49,9 @@ public class ExperimentInterface {
 
         mainFrame = new JFrame();
         mainFrame.setTitle("Run Initiator");
+        //mainFrame.setPreferredSize(new Dimension(6000, 10000));    
         mainPanel = new JPanel();
+        //mainPanel.setPreferredSize(new Dimension(6000, 10000));    
 
         //Setting the gridlayout of interface
         mainPanel.setLayout(new GridLayout(6, 1));
@@ -88,7 +92,7 @@ public class ExperimentInterface {
                         e1.printStackTrace();
                     }
 
-                    AlgorithmRun currRun = new AlgorithmRun(algotype, numberoffspring, config_param1, config_param2, runPath, runName);
+                    AlgorithmRun currRun = new AlgorithmRun(algotype, numberoffspring, config, config_param1, config_param2, runPath, runName);
                     currRun.run();
                     currRun = null;
 
@@ -105,7 +109,7 @@ public class ExperimentInterface {
         //Adding panel to frame
         mainFrame.add(mainPanel);
 
-        mainFrame.setSize(700, 700);
+        mainFrame.setSize(500, 1000);
         mainFrame.setVisible(true);
 
 
@@ -136,9 +140,11 @@ public class ExperimentInterface {
                 //    
 
                 if (chooser.showOpenDialog(selectB) == JFileChooser.APPROVE_OPTION) {
-                    System.out.println("getCurrentDirectory(): " +
+                    /*
+                	System.out.println("getCurrentDirectory(): " +
                         chooser.getCurrentDirectory());
-                    System.out.println("getSelectedFile() : " +
+                    */
+                    System.out.println("Selected Folder/File : " +
                         chooser.getSelectedFile());
 
                     Output_Location = chooser.getSelectedFile();
@@ -163,7 +169,7 @@ public class ExperimentInterface {
 
     public JPanel algoPanel() {
     	//Overall panel
-        JPanel algoPanelWrap = new JPanel();
+        JPanel algoPanelWrap = new JPanel();     
         GridLayout twoCol = new GridLayout(0,2);
         algoPanelWrap.setLayout(twoCol);
         //Left hand text sub-panel
@@ -205,6 +211,7 @@ public class ExperimentInterface {
     
     public JPanel numrunPanel() {
         JPanel numrunPanel = new JPanel();
+        numrunPanel.setPreferredSize(new Dimension(400, 200));
         JTextField textPanel = new JTextField();
         GridLayout twoCol = new GridLayout(0,2);
         numrunPanel.setLayout(twoCol);
@@ -245,29 +252,39 @@ public class ExperimentInterface {
         //Storage for slider
         JPanel sliderPanel = new JPanel();
         //Storage for current slider value
-        JSlider offspringSlider = new JSlider(JSlider.HORIZONTAL, 0, 200000, defaultoffspring);
+        JSlider offspringSlider = new JSlider(JSlider.HORIZONTAL, 0, 20000, defaultoffspring);
+        offspringSlider.setPreferredSize(new Dimension(450, 50));
         offspringSlider.setMajorTickSpacing(10000);
         offspringSlider.setMinorTickSpacing(5000);
         offspringSlider.setPaintTicks(true);
         offspringSlider.setSnapToTicks(true);
         offspringSlider.setSize(numoffspringPanelWrapper.getSize());
-        JTextArea offspringDeetsPanel = new JTextArea();
+        JTextArea offspringDetailsPanel = new JTextArea(3, 30);
+        
+        numberoffspring = offspringSlider.getValue();
+        String s = "Offspring Count: " + Integer.toString(offspringSlider.getValue());
+        if (algotype == config.Algo_MapElites) {
+        	s+=("\n" + "MAP Elites Iterations: " + Integer.toString(offspringSlider.getValue()/2));
+        }
+        else if (algotype == config.Algo_Shine){
+        	s+=("\n" + "SHINE Gens (Size: " + config.Generation_Size + "): " + Integer.toString(offspringSlider.getValue()/config.Generation_Size));
+        }
+        s+=("\n" + "Estimated runtime: " + Double.toString(offspringSlider.getValue()*minutesPerLevel) + " minutes. Hours: " + String.format("%.2f", (offspringSlider.getValue()*minutesPerLevel)/60));
+        offspringDetailsPanel.setText(s);
 
         offspringSlider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent arg0) {
                 numberoffspring = offspringSlider.getValue();
-                offspringDeetsPanel.setText("Offspring Count: " + Integer.toString(offspringSlider.getValue()));
+                String s = "Offspring Count: " + Integer.toString(offspringSlider.getValue());
                 if (algotype == config.Algo_MapElites) {
-                	String s = offspringDeetsPanel.getText();
                 	s+=("\n" + "MAP Elites Iterations: " + Integer.toString(offspringSlider.getValue()/2));
-                	offspringDeetsPanel.setText(s);
                 }
                 else if (algotype == config.Algo_Shine){
-                	String s = offspringDeetsPanel.getText();
                 	s+=("\n" + "SHINE Gens (Size: " + config.Generation_Size + "): " + Integer.toString(offspringSlider.getValue()/config.Generation_Size));
-                	offspringDeetsPanel.setText(s);
                 }
+                s+=("\n" + "Estimated runtime: " + Double.toString(offspringSlider.getValue()*minutesPerLevel) + " minutes. Hours: " + String.format("%.2f", (offspringSlider.getValue()*minutesPerLevel)/60));
+                offspringDetailsPanel.setText(s);
             }
         });
         
@@ -275,8 +292,8 @@ public class ExperimentInterface {
         sliderPanel.add(offspringSlider);
         numoffspringPanelWrapper.add(sliderPanel);
 
-        offspringDeetsPanel.setEditable(false);
-        numoffspringPanelWrapper.add(offspringDeetsPanel);
+        offspringDetailsPanel.setEditable(false);
+        numoffspringPanelWrapper.add(offspringDetailsPanel);
 
         return numoffspringPanelWrapper;
 
@@ -341,12 +358,22 @@ public class ExperimentInterface {
             }
         });
 
+        Checkbox param1_smooth = new Checkbox("Aggregate Smoothness", param1_rtGrp, true);
+        param1_smooth.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                System.out.println("Aggregate Smoothness Param 1 selected");
+                config_param1 = config.config_paramAgrSmooth;
+
+            }
+        });
+        
         param1_rtGrp.setSelectedCheckbox(param1_je);
         f2_param1.add(param1_je);
         f2_param1.add(param1_contig);
         f2_param1.add(param1_speed);
         f2_param1.add(param1_clearrows);
         f2_param1.add(param1_bc);
+        f2_param1.add(param1_smooth);
         f2.add(f2_param1);
         
         //Initialise selection option for parameter 2
@@ -397,6 +424,15 @@ public class ExperimentInterface {
 
             }
         });
+        
+        Checkbox param2_smooth = new Checkbox("Aggregate Smoothness", param2_rtGrp, true);
+        param2_smooth.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                System.out.println("Aggregate Smoothness Param 1 selected");
+                config_param2 = config.config_paramAgrSmooth;
+
+            }
+        });
 
         param2_rtGrp.setSelectedCheckbox(param2_je);
         f2_param2.add(param2_je);
@@ -404,6 +440,7 @@ public class ExperimentInterface {
         f2_param2.add(param2_speed);
         f2_param2.add(param2_clearrows);
         f2_param2.add(param2_bc);
+        f2_param2.add(param2_smooth);
            
         f2.add(f2_param2);
         
