@@ -19,8 +19,8 @@ public class IllumConfig {
     public final float config_map_maxBC = 550f; 
     public final float config_map_minLW = 50;
     public final float config_map_maxLW = 150;
-    public final float config_map_minJE = 0.01f;
-    public final float config_map_maxJE = 0.2f;
+    public final float config_map_minJE = 0.04f;
+    public final float config_map_maxJE = 0.08f;
     public final float config_map_minSpeed = 0.07f;
     public final float config_map_maxSpeed = 0.18f;
     public final float config_map_minRTime = 0.0f;
@@ -49,6 +49,7 @@ public class IllumConfig {
     //Parameters for generating random noise levels
     public final float max_tile_chance = 0.3f;
     public final int fixed_width = 100;
+    
     
     //SHINE Variables
     public final int Generation_Size = 20;

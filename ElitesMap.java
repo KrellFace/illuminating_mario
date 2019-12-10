@@ -130,6 +130,8 @@ public class ElitesMap {
         //System.out.println("Map size: " + map.size());                
     }
     
+    //Constructor to create map from tree
+    
     
     private void addLevels(ArrayList<LevelWrap> levels) {
         //System.out.println("Param 1 & 2 max: " + this.param1Max + "/" + this.param2Max);

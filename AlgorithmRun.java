@@ -17,6 +17,7 @@ import java.util.Scanner;
 
 public class AlgorithmRun
 {   
+	private int Num_Offspring;
 	//SHINE Variables
     private int Num_Generations;
     //MAP Elites Variables (Each iteration = new new offspring due to crossover operation)
@@ -44,6 +45,7 @@ public class AlgorithmRun
         this.config = config;
         this.runConfig_param1 = param1;
         this.runConfig_param2 = param2;
+        this.Num_Offspring = numOffspring;
         this.Num_Iterations = (numOffspring/2);
         this.Num_Generations = (numOffspring/config.Generation_Size);
         this.outputFolder = outputFolder;
@@ -60,7 +62,12 @@ public class AlgorithmRun
         }
         else if (algoType == config.Algo_Shine) {
             
-            init_shine();
+            try {
+				init_shine();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         }
         else {
             System.out.println("Unknown algorithm inputted");
@@ -68,7 +75,7 @@ public class AlgorithmRun
     }
 
     
-    public void init_shine() {
+    public void init_shine() throws Exception {
         
         long runStartTime = System.nanoTime();
             
@@ -86,6 +93,10 @@ public class AlgorithmRun
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        
+        ShineTree outputTree = new ShineRun(init_pop, runConfig_param1, runConfig_param2, Num_Offspring, config, outputFolder, runName).init();
+        
+        /*
         
         System.out.println("Population stored");
         
@@ -142,9 +153,9 @@ public class AlgorithmRun
         }
         while (Gen_Count<Num_Generations);
         
-        
+        */
         //Create the output from the map
-        mapOutput(eval_CreateMap(tree), runHistory, runName+" - Final Data", runStartTime, false);
+        //mapOutput(outputTree, runHistory, runName+" - Final Data", runStartTime, false);
                         
         
     }
