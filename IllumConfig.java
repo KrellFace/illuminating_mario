@@ -31,13 +31,9 @@ public class IllumConfig {
     public final float config_map_maxClearRows = 16;
     public final float config_map_minAgrSmooth = 0;
     public final float config_map_maxAgrSmooth = 300;
-    
-    
+        
     public final float config_map_fitnessThresshold = 1.00f;
-    
-    //Creating map for min max values. Used in initialisation in AlgoRUn
 
-    
     //Parameters for each level run
     public final int ticksPerRun = 10;
     
@@ -49,7 +45,6 @@ public class IllumConfig {
     //Parameters for generating random noise levels
     public final float max_tile_chance = 0.3f;
     public final int fixed_width = 100;
-    
     
     //SHINE Variables
     public final int Generation_Size = 20;

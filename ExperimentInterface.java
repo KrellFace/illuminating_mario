@@ -92,7 +92,7 @@ public class ExperimentInterface {
                         e1.printStackTrace();
                     }
 
-                    AlgorithmRun currRun = new AlgorithmRun(algotype, numberoffspring, config, config_param1, config_param2, runPath, runName);
+                    ExperimentRun currRun = new ExperimentRun(algotype, numberoffspring, config, config_param1, config_param2, runPath, runName);
                     currRun.run();
                     currRun = null;
 

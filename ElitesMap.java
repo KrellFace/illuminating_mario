@@ -207,6 +207,11 @@ public class ElitesMap {
     
     public void createOutputFiles(Path rootPath, String runName, boolean onlyFit) throws Exception {
         
+        if (!Files.exists(rootPath)) {
+            //System.out.println("Output folder does not exist when it should");
+            Files.createDirectory(rootPath);
+            
+        }
         FileWriter heatMap = new FileWriter((rootPath + "/" +runName+"- HeatMap.csv"));
 
         System.out.println("Create output files in ElitesMap being run");
