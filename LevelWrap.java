@@ -25,11 +25,10 @@ import engine.core.MarioResult;
 
 public class LevelWrap implements Comparable < LevelWrap > {
 
+	//Storage for config object for current run
     private IllumConfig config;
 
     //Storage for all level parameters for the level stored in the Level Wrap
-    private int config_param1;
-    private int config_param2;
     private String name;
     private IllumMarioLevel level;
     private float fitness;
@@ -51,30 +50,26 @@ public class LevelWrap implements Comparable < LevelWrap > {
     private double novelty;
 
     //Constructor for creating with a specified unevaluated level
-    public LevelWrap(String name, IllumConfig config, int param1, int param2, IllumMarioLevel level) {
+    public LevelWrap(String name, IllumConfig config,  IllumMarioLevel level) {
         this.config = config;
         this.name = name;
         this.level = level;
         this.fitness = 0f;
         this.widthCells = level.tileWidth;
         this.heightCells = level.tileHeight;
-        this.config_param1 = param1;
-        this.config_param2 = param2;
         this.updateLevelFeatures();
 
 
     }
 
     //Constructor for random noise level
-    public LevelWrap(String name, IllumConfig config, int param1, int param2, Random random) {
+    public LevelWrap(String name, IllumConfig config, Random random) {
         this.config = config;
         this.level = new IllumMarioLevel(genNoiseLevel(config.fixed_width, random), true);
         this.name = name;
         this.fitness = 0f;
         this.widthCells = level.tileWidth;
         this.heightCells = level.tileHeight;
-        this.config_param1 = param1;
-        this.config_param2 = param2;
         this.updateLevelFeatures();
     }
   
@@ -83,7 +78,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
 
 	//Constructor used for creating with all parameters, facilitating cloning
-    public LevelWrap(String name, IllumConfig config, int param1, int param2, IllumMarioLevel level, Float fitness, Integer blockCount, Integer clearRows, Float jumpEntropy, Float selectionChoice, int width, float timeTaken, float marioSpeed) {
+    public LevelWrap(String name, IllumConfig config, IllumMarioLevel level, Float fitness, Integer blockCount, Integer clearRows, Float jumpEntropy, Float selectionChoice, int width, float timeTaken, float marioSpeed) {
         this.config = config;
         this.name = name;
         this.selectionChance = 0;
@@ -94,8 +89,6 @@ public class LevelWrap implements Comparable < LevelWrap > {
         this.heightCells = level.tileHeight;
         this.blockCount = blockCount;
         this.clearRows = clearRows;
-        this.config_param1 = param1;
-        this.config_param2 = param2;
         this.marioSpeed = marioSpeed;
         this.updateLevelFeatures();
     }
@@ -235,8 +228,8 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
         //System.out.println("Creating new IllumLevel post crossover:");
 
-        output[0] = new LevelWrap("Output1", this.config, this.config_param1, this.config_param2, new IllumMarioLevel(stringRep(output1), true));
-        output[1] = new LevelWrap("Output2", this.config, this.config_param1, this.config_param2, new IllumMarioLevel(stringRep(output2), true));
+        output[0] = new LevelWrap("Output1", this.config, new IllumMarioLevel(stringRep(output1), true));
+        output[1] = new LevelWrap("Output2", this.config, new IllumMarioLevel(stringRep(output2), true));
 
         return output;
     }
@@ -573,7 +566,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
     public LevelWrap clone() {
 
-        return new LevelWrap(this.name, this.config, this.config_param1, this.config_param2, this.level, this.fitness, this.blockCount, this.clearRows, this.jumpEntropy, this.selectionChance, this.widthCells, this.timeTaken, this.marioSpeed);
+        return new LevelWrap(this.name, this.config, this.level, this.fitness, this.blockCount, this.clearRows, this.jumpEntropy, this.selectionChance, this.widthCells, this.timeTaken, this.marioSpeed);
 
     }
 
@@ -664,19 +657,19 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
     public float getParam1() {
 
-        if (config_param1 == config.config_paramBC) {
+        if (config.getParam1() == config.config_paramBC) {
             return blockCount;
-        } else if (config_param1 == config.config_paramWidth) {
+        } else if (config.getParam1() == config.config_paramWidth) {
             return (float) widthCells;
-        } else if (config_param1 == config.config_paramSpeed) {
+        } else if (config.getParam1() == config.config_paramSpeed) {
             return (Float) marioSpeed;
-        } else if (config_param1 == config.config_paramContig) {
+        } else if (config.getParam1() == config.config_paramContig) {
             return (Float) contigScore;
-        } else if (config_param1 == config.config_paramJE) {
+        } else if (config.getParam1() == config.config_paramJE) {
             return (Float) jumpEntropy;
-        } else if (config_param1 == config.config_paramClearRows) {
+        } else if (config.getParam1() == config.config_paramClearRows) {
             return clearRows;
-        }else if (config_param1 == config.config_paramAgrSmooth) {
+        }else if (config.getParam1() == config.config_paramAgrSmooth) {
             return agrSmooth;
         } else {
             return (Float) null;
@@ -686,19 +679,19 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
     public float getParam2() {
         //System.out.println("Get param2 ran with config type: " + this.configType);
-        if (config_param2 == config.config_paramBC) {
+        if (config.getParam2() == config.config_paramBC) {
             return blockCount;
-        } else if (config_param2 == config.config_paramWidth) {
+        } else if (config.getParam2() == config.config_paramWidth) {
             return (float) widthCells;
-        } else if (config_param2 == config.config_paramSpeed) {
+        } else if (config.getParam2() == config.config_paramSpeed) {
             return (Float) marioSpeed;
-        } else if (config_param2 == config.config_paramContig) {
+        } else if (config.getParam2() == config.config_paramContig) {
             return (Float) contigScore;
-        } else if (config_param2 == config.config_paramJE) {
+        } else if (config.getParam2() == config.config_paramJE) {
             return (Float) jumpEntropy;
-        } else if (config_param2 == config.config_paramClearRows) {
+        } else if (config.getParam2() == config.config_paramClearRows) {
             return clearRows;
-        } else if (config_param2 == config.config_paramAgrSmooth) {
+        } else if (config.getParam2() == config.config_paramAgrSmooth) {
             return agrSmooth;
         }  else {
             return (Float) null;

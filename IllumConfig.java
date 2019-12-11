@@ -1,5 +1,7 @@
 package illumsearch;
 
+import java.nio.file.Path;
+
 public class IllumConfig {
 	
     public final int Algo_MapElites = 1;
@@ -14,7 +16,7 @@ public class IllumConfig {
     public final int config_paramClearRows = 5;
     public final int config_paramAgrSmooth = 6;
     
-    //Level parameters for map generation
+    //Fixed min and max level parameters for map generation (hard coded based around a level width of 100)
     public final float config_map_minBC = 200f;
     public final float config_map_maxBC = 550f; 
     public final float config_map_minLW = 50;
@@ -57,6 +59,41 @@ public class IllumConfig {
     //Seed used for generating initial population
     public final int initialSeed = 100;
     
+    //Parameters for current run
+    private int algoType;
+    private int numOffspring;
+    private int runParam1;
+    private int runParam2;
+    private Path runPath;
+    private String runName;
+    
+    public IllumConfig(int algoType, int numOffspring, int runParam1, int runParam2, Path runPath, String runName) {
+    	this.algoType = algoType;
+    	this.numOffspring = numOffspring;
+    	this.runParam1 = runParam1;
+    	this.runParam2 = runParam2;
+    	this.runPath = runPath;
+    	this.runName = runName;
+    }
+    
+    public int getAlgoType() {
+    	return this.algoType;
+    }
+    public int getNumOffspring() {
+    	return this.numOffspring;
+    }
+    public int getParam1() {
+    	return this.runParam1;
+    }
+    public int getParam2() {
+    	return this.runParam2;
+    }
+    public Path getRunPath() {
+    	return this.runPath;
+    }
+    public String getRunName() {
+    	return this.runName;
+    }
     
     
 

@@ -7,12 +7,12 @@ import java.util.List;
 
 public class ShineRun extends AlgoRun {
 
-    public ShineRun(List < LevelWrap > initPop, int param1, int param2, int numOffspring, IllumConfig config, Path outputFolder, String runName) {
-        super(initPop,param1, param2, numOffspring, config,outputFolder, runName);
+    public ShineRun(List < LevelWrap > initPop, IllumConfig config) {
+        super(initPop,config);
 
     }
 
-    public ShineTree run()  {
+    public void run()  {
         long runStartTime = System.nanoTime();
         //System.out.println("Config:" +config);
         ShineTree tree = new ShineTree(config.Max_Tree_Depth, config.Max_Vertex_Reps, param1Min, param1Max, param2Min, param2Max);
@@ -62,8 +62,8 @@ public class ShineRun extends AlgoRun {
             if (Gen_Count % 10 == 0) {
                 //mapOutput(currMap, runHistory, runName+" - Generation "+Gen_Count, runStartTime, true);
                 try {
-                	Path snapsshotPath = Paths.get(outputFolder+"\\Generation "+ Gen_Count);
-					currMap.createOutputFiles(snapsshotPath, runName, true);
+                	Path snapsshotPath = Paths.get(config.getRunPath()+"\\Generation "+ Gen_Count);
+					currMap.createOutputFiles(snapsshotPath, config.getRunName(), true);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -77,10 +77,7 @@ public class ShineRun extends AlgoRun {
 
         //Create the output from the map
         ElitesMap endMap = new ElitesMap(tree.root.getAllChildLevels(), config.mapSize, param1Min, param1Max, param2Min, param2Max);
-        mapOutput(endMap, runHistory, runName+" - Final Data", runStartTime, false);
-
-
-        return null;
+        mapOutput(endMap, runHistory, config.getRunName()+" - Final Data", runStartTime, false);
 
     }
 

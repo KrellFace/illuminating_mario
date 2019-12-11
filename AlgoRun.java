@@ -15,11 +15,6 @@ public abstract class AlgoRun {
     protected IllumConfig config;
 
     protected int Num_Generations;
-    protected int algoType;
-    protected int runConfig_param1;
-    protected int runConfig_param2;
-    protected Path outputFolder;
-    protected String runName;
 
     //Storage for the parameters used in current run
     protected static float param1Min;
@@ -27,59 +22,55 @@ public abstract class AlgoRun {
     protected static float param2Min;
     protected static float param2Max;
 
-    public AlgoRun(List < LevelWrap > initPop, int param1, int param2, int numOffspring, IllumConfig config, Path outputFolder, String runName) {
+    public AlgoRun(List < LevelWrap > initPop, IllumConfig config) {
         this.initialPop = initPop;
-        this.runConfig_param1 = param1;
-        this.runConfig_param2 = param2;
         this.config = config;
-        this.outputFolder = outputFolder;
-        this.Num_Generations = (numOffspring / config.Generation_Size);
-        this.runName = runName;
+        this.Num_Generations = (config.getNumOffspring() / config.Generation_Size);
         this.setParams();
 
     }
 
-    public abstract ShineTree run() throws Exception;
+    public abstract void run() throws Exception;
 
     public void setParams() {
         //Set param1
-        if (runConfig_param1 == config.config_paramJE) {
+        if (config.getParam1() == config.config_paramJE) {
             param1Min = config.config_map_minJE;
             param1Max = config.config_map_maxJE;
-        } else if (runConfig_param1 == config.config_paramBC) {
+        } else if (config.getParam1() == config.config_paramBC) {
             param1Min = config.config_map_minBC;
             param1Max = config.config_map_maxBC;
-        } else if (runConfig_param1 == config.config_paramContig) {
+        } else if (config.getParam1() == config.config_paramContig) {
             param1Min = config.config_map_minContig;
             param1Max = config.config_map_maxContig;
-        } else if (runConfig_param1 == config.config_paramSpeed) {
+        } else if (config.getParam1() == config.config_paramSpeed) {
             param1Min = config.config_map_minSpeed;
             param1Max = config.config_map_maxSpeed;
-        } else if (runConfig_param1 == config.config_paramClearRows) {
+        } else if (config.getParam1() == config.config_paramClearRows) {
             param1Min = config.config_map_minClearRows;
             param1Max = config.config_map_maxClearRows;
-        } else if (runConfig_param1 == config.config_paramAgrSmooth) {
+        } else if (config.getParam1() == config.config_paramAgrSmooth) {
             param1Min = config.config_map_minAgrSmooth;
             param1Max = config.config_map_maxAgrSmooth;
         }
 
         //Set param 2
-        if (runConfig_param2 == config.config_paramJE) {
+        if (config.getParam2() == config.config_paramJE) {
             param2Min = config.config_map_minJE;
             param2Max = config.config_map_maxJE;
-        } else if (runConfig_param2 == config.config_paramBC) {
+        } else if (config.getParam2() == config.config_paramBC) {
             param2Min = config.config_map_minBC;
             param2Max = config.config_map_maxBC;
-        } else if (runConfig_param2 == config.config_paramContig) {
+        } else if (config.getParam2() == config.config_paramContig) {
             param2Min = config.config_map_minContig;
             param2Max = config.config_map_maxContig;
-        } else if (runConfig_param2 == config.config_paramSpeed) {
+        } else if (config.getParam2() == config.config_paramSpeed) {
             param2Min = config.config_map_minSpeed;
             param2Max = config.config_map_maxSpeed;
-        } else if (runConfig_param2 == config.config_paramClearRows) {
+        } else if (config.getParam2() == config.config_paramClearRows) {
             param2Min = config.config_map_minClearRows;
             param2Max = config.config_map_maxClearRows;
-        } else if (runConfig_param2 == config.config_paramAgrSmooth) {
+        } else if (config.getParam2() == config.config_paramAgrSmooth) {
             param2Min = config.config_map_minAgrSmooth;
             param2Max = config.config_map_maxAgrSmooth;
         }
@@ -108,7 +99,7 @@ public abstract class AlgoRun {
 
     public void levelsToFiles(List < LevelWrap > init_pop, String folder) throws Exception {
 
-        Path rootPath = Paths.get(outputFolder + "/" + folder);
+        Path rootPath = Paths.get(config.getRunPath() + "/" + folder);
         Files.createDirectory(rootPath);
 
         for (LevelWrap level: init_pop) {
@@ -179,7 +170,7 @@ public void mapOutput(ElitesMap sMap, ArrayList<String> runHistory, String dataF
     	
     	//System.out.println("MapOutput running with imperfect levels flag: " + impefectLevels);
  
-        Path dataFolderPath = Paths.get(outputFolder+"\\"+dataFolder);
+        Path dataFolderPath = Paths.get(config.getRunPath()+"\\"+dataFolder);
         
         //In case we havent updated the run name, we dont want to lose the data
         try {
@@ -202,7 +193,7 @@ public void mapOutput(ElitesMap sMap, ArrayList<String> runHistory, String dataF
             mapwriter.println("Map Avg Fitness: " + sMap.getAvgFitness());
             mapwriter.println("Run Time (hrs): " + ((System.nanoTime()- runStartT)/(1000000000f*60f*60f)));
             mapwriter.println("");
-            if (algoType == config.Algo_Shine) {
+            if (config.getAlgoType() == config.Algo_Shine) {
                 mapwriter.println("SHINE tree parameters-");
                 mapwriter.println("Max Vertex Reps: " + config.Max_Vertex_Reps);
                 mapwriter.println("Max Tree Depth: " + config.Max_Tree_Depth);
@@ -220,8 +211,8 @@ public void mapOutput(ElitesMap sMap, ArrayList<String> runHistory, String dataF
             mapwriter.println("Chance of tile flip mutations: " + config.Tile_Mutation_Chance);
             mapwriter.println("Chance of crossover: " + config.Crossover_Chance);
             mapwriter.println("");
-            mapwriter.println("Algorithm ID: " + algoType);
-            mapwriter.println("Configuration param1: " + runConfig_param1 + " param 2: " + runConfig_param2);
+            mapwriter.println("Algorithm ID: " + config.getAlgoType());
+            mapwriter.println("Configuration param1: " + config.getParam1() + " param 2: " + config.getParam2());
             mapwriter.close();
     
             //Create output files from each level in map

@@ -15,7 +15,7 @@ public class ExperimentInterface {
 	
 	private static String Default_Output_Location = "C:/Users/Ollie/Documents/MSc Studying/Project/Output Data/";
 
-	private IllumConfig config = new IllumConfig();
+	private IllumConfig config = new IllumConfig(0,0,0,0,(Path)null,"");
 
     //Instantiate objects we'll need
     JFrame mainFrame;
@@ -26,7 +26,8 @@ public class ExperimentInterface {
 
     private int defaultoffspring = 20000;
 
-    private int algotype = config.Algo_MapElites;
+    //Default values
+    private int algotype = 1;
     private int numberofruns = 1;
     private int numberoffspring = defaultoffspring;
     private int config_param1 = 1;
@@ -91,8 +92,10 @@ public class ExperimentInterface {
                         // TODO Auto-generated catch block
                         e1.printStackTrace();
                     }
+                    
+                    config = new IllumConfig(algotype, numberoffspring, config_param1, config_param2, runPath, runName);
 
-                    ExperimentRun currRun = new ExperimentRun(algotype, numberoffspring, config, config_param1, config_param2, runPath, runName);
+                    ExperimentRun currRun = new ExperimentRun(config);
                     currRun.run();
                     currRun = null;
 
@@ -263,10 +266,10 @@ public class ExperimentInterface {
         
         numberoffspring = offspringSlider.getValue();
         String s = "Offspring Count: " + Integer.toString(offspringSlider.getValue());
-        if (algotype == config.Algo_MapElites) {
+        if (algotype == 1) {
         	s+=("\n" + "MAP Elites Iterations: " + Integer.toString(offspringSlider.getValue()/2));
         }
-        else if (algotype == config.Algo_Shine){
+        else if (algotype == 2){
         	s+=("\n" + "SHINE Gens (Size: " + config.Generation_Size + "): " + Integer.toString(offspringSlider.getValue()/config.Generation_Size));
         }
         s+=("\n" + "Estimated runtime: " + Double.toString(offspringSlider.getValue()*minutesPerLevel) + " minutes. Hours: " + String.format("%.2f", (offspringSlider.getValue()*minutesPerLevel)/60));
