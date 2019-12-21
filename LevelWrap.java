@@ -47,7 +47,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
     private int platformSize = 5;
 
     //Used for storing the novelty within SHINECell
-    private double novelty;
+    private double cdscore;
 
     //Constructor for creating with a specified unevaluated level
     public LevelWrap(String name, IllumConfig config,  IllumMarioLevel level) {
@@ -58,8 +58,6 @@ public class LevelWrap implements Comparable < LevelWrap > {
         this.widthCells = level.tileWidth;
         this.heightCells = level.tileHeight;
         this.updateLevelFeatures();
-
-
     }
 
     //Constructor for random noise level
@@ -72,10 +70,6 @@ public class LevelWrap implements Comparable < LevelWrap > {
         this.heightCells = level.tileHeight;
         this.updateLevelFeatures();
     }
-  
-    
-
-
 
 	//Constructor used for creating with all parameters, facilitating cloning
     public LevelWrap(String name, IllumConfig config, IllumMarioLevel level, Float fitness, Integer blockCount, Integer clearRows, Float jumpEntropy, Float selectionChoice, int width, float timeTaken, float marioSpeed) {
@@ -654,50 +648,17 @@ public class LevelWrap implements Comparable < LevelWrap > {
         transformer.transform(domSource, streamResult);
 
     }
-
+    
+    
     public float getParam1() {
-
-        if (config.getParam1() == config.config_paramBC) {
-            return blockCount;
-        } else if (config.getParam1() == config.config_paramWidth) {
-            return (float) widthCells;
-        } else if (config.getParam1() == config.config_paramSpeed) {
-            return (Float) marioSpeed;
-        } else if (config.getParam1() == config.config_paramContig) {
-            return (Float) contigScore;
-        } else if (config.getParam1() == config.config_paramJE) {
-            return (Float) jumpEntropy;
-        } else if (config.getParam1() == config.config_paramClearRows) {
-            return clearRows;
-        }else if (config.getParam1() == config.config_paramAgrSmooth) {
-            return agrSmooth;
-        } else {
-            return (Float) null;
-        }
+    	return config.getParam1(this);
 
     }
 
     public float getParam2() {
-        //System.out.println("Get param2 ran with config type: " + this.configType);
-        if (config.getParam2() == config.config_paramBC) {
-            return blockCount;
-        } else if (config.getParam2() == config.config_paramWidth) {
-            return (float) widthCells;
-        } else if (config.getParam2() == config.config_paramSpeed) {
-            return (Float) marioSpeed;
-        } else if (config.getParam2() == config.config_paramContig) {
-            return (Float) contigScore;
-        } else if (config.getParam2() == config.config_paramJE) {
-            return (Float) jumpEntropy;
-        } else if (config.getParam2() == config.config_paramClearRows) {
-            return clearRows;
-        } else if (config.getParam2() == config.config_paramAgrSmooth) {
-            return agrSmooth;
-        }  else {
-            return (Float) null;
-        }
+    	return config.getParam2(this);
     }
-
+	
 
     public void setSelectionChance(float f) {
         selectionChance = f;
@@ -755,43 +716,40 @@ public class LevelWrap implements Comparable < LevelWrap > {
     	return agrSmooth;
     }
 
-    public void setNovelty(double lvlNovelty) {
-        this.novelty = lvlNovelty;
+    public void setCDscore(double cdscore) {
+        this.cdscore = cdscore;
     }
 
     public String toString() {
         return ("LevelWrap- LevelName: " + name + ". LevelFitness: " + fitness + "Level Block count: " + blockCount + ". LevelContig: " + contigScore + ". JE: " + jumpEntropy + " LevelSpeed: " + marioSpeed + " Clear rows: " + this.clearRows + " AggrSmoothness: " + this.agrSmooth);
     }
 
-
-    //Fitness CompareTo
-    /*
-    @Override
-	
-    public int compareTo(ShineLevel o) {
-    	if( this.fitness - o.fitness > 0) {
-    		return 1;
-    	}
-    	else if (this.fitness == o.fitness) {
-    		return 0;
-    	}
-    	else {
-    		return -1;
-    	}
-    }
-    */
-
-
-    //Novelty Compare to
-
     public int compareTo(LevelWrap o) {
-        if (this.novelty - o.novelty > 0) {
-            return 1;
-        } else if (this.novelty == o.novelty) {
-            return 0;
-        } else {
-            return -1;
-        }
+    	//Compare levels based on corner distance metric
+    	if (this.config.getAlgoType() == this.config.Algo_ShineCD) {
+    		//System.out.println("Comparing CD score of this level: " + this.cdscore + " to " + o.cdscore);
+            if (this.cdscore - o.cdscore > 0) {
+                return 1;
+            } else if (this.cdscore == o.cdscore) {
+                return 0;
+            } else {
+                return -1;
+            }
+    	}
+    	//Compare levels based on fitness
+    	else {
+    		//System.out.println("Comparing fitness of this level: " + this.fitness + " to " + o.fitness);
+        	if( this.fitness - o.fitness > 0) {
+        		return 1;
+        	}
+        	else if (this.fitness == o.fitness) {
+        		return 0;
+        	}
+        	else {
+        		return -1;
+        	}
+    	}
+
     }
 
 

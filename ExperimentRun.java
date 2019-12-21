@@ -21,10 +21,12 @@ public class ExperimentRun
     private int Num_Iterations;
     
     //Storage for the parameters used in current run
+    /*
     private static float param1Min;
     private static float param1Max;
     private static float param2Min;
     private static float param2Max;
+    */
     
     private IllumConfig runConfig;
     
@@ -48,7 +50,7 @@ public class ExperimentRun
 			}
             
         }
-        else if (runConfig.getAlgoType() == runConfig.Algo_Shine) {
+        else if (runConfig.getAlgoType() == runConfig.Algo_ShineCD||runConfig.getAlgoType() == runConfig.Algo_ShineFit) {
             
             try {
 				init_shine();
@@ -68,7 +70,7 @@ public class ExperimentRun
         long runStartTime = System.nanoTime();
                   
         //List<LevelWrap> init_pop = initPopFromFolder(Input_Files);
-        List<LevelWrap> init_pop = initRandomPop(runConfig.getParam1(), runConfig.getParam2(), runConfig.initialSeed);
+        List<LevelWrap> init_pop = initRandomPop(runConfig.initialSeed);
         System.out.println("Population fully initialised");
         //Store initial levels used
         try {
@@ -90,7 +92,7 @@ public class ExperimentRun
         long runStartTime = System.nanoTime();     
         //List<LevelWrap> init_pop = initPopFromFolder(Input_Files);
         
-        List<LevelWrap> init_pop = initRandomPop(runConfig.getParam1(), runConfig.getParam2(), runConfig.initialSeed);
+        List<LevelWrap> init_pop = initRandomPop(runConfig.initialSeed);
         
         new MapElitesRun(init_pop, runConfig).run();
         
@@ -99,65 +101,8 @@ public class ExperimentRun
         
     }
     
-    public ArrayList<LevelWrap> archiveOffspring(ArrayList<LevelWrap> inputArchive){
-        
-        ArrayList<LevelWrap> outputArchive = new ArrayList<LevelWrap>();
-        
-        Random random = new Random();
-        
-        //Loop through archive selecting random pairs
-        while (inputArchive.size() > 0) {
-            LevelWrap[] selectedPair = new LevelWrap[2];
-            int first = random.nextInt(inputArchive.size());
-            selectedPair[0] = inputArchive.get(first);
-            inputArchive.remove(first);
-            int second = random.nextInt(inputArchive.size());
-            selectedPair[1] = inputArchive.get(second);
-            inputArchive.remove(second);
-            
-            if (random.nextFloat()<runConfig.Crossover_Chance) {
-                selectedPair = selectedPair[0].crossover(selectedPair[1]);
-                //System.out.println("Crossover fired");
-            }
-            
-            mutate_dupeRemoveLevel(selectedPair[0]);
-            mutate_dupeRemoveLevel(selectedPair[1]);
-            mutate_tileflipLevel(selectedPair[0]);
-            mutate_tileflipLevel(selectedPair[1]);
-            
-            outputArchive.add(selectedPair[0]);
-            outputArchive.add(selectedPair[1]);
-        }
-             
-        return outputArchive;
-    }
     
-    //Runs the Duplicate + Remove a column method for every column if odds achieved
-    public void mutate_dupeRemoveLevel(LevelWrap inputLevel) {
-        Random random = new Random();
-        for (int y = 5; y < inputLevel.getWidth()-1; y++) {
-        
-            if (random.nextFloat()<runConfig.Dupe_Remove_Chance) {
-                inputLevel.mutate_removeColumn();
-                inputLevel.mutate_dupeColInPlace(y);
-            }
-        }
-    }
-    
-    //Runs the Tile Flip mutation method for every tile in a level if odds achieved
-    public void mutate_tileflipLevel(LevelWrap inputLevel) {
-        Random random = new Random();
-        for (int y = 1; y < inputLevel.getHeight(); y++) {
-            for (int x = 5; x < inputLevel.getWidth(); x++) {
-                if (random.nextFloat()<runConfig.Tile_Mutation_Chance){
-                    inputLevel.mutate_blockUnblockCell(x, y);
-                }
-            }
-        }
-    }
-    
-    
-    public ArrayList<LevelWrap> initRandomPop(int param1, int param2, int seed){
+    public ArrayList<LevelWrap> initRandomPop(int seed){
     	
     	System.out.println("Init random pop started");
         
@@ -183,29 +128,6 @@ public class ExperimentRun
         return outputlevels;
         
     }
-    
-    //Select a population equal to generation size from an inputted archive
-    public ArrayList<LevelWrap> tournamentSelect(ArrayList<LevelWrap> inputArchive){
-        
-        Random random = new Random(10);
-        int iSize = inputArchive.size();
-        
-        ArrayList<LevelWrap> outputArchive = new ArrayList<>();
-        
-        while (outputArchive.size()<runConfig.Generation_Size) {
-            
-            LevelWrap r1 = inputArchive.get(random.nextInt(iSize));
-            LevelWrap r2 = inputArchive.get(random.nextInt(iSize));
-            if (r1.getSelectionChance()>r2.getSelectionChance()) {
-                outputArchive.add(r1);
-            }
-            else {
-                outputArchive.add(r2);
-            }
-        }                           
-        return outputArchive;   
-    }
-
     
     public File[] getFiles(String filePath) {
 
@@ -279,7 +201,7 @@ public class ExperimentRun
         
         ArrayList<LevelWrap> allLevels = tree.root.getAllChildLevels();
         
-        return new ElitesMap(allLevels, runConfig.mapSize, param1Min, param1Max, param2Min, param2Max);
+        return new ElitesMap(allLevels, runConfig.mapSize, runConfig.getParam1Min(), runConfig.getParam1Max(), runConfig.getParam2Min(), runConfig.getParam2Max());
         
         
     }
@@ -309,16 +231,16 @@ public class ExperimentRun
             mapwriter.println("Map Avg Fitness: " + sMap.getAvgFitness());
             mapwriter.println("Run Time (hrs): " + ((System.nanoTime()- runStartT)/(1000000000f*60f*60f)));
             mapwriter.println("");
-            if (runConfig.getAlgoType() == runConfig.Algo_Shine) {
+            if (runConfig.getAlgoType() == runConfig.Algo_ShineCD) {
                 mapwriter.println("SHINE tree parameters-");
                 mapwriter.println("Max Vertex Reps: " + runConfig.Max_Vertex_Reps);
                 mapwriter.println("Max Tree Depth: " + runConfig.Max_Tree_Depth);
                 mapwriter.println("");
             }
-            mapwriter.println("Parameter 1 min: " + param1Min);
-            mapwriter.println("Parameter 1 max: " + param1Max);
-            mapwriter.println("Parameter 2 min: " + param2Min);
-            mapwriter.println("Parameter 2 max: " + param2Max);
+            mapwriter.println("Parameter 1 min: " + runConfig.getParam1Min());
+            mapwriter.println("Parameter 1 max: " + runConfig.getParam1Max());
+            mapwriter.println("Parameter 2 min: " + runConfig.getParam2Min());
+            mapwriter.println("Parameter 2 max: " + runConfig.getParam2Max());
             mapwriter.println("");
             mapwriter.println("Algorithm parameters-");
             mapwriter.println("Generation size: " + runConfig.Generation_Size);

@@ -107,7 +107,7 @@ public class ShineNode {
             }
             //If we are at the max depth, remove the weakest member
             else if (LevelWraps.size() > tree.maxReps) {
-                setLevelsNovelty();
+                setLevelCDscore();
                 Collections.sort(LevelWraps);
                 //System.out.println("Removing level with fitness " + LevelWraps.get(0).getFitness()+". Max fitness at node: " + LevelWraps.get(LevelWraps.size()-1).getFitness());
                 LevelWraps.remove(0);
@@ -153,7 +153,7 @@ public class ShineNode {
         //If we have more than max reps at level, add sorted (By Fitness or Novelty) levels until we are at max
         else if (LevelWraps.size() > maxReps) {
             //System.out.println("Max Reps: " + maxReps + ". Current reps at vertex: " + LevelWraps.size()+ ". Node depth: "+ depth);
-            setLevelsNovelty();
+            setLevelCDscore();
             Collections.sort(LevelWraps);
             int index = LevelWraps.size()-1;
             while (archiveReps.size() < maxReps) {
@@ -198,7 +198,7 @@ public class ShineNode {
         
     }
     
-    private void setLevelsNovelty() {
+    private void setLevelCDscore() {
         
         //System.out.println("NodeType: " + this.nodeType);
         
@@ -219,7 +219,7 @@ public class ShineNode {
                     System.out.println("This levels normalised novelty is: " + getPythagC((level.getParam1()-this.param1Min),(this.param2Min-level.getParam2())*normalisationFactor));
                     System.out.println("");
                     */
-                    level.setNovelty(getPythagC((level.getParam1()-this.param1Min),(this.param2Min-level.getParam2())*normalisationFactor));
+                    level.setCDscore(getPythagC((level.getParam1()-this.param1Min),(this.param2Min-level.getParam2())*normalisationFactor));
                     break;
                 case "TR":
                     
@@ -230,7 +230,7 @@ public class ShineNode {
                     System.out.println("This levels normalised novelty is: " + getPythagC((this.param1Max-level.getParam1()),(this.param2Max-level.getParam2())*normalisationFactor));
                     System.out.println("");
                     */
-                    level.setNovelty(getPythagC((level.getParam1()-this.param1Min),(level.getParam2()-this.param2Min)*normalisationFactor));
+                    level.setCDscore(getPythagC((level.getParam1()-this.param1Min),(level.getParam2()-this.param2Min)*normalisationFactor));
                     break;
                 case "BL":
                     /*
@@ -241,7 +241,7 @@ public class ShineNode {
                     System.out.println("");
                     */
                     
-                    level.setNovelty(getPythagC((this.param1Max-level.getParam1()),this.param2Max-level.getParam2())*normalisationFactor);
+                    level.setCDscore(getPythagC((this.param1Max-level.getParam1()),this.param2Max-level.getParam2())*normalisationFactor);
                     break;
                 case "BR":
                     /*
@@ -250,10 +250,10 @@ public class ShineNode {
                     System.out.println("This levels novelty is : " + getPythagC((level.getParam1()-this.param1Min),(this.param2Max-level.getParam2())));
                     System.out.println("This levels normalised novelty is: " + getPythagC((level.getParam1()-this.param1Min),(this.param2Max-level.getParam2())*normalisationFactor));
                     */
-                    level.setNovelty(getPythagC((level.getParam1()-this.param1Min),(this.param2Max-level.getParam2())*normalisationFactor));
+                    level.setCDscore(getPythagC((level.getParam1()-this.param1Min),(this.param2Max-level.getParam2())*normalisationFactor));
                     break;
                 default:
-                    level.setNovelty(0);
+                    level.setCDscore(0);
             
             }
         }

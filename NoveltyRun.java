@@ -5,40 +5,32 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShineRun extends AlgoRun {
+public class NoveltyRun extends AlgoRun{
 
-    public ShineRun(List < LevelWrap > initPop, IllumConfig config) {
-        super(initPop,config);
+	public NoveltyRun(List<LevelWrap> initPop, IllumConfig config) {
+		super(initPop, config);
+	}
 
-    }
-
-    public void run()  {
+	public void run() throws Exception {
         long runStartTime = System.nanoTime();
-        //System.out.println("Config:" +config);
-        ShineTree tree = new ShineTree(config.Max_Tree_Depth, config.Max_Vertex_Reps, config.getParam1Min(), config.getParam1Max(), config.getParam2Min(), config.getParam2Max());
+        
+        List<LevelWrap> novelArchive = new ArrayList<LevelWrap>();
         int Gen_Count = 0;
+        ArrayList<LevelWrap> currentPopulation = new ArrayList<LevelWrap>();
 
         ArrayList < String > runHistory = new ArrayList < String > ();
 
-        //Add levels to our tree
-        for (int i = 0; i < initPop.size(); i++) {
-            tree.root.addLevel(initPop.get(i));
-
-        }
+        //Set initial population as current pop
+        currentPopulation.addAll(initPop);
 
         //Run until we reach max generations
         do {
             System.out.println("STARTING GENERATION " + Gen_Count);
-
-            //tree.root.printLeaves(true);  
-            System.out.println("Total leaf nodes: " + tree.root.countLeaves());
-
-            //CREATING ARCHIVE FROM TREE (i.e limit reps at each vertex)
-            ArrayList < LevelWrap > archive = tree.createArchive();
-            //printArchive(archive, "Depth weight selected", false);
+            
+            //SET NOVELTY SCORES
 
             //SELECTING PARENTS FOR NEXT GENERATION
-            ArrayList < LevelWrap > selectedArchive = tournamentSelect(archive);
+            ArrayList < LevelWrap > selectedArchive = tournamentSelect(currentPopulation);
             //printArchive(selectedArchive, "Selected Parents before mutation:", true);
 
             //MUTATING SELECTED PARENTS
@@ -55,10 +47,10 @@ public class ShineRun extends AlgoRun {
             Gen_Count += 1;
 
             //ElitesMap currMap = eval_CreateMap(tree);
-            ElitesMap currMap = new ElitesMap(tree.root.getAllChildLevels(), config.mapSize,config.getParam1Min(), config.getParam1Max(), config.getParam2Min(), config.getParam2Max());
+            ElitesMap currMap = new ElitesMap(tree.root.getAllChildLevels(), config.mapSize, param1Min, param1Max, param2Min, param2Max);
             System.out.println(currMap.toString());
             runHistory.add(Gen_Count + ", " + currMap.getCoverage() + ", " + currMap.getReliability() + ", " + currMap.getAvgFitness());
-            if (Gen_Count % 500 == 0) {
+            if (Gen_Count % 10 == 0) {
                 //mapOutput(currMap, runHistory, runName+" - Generation "+Gen_Count, runStartTime, true);
                 try {
                 	Path snapsshotPath = Paths.get(config.getRunPath()+"\\Generation "+ Gen_Count);
@@ -75,9 +67,18 @@ public class ShineRun extends AlgoRun {
 
 
         //Create the output from the map
-        ElitesMap endMap = new ElitesMap(tree.root.getAllChildLevels(), config.mapSize, config.getParam1Min(), config.getParam1Max(), config.getParam2Min(), config.getParam2Max());
+        ElitesMap endMap = new ElitesMap(tree.root.getAllChildLevels(), config.mapSize, param1Min, param1Max, param2Min, param2Max);
         mapOutput(endMap, runHistory, config.getRunName()+" - Final Data", runStartTime, false);
-
-    }
+	}
+	
+	public void setNovelty(ArrayList<LevelWrap> currentPop, ArrayList<LevelWrap> novelArchive) {
+		
+		
+		
+	}
+	
+	public void getNormalisedDistance(LevelWrap l1, LevelWrap l2) {
+		float normFactor = ((config.get))
+	}
 
 }

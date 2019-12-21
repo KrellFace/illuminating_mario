@@ -15,7 +15,7 @@ public class MapElitesRun extends AlgoRun{
 		long runStartTime = System.nanoTime();
 		
         try {
-            levelsToFiles(initialPop, "Initial Population" );
+            levelsToFiles(initPop, "Initial Population" );
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -25,10 +25,10 @@ public class MapElitesRun extends AlgoRun{
         
         ArrayList<String> runHistory = new ArrayList<String>();
         
-        ElitesMap map = new ElitesMap(config.mapSize, param1Min, param1Max, param2Min, param2Max);
+        ElitesMap map = new ElitesMap(config.mapSize,  config.getParam1Min(), config.getParam1Max(), config.getParam2Min(), config.getParam2Max());
 
-        for (int i = 0; i< initialPop.size(); i++) {
-            map.addLevel(initialPop.get(i));          
+        for (int i = 0; i< initPop.size(); i++) {
+            map.addLevel(initPop.get(i));          
         }
         
         //Run until we reach max iterations

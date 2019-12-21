@@ -38,21 +38,16 @@ public class ExperimentInterface {
 
     public static void main(String[] args) {
 
-
         ExperimentInterface ei = new ExperimentInterface();
 
         ei.run();
-
     }
 
     public void run() {
 
-
         mainFrame = new JFrame();
-        mainFrame.setTitle("Run Initiator");
-        //mainFrame.setPreferredSize(new Dimension(6000, 10000));    
-        mainPanel = new JPanel();
-        //mainPanel.setPreferredSize(new Dimension(6000, 10000));    
+        mainFrame.setTitle("Run Initiator"); 
+        mainPanel = new JPanel();    
 
         //Setting the gridlayout of interface
         mainPanel.setLayout(new GridLayout(6, 1));
@@ -114,10 +109,6 @@ public class ExperimentInterface {
 
         mainFrame.setSize(500, 1000);
         mainFrame.setVisible(true);
-
-
-
-
 
     }
 
@@ -194,18 +185,28 @@ public class ExperimentInterface {
             }
         });
 
-        Checkbox shine = new Checkbox("SHINE", algoGrp, true);
-        shine.addItemListener(new ItemListener() {
+        Checkbox shinecd = new Checkbox("SHINE-CD", algoGrp, true);
+        shinecd.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                System.out.println("Shine selected");
-                algotype = config.Algo_Shine;
+                System.out.println("Shine-CD selected");
+                algotype = config.Algo_ShineCD;
+
+            }
+        });
+        
+        Checkbox shinefit = new Checkbox("SHINE-FIT", algoGrp, true);
+        shinefit.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                System.out.println("Shine-Fit selected");
+                algotype = config.Algo_ShineFit;
 
             }
         });
         //Set default
         algoGrp.setSelectedCheckbox(me);
         panelAlgoOpts.add(me);
-        panelAlgoOpts.add(shine);
+        panelAlgoOpts.add(shinecd);
+        panelAlgoOpts.add(shinefit);
         algoPanelWrap.add(panelAlgoOpts);
         
         return algoPanelWrap;
@@ -255,7 +256,7 @@ public class ExperimentInterface {
         //Storage for slider
         JPanel sliderPanel = new JPanel();
         //Storage for current slider value
-        JSlider offspringSlider = new JSlider(JSlider.HORIZONTAL, 0, 20000, defaultoffspring);
+        JSlider offspringSlider = new JSlider(JSlider.HORIZONTAL, 0, 50000, defaultoffspring);
         offspringSlider.setPreferredSize(new Dimension(450, 50));
         offspringSlider.setMajorTickSpacing(10000);
         offspringSlider.setMinorTickSpacing(5000);
@@ -283,7 +284,7 @@ public class ExperimentInterface {
                 if (algotype == config.Algo_MapElites) {
                 	s+=("\n" + "MAP Elites Iterations: " + Integer.toString(offspringSlider.getValue()/2));
                 }
-                else if (algotype == config.Algo_Shine){
+                else if (algotype == config.Algo_ShineCD){
                 	s+=("\n" + "SHINE Gens (Size: " + config.Generation_Size + "): " + Integer.toString(offspringSlider.getValue()/config.Generation_Size));
                 }
                 s+=("\n" + "Estimated runtime: " + Double.toString(offspringSlider.getValue()*minutesPerLevel) + " minutes. Hours: " + String.format("%.2f", (offspringSlider.getValue()*minutesPerLevel)/60));

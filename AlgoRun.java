@@ -11,71 +11,28 @@ import java.util.Random;
 
 public abstract class AlgoRun {
 
-    protected List < LevelWrap > initialPop;
+    protected List < LevelWrap > initPop;
     protected IllumConfig config;
 
     protected int Num_Generations;
 
+    /*
     //Storage for the parameters used in current run
     protected static float param1Min;
     protected static float param1Max;
     protected static float param2Min;
     protected static float param2Max;
-
+	*/
+	
     public AlgoRun(List < LevelWrap > initPop, IllumConfig config) {
-        this.initialPop = initPop;
+        this.initPop = initPop;
         this.config = config;
         this.Num_Generations = (config.getNumOffspring() / config.Generation_Size);
-        this.setParams();
+        //this.setParams();
 
     }
 
     public abstract void run() throws Exception;
-
-    public void setParams() {
-        //Set param1
-        if (config.getParam1() == config.config_paramJE) {
-            param1Min = config.config_map_minJE;
-            param1Max = config.config_map_maxJE;
-        } else if (config.getParam1() == config.config_paramBC) {
-            param1Min = config.config_map_minBC;
-            param1Max = config.config_map_maxBC;
-        } else if (config.getParam1() == config.config_paramContig) {
-            param1Min = config.config_map_minContig;
-            param1Max = config.config_map_maxContig;
-        } else if (config.getParam1() == config.config_paramSpeed) {
-            param1Min = config.config_map_minSpeed;
-            param1Max = config.config_map_maxSpeed;
-        } else if (config.getParam1() == config.config_paramClearRows) {
-            param1Min = config.config_map_minClearRows;
-            param1Max = config.config_map_maxClearRows;
-        } else if (config.getParam1() == config.config_paramAgrSmooth) {
-            param1Min = config.config_map_minAgrSmooth;
-            param1Max = config.config_map_maxAgrSmooth;
-        }
-
-        //Set param 2
-        if (config.getParam2() == config.config_paramJE) {
-            param2Min = config.config_map_minJE;
-            param2Max = config.config_map_maxJE;
-        } else if (config.getParam2() == config.config_paramBC) {
-            param2Min = config.config_map_minBC;
-            param2Max = config.config_map_maxBC;
-        } else if (config.getParam2() == config.config_paramContig) {
-            param2Min = config.config_map_minContig;
-            param2Max = config.config_map_maxContig;
-        } else if (config.getParam2() == config.config_paramSpeed) {
-            param2Min = config.config_map_minSpeed;
-            param2Max = config.config_map_maxSpeed;
-        } else if (config.getParam2() == config.config_paramClearRows) {
-            param2Min = config.config_map_minClearRows;
-            param2Max = config.config_map_maxClearRows;
-        } else if (config.getParam2() == config.config_paramAgrSmooth) {
-            param2Min = config.config_map_minAgrSmooth;
-            param2Max = config.config_map_maxAgrSmooth;
-        }
-
-    }
 
     public ArrayList < LevelWrap > tournamentSelect(ArrayList < LevelWrap > inputArchive) {
 
@@ -193,16 +150,16 @@ public void mapOutput(ElitesMap sMap, ArrayList<String> runHistory, String dataF
             mapwriter.println("Map Avg Fitness: " + sMap.getAvgFitness());
             mapwriter.println("Run Time (hrs): " + ((System.nanoTime()- runStartT)/(1000000000f*60f*60f)));
             mapwriter.println("");
-            if (config.getAlgoType() == config.Algo_Shine) {
+            if (config.getAlgoType() == config.Algo_ShineCD) {
                 mapwriter.println("SHINE tree parameters-");
                 mapwriter.println("Max Vertex Reps: " + config.Max_Vertex_Reps);
                 mapwriter.println("Max Tree Depth: " + config.Max_Tree_Depth);
                 mapwriter.println("");
             }
-            mapwriter.println("Parameter 1 min: " + param1Min);
-            mapwriter.println("Parameter 1 max: " + param1Max);
-            mapwriter.println("Parameter 2 min: " + param2Min);
-            mapwriter.println("Parameter 2 max: " + param2Max);
+            mapwriter.println("Parameter 1 min: " + config.getParam1Min());
+            mapwriter.println("Parameter 1 max: " + config.getParam1Max());
+            mapwriter.println("Parameter 2 min: " + config.getParam2Min());
+            mapwriter.println("Parameter 2 max: " + config.getParam2Max());
             mapwriter.println("");
             mapwriter.println("Algorithm parameters-");
             mapwriter.println("Generation size: " + config.Generation_Size);
