@@ -22,7 +22,7 @@ public class IllumConfig {
     public final float config_map_maxBC = 550f; 
     public final float config_map_minLW = 50;
     public final float config_map_maxLW = 150;
-    public final float config_map_minJE = 0.04f;
+    public final float config_map_minJE = 0.00f;
     public final float config_map_maxJE = 0.08f;
     public final float config_map_minSpeed = 0.07f;
     public final float config_map_maxSpeed = 0.18f;
@@ -132,54 +132,71 @@ public class IllumConfig {
     
     private void setParamMinMax() {
     	
-        switch(runParam1) {
+    	System.out.println("Setting min and max based on param1: " + this.runParam1 + " and param2: " + this.runParam2);
+        switch(this.runParam1) {
     	case config_paramBC:
     		this.param1Min = this.config_map_minBC;
     		this.param1Max = this.config_map_maxBC;
+    		break;
     	case config_paramWidth:
     		this.param1Min = this.config_map_minWidth;
     		this.param1Max = this.config_map_maxWidth;
+    		break;
     	case config_paramSpeed:
     		this.param1Min = this.config_map_minSpeed;
     		this.param1Max = this.config_map_maxSpeed;
+    		break;
     	case config_paramContig:
     		this.param1Min = this.config_map_minContig;
     		this.param1Max = this.config_map_maxContig;
+    		break;
     	case config_paramJE:
     		this.param1Min = this.config_map_minJE;
     		this.param1Max = this.config_map_maxJE;
+    		break;
     	case config_paramClearRows:
     		this.param1Min = this.config_map_minClearRows;
     		this.param1Max = this.config_map_maxClearRows;
+    		break;
     	case config_paramAgrSmooth:
     		this.param1Min = this.config_map_minAgrSmooth;
     		this.param1Max = this.config_map_maxAgrSmooth;
+    		break;
     	default:
         }
-        switch(runParam2) {
+        switch(this.runParam2) {
     	case config_paramBC:
     		this.param2Min = this.config_map_minBC;
     		this.param2Max = this.config_map_maxBC;
+    		break;
     	case config_paramWidth:
     		this.param2Min = this.config_map_minWidth;
     		this.param2Max = this.config_map_maxWidth;
+    		break;
     	case config_paramSpeed:
     		this.param2Min = this.config_map_minSpeed;
     		this.param2Max = this.config_map_maxSpeed;
+    		break;
     	case config_paramContig:
     		this.param2Min = this.config_map_minContig;
     		this.param2Max = this.config_map_maxContig;
+    		break;
     	case config_paramJE:
     		this.param2Min = this.config_map_minJE;
     		this.param2Max = this.config_map_maxJE;
+    		break;
     	case config_paramClearRows:
     		this.param2Min = this.config_map_minClearRows;
     		this.param2Max = this.config_map_maxClearRows;
+    		break;
     	case config_paramAgrSmooth:
     		this.param2Min = this.config_map_minAgrSmooth;
     		this.param2Max = this.config_map_maxAgrSmooth;
+    		break;
     	default:
         }
+        
+        System.out.println("Setting param1 min: " + this.param1Min + "Setting param1 max: " + this.param1Max + "Setting param2 min: " + this.param2Min + "Setting param2 max: " + this.param2Max);
     }
     
     public int getAlgoType() {

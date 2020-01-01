@@ -69,6 +69,9 @@ public class MapElitesRun extends AlgoRun{
     
         }
         while (iterCount<(config.getNumOffspring()/2));
+        
+        //Create the output from the map
+        mapOutput(map, runHistory, config.getRunName()+" - Snapshot"+iterCount, runStartTime, true);
 	}
 
 }
