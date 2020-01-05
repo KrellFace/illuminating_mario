@@ -56,8 +56,6 @@ public class ImageGen {
         g2d.setColor(new Color(191, 252, 252));
         g2d.fillRect(0, 0, (width * blockSize), (height * blockSize));
   
-        String space = "-";
-        
         //Instantiate block characters to check
         String block = "X";
         char blockChar = block.charAt(0);

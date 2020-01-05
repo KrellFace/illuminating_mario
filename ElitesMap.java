@@ -1,8 +1,6 @@
 package illumsearch;
 
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,18 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.io.File;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ElitesMap {
@@ -44,50 +30,9 @@ public class ElitesMap {
     //Constructor to initialise with levels
     public ElitesMap (ArrayList<LevelWrap> allLevels, int mapSize, float param1Min, float param1Max, float param2Min, float param2Max){
         
-        this.map  =  new HashMap<List<Integer>, LevelWrap>();
-        this.mapSize = mapSize;
-        this.param1Min = param1Min;
-        this.param1Max = param1Max;
-        this.param2Min = param2Min;
-        this.param2Max = param2Max;
-        
-        
-        this.param1Intervals = new float[mapSize];
-        float param1Iter = param1Min;
-        //Create BC map intervals
-        for (int i = 0; i<mapSize; i++) {
-            param1Intervals[i]=param1Iter;
-            param1Iter += (param1Max-param1Min)/mapSize;
-        }
-        
-        //System.out.println("ShineTree- Param1 Intervals: " + Arrays.toString(param1Intervals));
-        
-        this.param2Intervals = new float[mapSize];
-        float param2Iter = param2Min;
-        //Create JE map intervals
-        for (int i = 0; i<mapSize; i++) {
-            param2Intervals[i]=param2Iter;
-            param2Iter += (param2Max-param2Min)/mapSize;
-        }
-        
-        //System.out.println("ShineTree- Param2 Intervals: " + Arrays.toString(param2Intervals));
-        
-        //Populate map with empty cells
-        for (int x = 0; x<mapSize; x++) {
-            for (int y = 0; y<mapSize; y++) {
-                //System.out.println("Adding " + x +"/" + y);
-                map.put(Arrays.asList(x,y), null);
-            }
-        }
-         
-        //System.out.println("Map size: " + map.size());        
-        
-        addLevels(allLevels);
-        
-        //System.out.println("Map size after populating: " + map.size());
-        //System.out.println("Done with populating");
-            
-        //System.out.println("Coverage of tree = " + getCoverage() + ". Reliability of tree = " + getReliability());        
+    	this(mapSize, param1Min, param1Max, param2Min, param2Max);
+        this.addLevels(allLevels);
+
     }
     
     //Constructor to initialise empty map
@@ -129,10 +74,7 @@ public class ElitesMap {
          
         //System.out.println("Map size: " + map.size());                
     }
-    
-    //Constructor to create map from tree
-    
-    
+     
     private void addLevels(ArrayList<LevelWrap> levels) {
         //System.out.println("Param 1 & 2 max: " + this.param1Max + "/" + this.param2Max);
         for (int curLev = 0; curLev<levels.size();curLev++) {
@@ -163,13 +105,13 @@ public class ElitesMap {
             if (!param1Set && level.getParam1() >= param1Intervals[i] && level.getParam1()<param1Max && level.getParam1()>param1Min) {
                 param1MapLoc = i;
                 param1Set=true;
-                //System.out.println("Param 1 location found as " + level.getParam1() + " is smaller than interval " + param1Intervals[i]);
+                //System.out.println("Param 1 location found as " + level.getParam1() + " is bigger than interval " + param1Intervals[i] + " and smaller than " + param1Intervals[i+1] );
             }
             //Find param2 location
             if (!param2Set && level.getParam2() >= param2Intervals[i] && level.getParam2()<param2Max && level.getParam2()>param2Min) {
                 param2MapLoc = i;
                 param2Set=true;
-                //System.out.println("Param 2 location found as " + level.getParam1() + " is smaller than interval " + param2Intervals[i]);
+                //System.out.println("Param 2 location found as " + level.getParam2() + " is bigger than interval " + param2Intervals[i] + " and smaller than " + param2Intervals[i+1] );
 
             }
         }
@@ -185,7 +127,6 @@ public class ElitesMap {
                 //System.out.println("Blank cell populated" );
                 map.put(cell, level);
                 //System.out.println(map.get(cell) == null);
-                //System.out.println("ShineTree- Populating cell (x/y) " + Arrays.toString(cell) + " with level with fitness " + level.getFitness());
                 
                 //Add to our count of populated cells
                 countPopulated += 1;

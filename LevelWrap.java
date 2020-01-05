@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Random;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -62,8 +61,10 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
     //Constructor for random noise level
     public LevelWrap(String name, IllumConfig config, Random random) {
-        this.config = config;
-        this.level = new IllumMarioLevel(genNoiseLevel(config.fixed_width, random), true);
+    	
+
+    	this.config = config;
+    	this.level = new IllumMarioLevel(genNoiseLevel(config.fixed_width, random), true);
         this.name = name;
         this.fitness = 0f;
         this.widthCells = level.tileWidth;
@@ -83,6 +84,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
         this.heightCells = level.tileHeight;
         this.blockCount = blockCount;
         this.clearRows = clearRows;
+        this.timeTaken = timeTaken;
         this.marioSpeed = marioSpeed;
         this.updateLevelFeatures();
     }
@@ -263,7 +265,6 @@ public class LevelWrap implements Comparable < LevelWrap > {
     }
 
     public void mutate_addColumn() {
-        float oldBC = this.blockCount;
         System.out.println("Mutate add column being run");
         System.out.println("Input level: " + level.getStringRep());
         Random random = new Random();
@@ -321,7 +322,6 @@ public class LevelWrap implements Comparable < LevelWrap > {
     }
 
     public void mutate_dupeColInPlace(int colDupe) {
-        float oldBC = this.blockCount;
         //System.out.println("Dupe in place on column " + colDupe + ". On " + toString());
 
         char[][] levelRep = charRep(level.getStringRep());
@@ -549,13 +549,11 @@ public class LevelWrap implements Comparable < LevelWrap > {
     public void runAgent(Agent agent) {
 
         //System.out.println("Running runGame " + System.currentTimeMillis());
-        long startTime = System.currentTimeMillis();
         //System.out.println(level.getStringRep());
         result = new MarioGame().runGame(agent, level.getStringRep(), config.ticksPerRun);
 
         updateResultFeatures(result);
         //System.out.println(this.toString());
-        //System.out.println("Agent run took " + ((System.currentTimeMillis()-startTime)/1000f)  + " seconds to complete");
     }
 
     public LevelWrap clone() {
@@ -691,6 +689,10 @@ public class LevelWrap implements Comparable < LevelWrap > {
     public String getName() {
         return name;
     }
+    
+    public void setName(String newName) {
+    	this.name = newName;
+    }
 
     public float getSpeed() {
         return marioSpeed;
@@ -726,11 +728,23 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
     public int compareTo(LevelWrap o) {
     	//Compare levels based on corner distance metric
-    	if (this.config.getAlgoType() == this.config.Algo_ShineCD) {
+    	if (this.config.getAlgoType() == this.config.Algo_ShineCD ) {
     		//System.out.println("Comparing CD score of this level: " + this.cdscore + " to " + o.cdscore);
             if (this.cdscore - o.cdscore > 0) {
                 return 1;
             } else if (this.cdscore == o.cdscore) {
+                return 0;
+            } else {
+                return -1;
+            }
+    	}
+    	else if (this.config.getAlgoType()== this.config.Algo_ShineHybrid) {
+    		//System.out.println("Comparing CD score of this level: " + this.cdscore + " to " + o.cdscore);
+    		float thisHybridScore = (float) (this.cdscore*this.fitness);
+    		float thatHybridScore = (float) (o.cdscore*o.fitness);
+            if (thisHybridScore - thatHybridScore > 0) {
+                return 1;
+            } else if (thisHybridScore == thatHybridScore) {
                 return 0;
             } else {
                 return -1;

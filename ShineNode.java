@@ -75,11 +75,18 @@ public class ShineNode {
     //Method for adding levels to the ShineNode
     public void addLevel(LevelWrap level) {
         
-        //System.out.println("ShineNode- Param1 min/max = " + this.param1Min+"/"+this.param1Max+ ". Param2 min/max"+ this.param2Min+"/"+this.param2Max);
-        //System.out.println("ShineNode- Added " + level.toString());   
+    	/*
+    	if (checkBelongs(level)) {
+    		System.out.print("Level belongs in node: " );
+    		this.printNode(false);
+    		//System.out.println("ShineNode- Added " + level.toString() + " to node: ");
+    	}
+		*/
         //System.out.println("Level inputted as param1: " + level.getParam1()+ " and param2: " +level.getParam2());
         //If node has no children, and has the appropriate parameters, add it to levelbucket
         if (children.size() == 0 && checkBelongs(level)) {
+            //System.out.println("ShineNode- Added " + level.toString() + " to node: ");
+            //this.printNode(false);
             this.LevelWraps.add(level);
             //System.out.println("ShineNode- Added " + level.toString());
             //If we have exceeded the max representatives at vertex, without hitting max depth create child nodes and assign
@@ -101,8 +108,8 @@ public class ShineNode {
                         }
                 }
                     
-                    //Remove all levels from current node
-                LevelWraps.clear();
+                //Remove all levels from current node
+                LevelWraps.clear();          
                 
             }
             //If we are at the max depth, remove the weakest member
@@ -113,8 +120,6 @@ public class ShineNode {
                 LevelWraps.remove(0);
                 //System.out.println("Bottomed out at depth " + depth + " with num reps: " + LevelWraps.size());
             }
-            //Printing after every actual addition
-            //this.printNode();
         }
         //Reccur for all child nodes if belongs
         else if (checkBelongs(level)){  
@@ -131,19 +136,18 @@ public class ShineNode {
     public ArrayList<LevelWrap> archiveReps(){
         
         ArrayList<LevelWrap> archiveReps = new ArrayList<>();
-        
+          
         //printNode(true);
         float maxReps = (float) Math.pow(( tree.maxDepth - depth + 1),tree.childNodes);
-        //System.out.println("Depth: " + depth + "Max reps: " + maxReps + ". Number of reps: " + LevelWraps.size());
-        
+        //System.out.println("Depth: " + depth + "Max reps: " + maxReps + ". Number of reps: " + LevelWraps.size());  
         //System.out.println("Processing ArchiveNode on node:");
-        //this.printNode();
+        //this.printNode(false);
         //If there are children nodes, reccur down and add their reps to the archive
         if (children.size()>0) {
             for (int i = 0; i<children.size();i++) {
                 try {
-                        //System.out.println("Attempting to add " + children.get(i).archiveReps().size() + " levels to archive");
-                        archiveReps.addAll(children.get(i).archiveReps());
+                	//System.out.println("Attempting to add " + children.get(i).archiveReps().size() + " levels to archive");
+                    archiveReps.addAll(children.get(i).archiveReps());
                 }
                 catch (Exception e) {
                     //System.out.println("Adding children failed");
@@ -156,11 +160,12 @@ public class ShineNode {
             setLevelCDscore();
             Collections.sort(LevelWraps);
             int index = LevelWraps.size()-1;
+            //System.out.println("MATH: tree.maxReps = "+ tree.maxReps + ", depth = " + depth + ", Node Max Reps = " + maxReps + ", (tree.maxReps*depth) = " + (tree.maxReps*depth) + ", ((tree.maxReps*depth)+maxReps= " + ((tree.maxReps*depth)+maxReps) + ", tree.maxReps/((tree.maxReps*depth)+maxReps) = " + tree.maxReps/((tree.maxReps*depth)+maxReps));
             while (archiveReps.size() < maxReps) {
                 //System.out.println("Adding level with fitness" + LevelWraps.get(index).getFitness() + " over " + LevelWraps.get(0).getFitness());
                 //Selection chance algorithm from Shine paper
-                //System.out.println("MATH: tree.maxReps = "+ tree.maxReps + ", depth = " + depth + ", maxReps = " + maxReps + ", (tree.maxReps*depth) = " + (tree.maxReps*depth) + ", ((tree.maxReps*depth)+maxReps= " + ((tree.maxReps*depth)+maxReps) + ", tree.maxReps/((tree.maxReps*depth)+maxReps) = " + tree.maxReps/((tree.maxReps*depth)+maxReps));
                 LevelWrap clone = LevelWraps.get(index).clone();
+            	//System.out.println("Adding level: " + clone.toString());
                 clone.setSelectionChance(tree.maxReps/((tree.maxReps*depth)+maxReps));
                 archiveReps.add(clone);
                 index--;
@@ -169,15 +174,21 @@ public class ShineNode {
         //If we have less than max reps at level, add them all
         else if (LevelWraps.size()>0){
             //System.out.println("Adding all " + LevelWraps.size() + " to archive");
+        	  	
+            float vPop = LevelWraps.size();
+            //System.out.println("MATH: tree.maxReps = "+ tree.maxReps + ", depth = " + depth + ", vPop = " + vPop + ", (tree.maxReps*depth) = " + (tree.maxReps*depth) + ", ((tree.maxReps*depth)+maxReps= " + ((tree.maxReps*depth)+vPop) + ", tree.maxReps/((tree.maxReps*depth)+vPop) = " + tree.maxReps/((tree.maxReps*depth)+vPop));               
             for (int i = 0; i < LevelWraps.size(); i++) {
                 LevelWrap clone = LevelWraps.get(i).clone();
-                float vPop = LevelWraps.size();
-                //System.out.println("MATH: tree.maxReps = "+ tree.maxReps + ", depth = " + depth + ", maxReps = " + vPop + ", (tree.maxReps*depth) = " + (tree.maxReps*depth) + ", ((tree.maxReps*depth)+maxReps= " + ((tree.maxReps*depth)+vPop) + ", tree.maxReps/((tree.maxReps*depth)+vPop) = " + tree.maxReps/((tree.maxReps*depth)+vPop));               
+                //System.out.println("Adding level: " + clone.toString());
                 clone.setSelectionChance(tree.maxReps/((tree.maxReps*depth)+vPop));
                 archiveReps.add(clone);
             }
             
         }
+        
+        //System.out.print("Finished getting archive reps from node: " );
+		//this.printNode(false);
+        
         return archiveReps;
     }
     
@@ -216,10 +227,10 @@ public class ShineNode {
                     System.out.println("Cell is in top left with P1Min/Max/P2Min/Max " + this.param1Min + "/"+this.param1Max + "/" + this.param2Min + "/" + this.param2Max);
                     System.out.println("This level has param1: " + level.getParam1()+ " and param2: " + level.getParam2());
                     System.out.println("This levels novelty is : " + getPythagC((this.param1Max-level.getParam1()),(level.getParam2()-this.param2Min)));
-                    System.out.println("This levels normalised novelty is: " + getPythagC((level.getParam1()-this.param1Min),(this.param2Min-level.getParam2())*normalisationFactor));
+                    System.out.println("This levels normalised novelty is: " + getPythagC((this.param1Max-level.getParam1()),(level.getParam2()-this.param2Min)*normalisationFactor));
                     System.out.println("");
                     */
-                    level.setCDscore(getPythagC((level.getParam1()-this.param1Min),(this.param2Min-level.getParam2())*normalisationFactor));
+                    level.setCDscore(getPythagC((this.param1Max-level.getParam1()),(level.getParam2()-this.param2Min)*normalisationFactor));
                     break;
                 case "TR":
                     
@@ -227,7 +238,7 @@ public class ShineNode {
                     System.out.println("Cell is in top right with P1Min/Max/P2Min/Max " + this.param1Min + "/"+this.param1Max + "/" + this.param2Min + "/" + this.param2Max);
                     System.out.println("This level has param1: " + level.getParam1()+ " and param2: " + level.getParam2());
                     System.out.println("This levels novelty is : " + getPythagC((level.getParam1()-this.param1Min),(level.getParam2()-this.param2Min)));
-                    System.out.println("This levels normalised novelty is: " + getPythagC((this.param1Max-level.getParam1()),(this.param2Max-level.getParam2())*normalisationFactor));
+                    System.out.println("This levels normalised novelty is: " + getPythagC((level.getParam1()-this.param1Min),(level.getParam2()-this.param2Min)*normalisationFactor));
                     System.out.println("");
                     */
                     level.setCDscore(getPythagC((level.getParam1()-this.param1Min),(level.getParam2()-this.param2Min)*normalisationFactor));
@@ -240,7 +251,6 @@ public class ShineNode {
                     System.out.println("This levels normalised novelty is: " + getPythagC((this.param1Max-level.getParam1()),(this.param2Max-level.getParam2())*normalisationFactor));
                     System.out.println("");
                     */
-                    
                     level.setCDscore(getPythagC((this.param1Max-level.getParam1()),this.param2Max-level.getParam2())*normalisationFactor);
                     break;
                 case "BR":
@@ -249,7 +259,8 @@ public class ShineNode {
                     System.out.println("This level has param1: " + level.getParam1()+ " and param2: " + level.getParam2());
                     System.out.println("This levels novelty is : " + getPythagC((level.getParam1()-this.param1Min),(this.param2Max-level.getParam2())));
                     System.out.println("This levels normalised novelty is: " + getPythagC((level.getParam1()-this.param1Min),(this.param2Max-level.getParam2())*normalisationFactor));
-                    */
+                    System.out.println("");
+					*/
                     level.setCDscore(getPythagC((level.getParam1()-this.param1Min),(this.param2Max-level.getParam2())*normalisationFactor));
                     break;
                 default:
@@ -328,7 +339,11 @@ public class ShineNode {
     }
     
     public void printNode(boolean noisy) {
-        System.out.println("ShineNode- Depth: " + depth + ". Param1 Min/Max = " + param1Min + "/" + param1Max +". Num reps: " + LevelWraps.size()+". Param2 Min/Max = " + param2Min+"/"+param2Max);
+        System.out.print("ShineNode- Position: " + this.nodeType + " Depth: " + depth + ". Param1 Min/Max = " + param1Min + "/" + param1Max +". Num reps: " + LevelWraps.size()+". Param2 Min/Max = " + param2Min+"/"+param2Max );
+        if (parent != null){
+        	System.out.print(". Parent position: " + this.parent.nodeType);
+        	System.out.println("");
+        }
         if(noisy) {
             for (int i = 0; i<LevelWraps.size(); i++) {
                 

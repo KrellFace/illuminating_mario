@@ -27,11 +27,11 @@ public class ExperimentInterface {
     private int defaultoffspring = 20000;
 
     //Default values
-    private int algotype = 1;
-    private int numberofruns = 1;
-    private int numberoffspring = defaultoffspring;
-    private int config_param1 = 1;
-    private int config_param2 = 2;
+    private Integer algotype;
+    private Integer numberofruns = 1;
+    private Integer numberoffspring = defaultoffspring;
+    private Integer config_param1;
+    private Integer config_param2;
     private String batchRunName;
     
     private float minutesPerLevel = 0.035f;
@@ -71,33 +71,36 @@ public class ExperimentInterface {
         JButton submitButton = new JButton("Initialize Experiment");
         submitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Form submitted. Initialising Experiments");
-                System.out.println("Algorithm type: " + algotype + ". Num Runs: " + numberofruns + " param1: " + config_param1 + " and param2: " + config_param2 );
-
-                mainFrame.dispatchEvent(new WindowEvent(mainFrame, WindowEvent.WINDOW_CLOSING));
-
-                for (int i = 0; i < numberofruns; i++) {
-
-                    String runName = "\\Run" + (i + 1);
-
-                    Path runPath = Paths.get(Output_Location + runName);
-                    try {
-                        Files.createDirectory(runPath);
-                    } catch (IOException e1) {
-                        // TODO Auto-generated catch block
-                        e1.printStackTrace();
-                    }
-                    
-                    config = new IllumConfig(algotype, numberoffspring, config_param1, config_param2, runPath, runName);
-
-                    ExperimentRun currRun = new ExperimentRun(config);
-                    currRun.run();
-                    currRun = null;
-
+                if (formCompleteValidation()) {
+	            	System.out.println("Form submitted. Initialising Experiments");
+	                System.out.println("Algorithm type: " + algotype + ". Num Runs: " + numberofruns + " param1: " + config_param1 + " and param2: " + config_param2 );
+	
+	                mainFrame.dispatchEvent(new WindowEvent(mainFrame, WindowEvent.WINDOW_CLOSING));
+	
+	                for (int i = 0; i < numberofruns; i++) {
+	
+	                    String runName = "\\Run" + (i + 1);
+	
+	                    Path runPath = Paths.get(Output_Location + runName);
+	                    try {
+	                        Files.createDirectory(runPath);
+	                    } catch (IOException e1) {
+	                        // TODO Auto-generated catch block
+	                        e1.printStackTrace();
+	                    }
+	                    
+	                    config = new IllumConfig(algotype, numberoffspring, config_param1, config_param2, runPath, runName);
+	
+	                    ExperimentRun currRun = new ExperimentRun(config);
+	                    currRun.run();
+	                    currRun = null;
+	                }
+	
+	                System.exit(0);
                 }
-
-                System.exit(0);
-
+                else {
+                	System.out.println("Please complete form before submitting");
+                }
 
             }
         });
@@ -134,11 +137,8 @@ public class ExperimentInterface {
                 //    
 
                 if (chooser.showOpenDialog(selectB) == JFileChooser.APPROVE_OPTION) {
-                    /*
-                	System.out.println("getCurrentDirectory(): " +
-                        chooser.getCurrentDirectory());
-                    */
-                    System.out.println("Selected Folder/File : " +
+
+                    System.out.println("Selected Folder : " +
                         chooser.getSelectedFile());
 
                     Output_Location = chooser.getSelectedFile();
@@ -175,6 +175,7 @@ public class ExperimentInterface {
         JPanel panelAlgoOpts = new JPanel();
         GridLayout oneCol = new GridLayout(0,1);
         panelAlgoOpts.setLayout(oneCol);
+        
         CheckboxGroup algoGrp = new CheckboxGroup();
         Checkbox me = new Checkbox("MAP-Elites", algoGrp, true);
         me.addItemListener(new ItemListener() {
@@ -202,11 +203,23 @@ public class ExperimentInterface {
 
             }
         });
+        
+        Checkbox shineHybrid = new Checkbox("SHINE-CD (Fit/Shine Hybrid)", algoGrp, true);
+        shineHybrid.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                System.out.println("Shine-Fit/Shine Hybrid selected");
+                algotype = config.Algo_ShineHybrid;
+
+            }
+        });
         //Set default
         algoGrp.setSelectedCheckbox(me);
+        algotype = config.Algo_MapElites;
+        
         panelAlgoOpts.add(me);
         panelAlgoOpts.add(shinecd);
         panelAlgoOpts.add(shinefit);
+        panelAlgoOpts.add(shineHybrid);
         algoPanelWrap.add(panelAlgoOpts);
         
         return algoPanelWrap;
@@ -267,17 +280,21 @@ public class ExperimentInterface {
         
         numberoffspring = offspringSlider.getValue();
         String s = "Offspring Count: " + Integer.toString(offspringSlider.getValue());
-        if (algotype == 1) {
-        	s+=("\n" + "MAP Elites Iterations: " + Integer.toString(offspringSlider.getValue()/2));
+        if (algotype!=null) {
+	        if (algotype == 1) {
+	        	s+=("\n" + "MAP Elites Iterations: " + Integer.toString(offspringSlider.getValue()/2));
+	        }
+	        else if (algotype==2||algotype==3){
+	        	s+=("\n" + "SHINE Gens (Size: " + config.Generation_Size + "): " + Integer.toString(offspringSlider.getValue()/config.Generation_Size));
+	        }
         }
-        else if (algotype == 2){
-        	s+=("\n" + "SHINE Gens (Size: " + config.Generation_Size + "): " + Integer.toString(offspringSlider.getValue()/config.Generation_Size));
-        }
+
         s+=("\n" + "Estimated runtime: " + Double.toString(offspringSlider.getValue()*minutesPerLevel) + " minutes. Hours: " + String.format("%.2f", (offspringSlider.getValue()*minutesPerLevel)/60));
         offspringDetailsPanel.setText(s);
 
         offspringSlider.addChangeListener(new ChangeListener() {
             @Override
+            
             public void stateChanged(ChangeEvent arg0) {
                 numberoffspring = offspringSlider.getValue();
                 String s = "Offspring Count: " + Integer.toString(offspringSlider.getValue());
@@ -372,6 +389,8 @@ public class ExperimentInterface {
         });
         
         param1_rtGrp.setSelectedCheckbox(param1_je);
+        config_param1 = config.config_paramJE;
+        
         f2_param1.add(param1_je);
         f2_param1.add(param1_contig);
         f2_param1.add(param1_speed);
@@ -439,6 +458,8 @@ public class ExperimentInterface {
         });
 
         param2_rtGrp.setSelectedCheckbox(param2_je);
+        config_param2 = config.config_paramJE;
+        
         f2_param2.add(param2_je);
         f2_param2.add(param2_contig);
         f2_param2.add(param2_speed);
@@ -471,5 +492,14 @@ public class ExperimentInterface {
         algoPanel.add(f1);
         algoPanel.add(f2);
         return algoPanel;
+    }
+    
+    public boolean formCompleteValidation() {
+    	if (Output_Location!=null&&algotype!=null&&config_param1!=null&&config_param2!=null) {
+    		return true;
+    	}
+    	else {
+    		return false;
+    	}
     }
 }

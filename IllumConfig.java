@@ -7,6 +7,7 @@ public class IllumConfig {
     public final int Algo_MapElites = 1;
     public final int Algo_ShineCD = 2;
     public final int Algo_ShineFit = 3;
+    public final int Algo_ShineHybrid = 4;
 	
     //Config options for each run
     public final int config_paramJE	= 0;
@@ -29,7 +30,7 @@ public class IllumConfig {
     public final float config_map_minRTime = 0.0f;
     public final float config_map_maxRTime = 30.0f;
     public final float config_map_minContig = 0f;
-    public final float config_map_maxContig = 2000f;
+    public final float config_map_maxContig = 1000f;
     public final float config_map_minClearRows = -0.1f;
     public final float config_map_maxClearRows = 16;
     public final float config_map_minAgrSmooth = 0;
@@ -44,7 +45,7 @@ public class IllumConfig {
     public final int ticksPerRun = 10;
     
     //Mutation chances - Shared between both ME and SHINE
-    public final float Dupe_Remove_Chance = 0.5F;
+    public final float Dupe_Remove_Chance = 0.02F;
     public final float Tile_Mutation_Chance = 0.005F;
     public final float Crossover_Chance = .2F;
     
@@ -132,7 +133,6 @@ public class IllumConfig {
     
     private void setParamMinMax() {
     	
-    	System.out.println("Setting min and max based on param1: " + this.runParam1 + " and param2: " + this.runParam2);
         switch(this.runParam1) {
     	case config_paramBC:
     		this.param1Min = this.config_map_minBC;
@@ -196,7 +196,6 @@ public class IllumConfig {
     	default:
         }
         
-        System.out.println("Setting param1 min: " + this.param1Min + "Setting param1 max: " + this.param1Max + "Setting param2 min: " + this.param2Min + "Setting param2 max: " + this.param2Max);
     }
     
     public int getAlgoType() {
@@ -230,6 +229,9 @@ public class IllumConfig {
     	return this.runName;
     }
     
-    
+    public String toString() {
+    	return ("IllumConfig information: AlgoType:  " + this.algoType + "; Param1: " + getParam1() + "; Param2 " + getParam2() + 
+    			" Param1 Min/Max: " + this.getParam1Min() + "/" + this.getParam1Max() + " Param2 Min/Max: " + this.getParam2Min() + "/" + this.getParam2Max());
+    }
 
 }

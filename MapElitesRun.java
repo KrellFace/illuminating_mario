@@ -43,7 +43,7 @@ public class MapElitesRun extends AlgoRun{
             levelPair.add(map.getRandomLevel().clone());
             
             //Generate offspring from parents
-            levelPair = archiveOffspring(levelPair);
+            levelPair = xOverAndMutate(levelPair);
             
             //Add the level pair back into the map
             for (int i = 0; i < levelPair.size(); i++) {

@@ -1,9 +1,8 @@
 package illumsearch;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ShineRun extends AlgoRun {
 
@@ -13,7 +12,15 @@ public class ShineRun extends AlgoRun {
     }
 
     public void run()  {
+    	
         long runStartTime = System.nanoTime();
+        
+        try {
+            levelsToFiles(initPop, "Initial Population" );
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         //System.out.println("Config:" +config);
         ShineTree tree = new ShineTree(config.Max_Tree_Depth, config.Max_Vertex_Reps, config.getParam1Min(), config.getParam1Max(), config.getParam2Min(), config.getParam2Max());
         int Gen_Count = 0;
@@ -39,10 +46,11 @@ public class ShineRun extends AlgoRun {
 
             //SELECTING PARENTS FOR NEXT GENERATION
             ArrayList < LevelWrap > selectedArchive = tournamentSelect(archive);
+            
             //printArchive(selectedArchive, "Selected Parents before mutation:", true);
 
             //MUTATING SELECTED PARENTS
-            selectedArchive = archiveOffspring(selectedArchive);
+            selectedArchive = xOverAndMutate(selectedArchive);
             //printArchive(selectedArchive, "Selected Parents after mutation:", true);
 
             //ADDING CHILDREN TO TREE
@@ -58,15 +66,8 @@ public class ShineRun extends AlgoRun {
             ElitesMap currMap = new ElitesMap(tree.root.getAllChildLevels(), config.mapSize,config.getParam1Min(), config.getParam1Max(), config.getParam2Min(), config.getParam2Max());
             System.out.println(currMap.toString());
             runHistory.add(Gen_Count + ", " + currMap.getCoverage() + ", " + currMap.getReliability() + ", " + currMap.getAvgFitness());
-            if (Gen_Count % 500 == 0) {
-                //mapOutput(currMap, runHistory, runName+" - Generation "+Gen_Count, runStartTime, true);
-                try {
-                	Path snapsshotPath = Paths.get(config.getRunPath()+"\\Generation "+ Gen_Count);
-					currMap.createOutputFiles(snapsshotPath, config.getRunName(), true);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+            if (Gen_Count % 100 == 0) {
+                mapOutput(currMap, runHistory, config.getRunName()+" - Generation "+Gen_Count, runStartTime, true);
             }
 
 
@@ -78,6 +79,26 @@ public class ShineRun extends AlgoRun {
         ElitesMap endMap = new ElitesMap(tree.root.getAllChildLevels(), config.mapSize, config.getParam1Min(), config.getParam1Max(), config.getParam2Min(), config.getParam2Max());
         mapOutput(endMap, runHistory, config.getRunName()+" - Final Data", runStartTime, false);
 
+    }
+    
+    public ArrayList < LevelWrap > tournamentSelect(ArrayList < LevelWrap > inputArchive) {
+
+        Random random = new Random(10);
+        int iSize = inputArchive.size();
+
+        ArrayList < LevelWrap > outputArchive = new ArrayList < > ();
+
+        while (outputArchive.size() < config.Generation_Size) {
+
+            LevelWrap r1 = inputArchive.get(random.nextInt(iSize));
+            LevelWrap r2 = inputArchive.get(random.nextInt(iSize));
+            if (r1.getSelectionChance() > r2.getSelectionChance()) {
+                outputArchive.add(r1);
+            } else {
+                outputArchive.add(r2);
+            }
+        }
+        return outputArchive;
     }
 
 }

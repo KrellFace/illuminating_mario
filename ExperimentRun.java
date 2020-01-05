@@ -3,11 +3,6 @@ package illumsearch;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -15,33 +10,18 @@ import java.util.Scanner;
 
 public class ExperimentRun
 {   
-	//SHINE Variables
-    private int Num_Generations;
-    //MAP Elites Variables (Each iteration = new new offspring due to crossover operation)
-    private int Num_Iterations;
-    
-    //Storage for the parameters used in current run
-    /*
-    private static float param1Min;
-    private static float param1Max;
-    private static float param2Min;
-    private static float param2Max;
-    */
-    
     private IllumConfig runConfig;
     
     public ExperimentRun(IllumConfig config) {
         
         this.runConfig = config;
-        this.Num_Iterations = (config.getNumOffspring()/2);
-        this.Num_Generations = (config.getNumOffspring()/config.Generation_Size);
+        
+        System.out.println(this.runConfig.toString());
         
     }
     
     public void run() {
         if (runConfig.getAlgoType() == runConfig.Algo_MapElites) {
-            System.out.println("Starting map elites run with param1: " + runConfig.getParam1() + " and param2 " + runConfig.getParam2() + " running for " + Num_Iterations + " iterations");
-
             try {
 				init_mapelites();
 			} catch (Exception e) {
@@ -50,7 +30,7 @@ public class ExperimentRun
 			}
             
         }
-        else if (runConfig.getAlgoType() == runConfig.Algo_ShineCD||runConfig.getAlgoType() == runConfig.Algo_ShineFit) {
+        else if (runConfig.getAlgoType() == runConfig.Algo_ShineCD||runConfig.getAlgoType() == runConfig.Algo_ShineFit||runConfig.getAlgoType() == runConfig.Algo_ShineHybrid) {
             
             try {
 				init_shine();
@@ -66,38 +46,20 @@ public class ExperimentRun
 
     
     public void init_shine() throws Exception {
-        
-        long runStartTime = System.nanoTime();
-                  
+                 
         //List<LevelWrap> init_pop = initPopFromFolder(Input_Files);
         List<LevelWrap> init_pop = initRandomPop(runConfig.initialSeed);
         System.out.println("Population fully initialised");
         //Store initial levels used
-        try {
-            levelsToFiles(init_pop, "Initial Population" );
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-        new ShineRun(init_pop, runConfig).run();
-  
-        //Create the output from the map
-        //mapOutput(outputTree, runHistory, runName+" - Final Data", runStartTime, false);                     
+        new ShineRun(init_pop, runConfig).run();            
         
     }
     
     public void init_mapelites() throws Exception {
-        
-        long runStartTime = System.nanoTime();     
-        //List<LevelWrap> init_pop = initPopFromFolder(Input_Files);
-        
-        List<LevelWrap> init_pop = initRandomPop(runConfig.initialSeed);
-        
-        new MapElitesRun(init_pop, runConfig).run();
-        
-        //Create the output from the map
-        //mapOutput(map, runHistory, runConfig.getRunName(), runStartTime, true);          
+           
+        //List<LevelWrap> init_pop = initPopFromFolder(Input_Files);     
+        List<LevelWrap> init_pop = initRandomPop(runConfig.initialSeed); 
+        new MapElitesRun(init_pop, runConfig).run();  
         
     }
     
@@ -180,113 +142,6 @@ public class ExperimentRun
             e.printStackTrace();
         }
         return a;
-    }
-    
-    public void printArchive(ArrayList<LevelWrap> archive, String aName, boolean noisy) {
-        System.out.println("Total " + aName + " archive size:" + archive.size());
-        float totalfitness = 0;
-        float totalselectionchance = 0;
-        for (int i = 0; i < archive.size(); i++) {
-            totalfitness+=archive.get(i).getFitness();
-            totalselectionchance+=archive.get(i).getSelectionChance();
-
-            if (noisy) {
-                System.out.println("ShineTesting- In archive - Level with " + archive.get(i).toString());
-            }
-        }
-        System.out.println( aName + " archive average fitness: " + (totalfitness/archive.size()) + ". Archive average selection chance: " + (totalselectionchance/archive.size())); 
-    }
-    
-    public ElitesMap eval_CreateMap(ShineTree tree){
-        
-        ArrayList<LevelWrap> allLevels = tree.root.getAllChildLevels();
-        
-        return new ElitesMap(allLevels, runConfig.mapSize, runConfig.getParam1Min(), runConfig.getParam1Max(), runConfig.getParam2Min(), runConfig.getParam2Max());
-        
-        
-    }
-    
-    public void mapOutput(ElitesMap sMap, ArrayList<String> runHistory, String dataFolder, long runStartT, boolean onlyFit) {
-   
-        Path dataFolderPath = Paths.get(runConfig.getRunPath()+"\\"+dataFolder);
-        
-        //In case we havent updated the run name, we dont want to lose the data
-        try {
-            if (!Files.exists(dataFolderPath)) {
-                //System.out.println("Output folder does not exist when it should");
-                Files.createDirectory(dataFolderPath);
-                
-            }
-            /*else {
-                Files.createDirectory(rootPath);
-            }
-            */
-            
-            //Create overall output 
-            PrintWriter mapwriter = new PrintWriter((dataFolderPath + "/" +dataFolder+"-Data.txt"), "UTF-8");
-            mapwriter.println("Data for run: " + dataFolder);
-            mapwriter.println("Map Size " + runConfig.mapSize);
-            mapwriter.println("Map Coverage: " + sMap.getCoverage());
-            mapwriter.println("Map Reliability: " + sMap.getReliability());
-            mapwriter.println("Map Avg Fitness: " + sMap.getAvgFitness());
-            mapwriter.println("Run Time (hrs): " + ((System.nanoTime()- runStartT)/(1000000000f*60f*60f)));
-            mapwriter.println("");
-            if (runConfig.getAlgoType() == runConfig.Algo_ShineCD) {
-                mapwriter.println("SHINE tree parameters-");
-                mapwriter.println("Max Vertex Reps: " + runConfig.Max_Vertex_Reps);
-                mapwriter.println("Max Tree Depth: " + runConfig.Max_Tree_Depth);
-                mapwriter.println("");
-            }
-            mapwriter.println("Parameter 1 min: " + runConfig.getParam1Min());
-            mapwriter.println("Parameter 1 max: " + runConfig.getParam1Max());
-            mapwriter.println("Parameter 2 min: " + runConfig.getParam2Min());
-            mapwriter.println("Parameter 2 max: " + runConfig.getParam2Max());
-            mapwriter.println("");
-            mapwriter.println("Algorithm parameters-");
-            mapwriter.println("Generation size: " + runConfig.Generation_Size);
-            mapwriter.println("Number of generations: " + Num_Generations);
-            mapwriter.println("Chance of grow/shrink mutations: " + runConfig.Dupe_Remove_Chance);
-            mapwriter.println("Chance of tile flip mutations: " + runConfig.Tile_Mutation_Chance);
-            mapwriter.println("Chance of crossover: " + runConfig.Crossover_Chance);
-            mapwriter.println("");
-            mapwriter.println("Algorithm ID: " + runConfig.getAlgoType());
-            mapwriter.println("Configuration param1: " + runConfig.getParam1() + " param 2: " + runConfig.getParam2());
-            mapwriter.close();
-    
-            //Create output files from each level in map
-            sMap.createOutputFiles(dataFolderPath, dataFolder, onlyFit);
-            
-            //Create CSV output
-            //PrintWriter historywriter = new PrintWriter((rootPath + "/" +runName+"-Full History.txt"), "UTF-8");
-            FileWriter historywriter = new FileWriter((dataFolderPath + "/" +dataFolder+"-Full History.csv"));
-            historywriter.append("Generation"); historywriter.append(","); historywriter.append("Coverage"); historywriter.append(",");historywriter.append("Reliability");historywriter.append(",");historywriter.append("Avg Fitness"); historywriter.append("\n");
-
-            for (int i = 0; i < runHistory.size(); i++) {
-                historywriter.append(runHistory.get(i));
-                historywriter.append("\n");
-            }
-            
-            historywriter.flush();
-            historywriter.close();
-        
-        }
-        catch (Exception e) {
-            System.out.println("Failed to create output folder struct");
-            System.out.println(e.getCause());
-            
-        }
-    }
-    
-    public void levelsToFiles(List<LevelWrap> init_pop, String folder) throws Exception {
-        
-        Path rootPath = Paths.get(runConfig.getRunPath()+"/"+folder);  
-        Files.createDirectory(rootPath);
-        
-        for (LevelWrap level : init_pop) {
-        	Path levelFolder = Paths.get(rootPath + "/" + level.getName());
-        	level.createLevelFiles(levelFolder);
-        }
-        
     }
     
 }
