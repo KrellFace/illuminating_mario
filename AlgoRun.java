@@ -122,7 +122,7 @@ public abstract class AlgoRun {
             mapwriter.println("Map Avg Fitness: " + sMap.getAvgFitness());
             mapwriter.println("Run Time (hrs): " + ((System.nanoTime() - runStartT) / (1000000000f * 60f * 60f)));
             mapwriter.println("");
-            if (config.getAlgoType() == config.Algo_ShineCD) {
+            if (config.getAlgoType() != config.Algo_MapElites) {
                 mapwriter.println("SHINE tree parameters-");
                 mapwriter.println("Max Vertex Reps: " + config.Max_Vertex_Reps);
                 mapwriter.println("Max Tree Depth: " + config.Max_Tree_Depth);

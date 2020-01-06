@@ -49,14 +49,14 @@ public class IllumConfig {
     public final float Tile_Mutation_Chance = 0.005F;
     public final float Crossover_Chance = .2F;
     
-    //Parameters for generating random noise levels
+    //Parameters for generating random noise levels  
     public final float max_tile_chance = 0.3f;
     public final int fixed_width = 100;
     
     //SHINE Variables
     public final int Generation_Size = 20;
     public final int Max_Tree_Depth = 6;
-    public final int Max_Vertex_Reps = 10;
+    public final int Max_Vertex_Reps = 5;
     
     //Size of Map Elites map (Maps always square)
     public final int mapSize = 20;
