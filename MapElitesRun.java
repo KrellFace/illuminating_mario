@@ -60,7 +60,7 @@ public class MapElitesRun extends AlgoRun{
                 System.out.println(map.toString());         
                 runHistory.add(iterCount +", " + map.getCoverage() + ", " + map.getReliability() + ", " + map.getAvgFitness());
                 
-                if (iterCount%100==0) {
+                if (iterCount%1000==0) {
                     mapOutput(map, runHistory, config.getRunName()+" - Snapshot"+iterCount, runStartTime, true);
                 }
             }

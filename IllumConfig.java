@@ -53,13 +53,13 @@ public class IllumConfig {
     public final float max_tile_chance = 0.3f;
     public final int fixed_width = 100;
     
-    //SHINE Variables
+    //SHINE Variables 
     public final int Generation_Size = 20;
-    public final int Max_Tree_Depth = 6;
+    public final int Max_Tree_Depth = 5;
     public final int Max_Vertex_Reps = 5;
     
     //Size of Map Elites map (Maps always square)
-    public final int mapSize = 20;
+    public final int mapSize = 32;
     
     //Seed used for generating initial population
     public final int initialSeed = 100;
