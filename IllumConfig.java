@@ -17,6 +17,7 @@ public class IllumConfig {
     public final int config_paramBC	= 4;
     public final int config_paramClearRows = 5;
     public final int config_paramAgrSmooth = 6;
+    public final int config_paramContigOverBC = 7;
     
     //Fixed min and max level parameters for map generation (hard coded based around a level width of 100)
     public final float config_map_minBC = 200f;
@@ -35,6 +36,8 @@ public class IllumConfig {
     public final float config_map_maxClearRows = 16;
     public final float config_map_minAgrSmooth = 0;
     public final float config_map_maxAgrSmooth = 300;
+    public final float config_paramContigOverBCmin = 0.0f;
+    public final float config_paramContigOverBCmax = 2f;
     
     public final float config_map_minWidth = 50f;
     public final float config_map_maxWidth = 150f;
@@ -56,7 +59,7 @@ public class IllumConfig {
     //SHINE Variables 
     public final int Generation_Size = 20;
     public final int Max_Tree_Depth = 5;
-    public final int Max_Vertex_Reps = 5;
+    public final int Max_Vertex_Reps = 3;
     
     //Size of Map Elites map (Maps always square)
     public final int mapSize = 32;
@@ -103,6 +106,8 @@ public class IllumConfig {
     		return inputLevel.getClearRows();
     	case config_paramAgrSmooth:
     		return inputLevel.getAggrSmooth();
+    	case config_paramContigOverBC:
+    		return inputLevel.getContigScore()/inputLevel.getBlockCount();					   		
     	default:
     		return (Float) null;
         }
@@ -126,6 +131,8 @@ public class IllumConfig {
         		return inputLevel.getClearRows();
         	case config_paramAgrSmooth:
         		return inputLevel.getAggrSmooth();
+        	case config_paramContigOverBC:
+        		return inputLevel.getContigScore()/inputLevel.getBlockCount();		
         	default:
         		return (Float) null;
         }
@@ -162,6 +169,10 @@ public class IllumConfig {
     		this.param1Min = this.config_map_minAgrSmooth;
     		this.param1Max = this.config_map_maxAgrSmooth;
     		break;
+    	case config_paramContigOverBC:
+    		this.param1Min = this.config_paramContigOverBCmin;
+    		this.param1Max = this.config_paramContigOverBCmax;
+    		break;
     	default:
         }
         switch(this.runParam2) {
@@ -192,6 +203,10 @@ public class IllumConfig {
     	case config_paramAgrSmooth:
     		this.param2Min = this.config_map_minAgrSmooth;
     		this.param2Max = this.config_map_maxAgrSmooth;
+    		break;
+    	case config_paramContigOverBC:
+    		this.param2Min = this.config_paramContigOverBCmin;
+    		this.param2Max = this.config_paramContigOverBCmax;
     		break;
     	default:
         }

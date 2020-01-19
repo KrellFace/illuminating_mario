@@ -77,7 +77,7 @@ public class ShineRun extends AlgoRun {
 
         //Create the output from the map
         ElitesMap endMap = new ElitesMap(tree.root.getAllChildLevels(), config.mapSize, config.getParam1Min(), config.getParam1Max(), config.getParam2Min(), config.getParam2Max());
-        mapOutput(endMap, runHistory, config.getRunName()+" - Final Data", runStartTime, false);
+        mapOutput(endMap, runHistory, config.getRunName()+" - Final Data", runStartTime, true);
 
     }
     

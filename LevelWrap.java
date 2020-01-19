@@ -580,6 +580,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
         lvlwriter.println("Level Jump Entropy: " + getJumpEntropy());
         lvlwriter.println("Level Block Count: " + getBlockCount());
         lvlwriter.println("Level Contiguity Score: " + getContigScore());
+        lvlwriter.println("Level Contig/BC: " + (getContigScore()/getBlockCount()));
         lvlwriter.println("Level Speed: " + getSpeed());
         lvlwriter.println("Level Time Taken: " + getTimeTaken());
         lvlwriter.println("Level Clear Rows: " + getClearRows());
@@ -723,7 +724,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
     }
 
     public String toString() {
-        return ("LevelWrap- LevelName: " + name + ". LevelFitness: " + fitness + "Level Block count: " + blockCount + ". LevelContig: " + contigScore + ". JE: " + jumpEntropy + " LevelSpeed: " + marioSpeed + " Clear rows: " + this.clearRows + " AggrSmoothness: " + this.agrSmooth);
+        return ("LevelWrap- LevelName: " + name + ". LevelFitness: " + fitness + "Level Block count: " + blockCount + ". LevelContig: " + contigScore + ". Contig/BC: "+ contigScore/blockCount + ". JE: " + jumpEntropy + " LevelSpeed: " + marioSpeed + " Clear rows: " + this.clearRows + " AggrSmoothness: " + this.agrSmooth);
     }
 
     public int compareTo(LevelWrap o) {

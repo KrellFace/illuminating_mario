@@ -32,6 +32,7 @@ public class ElitesMap {
         
     	this(mapSize, param1Min, param1Max, param2Min, param2Max);
         this.addLevels(allLevels);
+        updateFitnessStats();
 
     }
     
@@ -178,6 +179,8 @@ public class ElitesMap {
                     
                     //Only create if the level is fully fit, or if we are printing all levels
                     if (!onlyFit||map.get(cell).getFitness()>=1.0f) {
+                    	
+                    	System.out.println("Creating output files for level with fitness " + map.get(cell).getFitness() + " and with onlyFit flag: " + onlyFit);
                     	
                     	Path levelFolder = Paths.get(rootPath + "/" + cell);
 

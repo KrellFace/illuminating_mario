@@ -88,7 +88,7 @@ public class ExperimentInterface {
 	                        // TODO Auto-generated catch block
 	                        e1.printStackTrace();
 	                    }
-	                    
+	                                  
 	                    config = new IllumConfig(algotype, numberoffspring, config_param1, config_param2, runPath, runName);
 	
 	                    ExperimentRun currRun = new ExperimentRun(config);
@@ -387,6 +387,14 @@ public class ExperimentInterface {
 
             }
         });
+        Checkbox param1_contigOverBC = new Checkbox("Contiguity/BC", param1_rtGrp, true);
+        param1_contigOverBC.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                System.out.println("Contiguity/BC Param 1 selected");
+                config_param1 = config.config_paramContigOverBC;
+
+            }
+        });
         
         param1_rtGrp.setSelectedCheckbox(param1_je);
         config_param1 = config.config_paramJE;
@@ -394,9 +402,10 @@ public class ExperimentInterface {
         f2_param1.add(param1_je);
         f2_param1.add(param1_contig);
         f2_param1.add(param1_speed);
-        f2_param1.add(param1_clearrows);
+        //f2_param1.add(param1_clearrows);
         f2_param1.add(param1_bc);
         f2_param1.add(param1_smooth);
+        f2_param1.add(param1_contigOverBC);
         f2.add(f2_param1);
         
         //Initialise selection option for parameter 2
@@ -456,6 +465,14 @@ public class ExperimentInterface {
 
             }
         });
+        Checkbox param2_contigOverBC = new Checkbox("Contiguity/BC", param2_rtGrp, true);
+        param2_contigOverBC.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                System.out.println("Contiguity/BC Param 2 selected");
+                config_param2 = config.config_paramContigOverBC;
+
+            }
+        });
 
         param2_rtGrp.setSelectedCheckbox(param2_je);
         config_param2 = config.config_paramJE;
@@ -463,9 +480,10 @@ public class ExperimentInterface {
         f2_param2.add(param2_je);
         f2_param2.add(param2_contig);
         f2_param2.add(param2_speed);
-        f2_param2.add(param2_clearrows);
+        //f2_param2.add(param2_clearrows);
         f2_param2.add(param2_bc);
         f2_param2.add(param2_smooth);
+        f2_param2.add(param2_contigOverBC);
            
         f2.add(f2_param2);
         
