@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 public class ExperimentInterface {
 	
-	private static String Default_Output_Location = "C:/Users/Ollie/Documents/MSc Studying/Project/Output Data/";
+	private static String Default_Output_Location = "D:/IllumMarioOutputData/";
 
 	private IllumConfig config = new IllumConfig(0,0,0,0,(Path)null,"");
 

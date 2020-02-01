@@ -26,8 +26,8 @@ public class IllumConfig {
     public final float config_map_maxLW = 150;
     public final float config_map_minJE = 0.00f;
     public final float config_map_maxJE = 0.08f;
-    public final float config_map_minSpeed = 0.07f;
-    public final float config_map_maxSpeed = 0.18f;
+    public final float config_map_minSpeed = 0.1f;
+    public final float config_map_maxSpeed = 0.2f;
     public final float config_map_minRTime = 0.0f;
     public final float config_map_maxRTime = 30.0f;
     public final float config_map_minContig = 0f;

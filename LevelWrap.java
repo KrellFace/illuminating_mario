@@ -526,9 +526,11 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
         jumpEntropy = (float) result.getNumJumps() / (float) result.getAgentEvents().size();
         //System.out.println("Time spent (in ticks): " + (ticksPerRun-(result.getRemainingTime()/1000)) + " Completion percentage: " + result.getCompletionPercentage() + " Mario speed: " + result.getCompletionPercentage()/(ticksPerRun-(result.getRemainingTime()/1000)));
-        marioSpeed = (result.getCompletionPercentage() / (config.ticksPerRun - (result.getRemainingTime() / 1000)));
         timeTaken = (config.ticksPerRun - (result.getRemainingTime() / 1000));
+        marioSpeed = ((result.getCompletionPercentage()*1000) / ((config.ticksPerRun*1000) - result.getRemainingTime()));
         fitness = result.getCompletionPercentage();
+        
+        //System.out.println("Time taken: " + timeTaken + ". Fitness: " + fitness + " MarioSpeed: " + marioSpeed);
 
     }
 
@@ -551,6 +553,9 @@ public class LevelWrap implements Comparable < LevelWrap > {
         //System.out.println("Running runGame " + System.currentTimeMillis());
         //System.out.println(level.getStringRep());
         result = new MarioGame().runGame(agent, level.getStringRep(), config.ticksPerRun);
+    	
+    	//RUN VISIBLE
+    	//result = new MarioGame().runGame(agent, level.getStringRep(), config.ticksPerRun, 0, true);
 
         updateResultFeatures(result);
         //System.out.println(this.toString());
