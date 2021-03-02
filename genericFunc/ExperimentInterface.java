@@ -1,4 +1,4 @@
-package illumsearch;
+package illumsearch.genericFunc;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 public class ExperimentInterface {
 	
 	private static String Default_Output_Location = "D:/IllumMarioOutputData/";
@@ -43,29 +44,22 @@ public class ExperimentInterface {
         ei.run();
     }
 
-    public void run() {
+    private void run() {
 
         mainFrame = new JFrame();
         mainFrame.setTitle("Run Initiator"); 
         mainPanel = new JPanel();    
 
         //Setting the gridlayout of interface
-        mainPanel.setLayout(new GridLayout(6, 1));
+        mainPanel.setLayout(new GridLayout(7, 1));
 
-        JPanel outPanel = outLocPanel();
-        mainPanel.add(outPanel);
 
-        JPanel algoPanel = algoPanel();
-        mainPanel.add(algoPanel);
-
-        JPanel numrunPanel = numrunPanel();
-        mainPanel.add(numrunPanel);
-
-        JPanel totaloffspring = numoffspringPanel();
-        mainPanel.add(totaloffspring);
-
-        JPanel configpanel = runtypePanel();
-        mainPanel.add(configpanel);
+        mainPanel.add(outLocPanel());
+        mainPanel.add(algoPanel());
+        mainPanel.add(numrunPanel());
+        mainPanel.add(numoffspringPanel());
+        mainPanel.add(runtypePanel());
+        mainPanel.add(runnamepanel());
 
 
         JButton submitButton = new JButton("Initialize Experiment");
@@ -115,7 +109,7 @@ public class ExperimentInterface {
 
     }
 
-    public JPanel outLocPanel() {
+    private JPanel outLocPanel() {
         JPanel outLocPanel = new JPanel();
         GridLayout layout = new GridLayout(0,2);
         outLocPanel.setLayout(layout);
@@ -134,7 +128,6 @@ public class ExperimentInterface {
                 // disable the "All files" option.
                 //
                 chooser.setAcceptAllFileFilterUsed(false);
-                //    
 
                 if (chooser.showOpenDialog(selectB) == JFileChooser.APPROVE_OPTION) {
 
@@ -146,8 +139,6 @@ public class ExperimentInterface {
                 } else {
                     System.out.println("No Selection ");
                 }
-
-
             }
         });
         
@@ -161,7 +152,7 @@ public class ExperimentInterface {
 
 
 
-    public JPanel algoPanel() {
+    private JPanel algoPanel() {
     	//Overall panel
         JPanel algoPanelWrap = new JPanel();     
         GridLayout twoCol = new GridLayout(0,2);
@@ -176,42 +167,13 @@ public class ExperimentInterface {
         GridLayout oneCol = new GridLayout(0,1);
         panelAlgoOpts.setLayout(oneCol);
         
+        //Create Algorithm selection checkboxes
         CheckboxGroup algoGrp = new CheckboxGroup();
-        Checkbox me = new Checkbox("MAP-Elites", algoGrp, true);
-        me.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Map Elites Selected");
-                algotype = config.Algo_MapElites;
-
-            }
-        });
-
-        Checkbox shinecd = new Checkbox("SHINE-CD", algoGrp, true);
-        shinecd.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Shine-CD selected");
-                algotype = config.Algo_ShineCD;
-
-            }
-        });
+        Checkbox me = createCheckbox("MAP-Elites", algoGrp, "Map Elites Selected", algotype, config.Algo_MapElites);
+        Checkbox shinecd = createCheckbox("SHINE-CD", algoGrp, "Shine-CD selected", algotype, config.Algo_ShineCD);      
+        Checkbox shinefit = createCheckbox("SHINE-FIT", algoGrp, "Shine-Fit selected", algotype, config.Algo_ShineFit);
+        Checkbox shineHybrid = createCheckbox("SHINE-Hybrid", algoGrp, "Shine-Hybrid selected", algotype, config.Algo_ShineHybrid);
         
-        Checkbox shinefit = new Checkbox("SHINE-FIT", algoGrp, true);
-        shinefit.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Shine-Fit selected");
-                algotype = config.Algo_ShineFit;
-
-            }
-        });
-        
-        Checkbox shineHybrid = new Checkbox("SHINE-CD (Fit/Shine Hybrid)", algoGrp, true);
-        shineHybrid.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Shine-Fit/Shine Hybrid selected");
-                algotype = config.Algo_ShineHybrid;
-
-            }
-        });
         //Set default
         algoGrp.setSelectedCheckbox(me);
         algotype = config.Algo_MapElites;
@@ -226,7 +188,7 @@ public class ExperimentInterface {
     }
 
     
-    public JPanel numrunPanel() {
+    private JPanel numrunPanel() {
         JPanel numrunPanel = new JPanel();
         numrunPanel.setPreferredSize(new Dimension(400, 200));
         JTextField textPanel = new JTextField();
@@ -236,7 +198,6 @@ public class ExperimentInterface {
         textPanel.setEditable(false);
         numrunPanel.add(textPanel);
         JPanel selectPanel = new JPanel();
-
 
         Choice runOpts = new Choice();
         for (int i = 0; i < 5; i++) {
@@ -249,15 +210,13 @@ public class ExperimentInterface {
             }
         });
 
-
         selectPanel.add(runOpts);
         numrunPanel.add(selectPanel);
         return numrunPanel;
 
-
     }
 
-    public JPanel numoffspringPanel() {
+    private JPanel numoffspringPanel() {
         JPanel numoffspringPanelWrapper = new JPanel();
         GridLayout oneCol = new GridLayout(0,1);
         numoffspringPanelWrapper.setLayout(oneCol);
@@ -309,7 +268,6 @@ public class ExperimentInterface {
             }
         });
         
-
         sliderPanel.add(offspringSlider);
         numoffspringPanelWrapper.add(sliderPanel);
 
@@ -318,10 +276,9 @@ public class ExperimentInterface {
 
         return numoffspringPanelWrapper;
 
-
     }
 
-    public JPanel runtypePanel() {
+    private JPanel runtypePanel() {
         JPanel runtypePanel = new JPanel();
         JTextField f1 = new JTextField();
         f1.setText("Run Configuration:");
@@ -329,73 +286,21 @@ public class ExperimentInterface {
         runtypePanel.add(f1);
         JPanel f2 = new JPanel();     
         
-        //Initialise selection option for parameter 1
+        //Initialise selection options for parameter 1
         JPanel f2_param1 = new JPanel();
         GridLayout oneCol = new GridLayout(0,1);
         f2_param1.setLayout(oneCol);
         CheckboxGroup param1_rtGrp = new CheckboxGroup();
-        Checkbox param1_je = new Checkbox("Jump Entropy", param1_rtGrp, true);
-        param1_je.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Jump Entropy Param 1 selected");
-                config_param1 = config.config_paramJE;
 
-            }
-        });
-
-        Checkbox param1_speed = new Checkbox("Speed", param1_rtGrp, true);
-        param1_speed.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Speed Param 1 selected");
-                config_param1 = config.config_paramSpeed;
-
-            }
-        });
-
-        Checkbox param1_contig = new Checkbox("Contiguity", param1_rtGrp, true);
-        param1_contig.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Contiguity Param 1 selected");
-                config_param1 = config.config_paramContig;
-
-            }
-        });
+        Checkbox param1_je = createCheckbox("Jump Entropy", param1_rtGrp, "Jump Entropy Param 1 selected", config_param1, config.config_paramJE);
+        Checkbox param1_speed = createCheckbox("Speed", param1_rtGrp, "Speed Param 1 selected", config_param1, config.config_paramSpeed);
+        Checkbox param1_contig = createCheckbox("Contiguity", param1_rtGrp, "Contiguity Param 1 selected", config_param1, config.config_paramContig);
+        Checkbox param1_clearrows = createCheckbox("Clear Rows", param1_rtGrp, "Clear Rows Param 1 selected", config_param1, config.config_paramClearRows);
+        Checkbox param1_bc = createCheckbox("Block Count", param1_rtGrp, "Block count Param 1 selected", config_param1, config.config_paramBC);
+        Checkbox param1_smooth = createCheckbox("Aggregate Smoothness", param1_rtGrp, "Aggregate Smoothness Param 1 selected", config_param1, config.config_paramAgrSmooth);
+        Checkbox param1_contigOverBC = createCheckbox("Contiguity/BC", param1_rtGrp, "Contiguity/BC Param 1 selected", config_param1, config.config_paramContigOverBC);
         
-        Checkbox param1_clearrows = new Checkbox("Clear Rows", param1_rtGrp, true);
-        param1_clearrows.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Clear Rows Param 1 selected");
-                config_param1 = config.config_paramClearRows;
-
-            }
-        });
-
-        Checkbox param1_bc = new Checkbox("Block Count", param1_rtGrp, true);
-        param1_bc.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Block count Param 1 selected");
-                config_param1 = config.config_paramBC;
-
-            }
-        });
-
-        Checkbox param1_smooth = new Checkbox("Aggregate Smoothness", param1_rtGrp, true);
-        param1_smooth.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Aggregate Smoothness Param 1 selected");
-                config_param1 = config.config_paramAgrSmooth;
-
-            }
-        });
-        Checkbox param1_contigOverBC = new Checkbox("Contiguity/BC", param1_rtGrp, true);
-        param1_contigOverBC.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Contiguity/BC Param 1 selected");
-                config_param1 = config.config_paramContigOverBC;
-
-            }
-        });
-        
+        //Set default value
         param1_rtGrp.setSelectedCheckbox(param1_je);
         config_param1 = config.config_paramJE;
         
@@ -408,72 +313,20 @@ public class ExperimentInterface {
         f2_param1.add(param1_contigOverBC);
         f2.add(f2_param1);
         
-        //Initialise selection option for parameter 2
+        //Initialise selection options for parameter 2
         JPanel f2_param2 = new JPanel();
         f2_param2.setLayout(oneCol);
         CheckboxGroup param2_rtGrp = new CheckboxGroup();
-        Checkbox param2_je = new Checkbox("Jump Entropy", param2_rtGrp, true);
-        param2_je.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Jump Entropy Param 2 selected");
-                config_param2 = config.config_paramJE;
 
-            }
-        });
+        Checkbox param2_je = createCheckbox("Jump Entropy", param2_rtGrp, "Jump Entropy Param 2 selected", config_param2, config.config_paramJE);
+        Checkbox param2_speed = createCheckbox("Speed", param2_rtGrp, "Speed Param 2 selected", config_param2, config.config_paramSpeed);
+        Checkbox param2_contig = createCheckbox("Contiguity", param2_rtGrp, "Contiguity Param 2 selected", config_param2, config.config_paramContig);
+        Checkbox param2_clearrows = createCheckbox("Clear Rows", param2_rtGrp, "Clear Rows Param 2 selected", config_param2, config.config_paramClearRows);
+        Checkbox param2_bc = createCheckbox("Block Count", param2_rtGrp, "Block count Param 2 selected", config_param2, config.config_paramBC);
+        Checkbox param2_smooth = createCheckbox("Aggregate Smoothness", param2_rtGrp, "Aggregate Smoothness Param 2 selected", config_param2, config.config_paramAgrSmooth);
+        Checkbox param2_contigOverBC = createCheckbox("Contiguity/BC", param2_rtGrp, "Contiguity/BC Param 2 selected", config_param2, config.config_paramContigOverBC);
 
-        Checkbox param2_speed = new Checkbox("Speed", param2_rtGrp, true);
-        param2_speed.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Speed Param 2 selected");
-                config_param2 = config.config_paramSpeed;
-
-            }
-        });
-
-        Checkbox param2_contig = new Checkbox("Contiguity", param2_rtGrp, true);
-        param2_contig.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Contiguity Param 2 selected");
-                config_param2 = config.config_paramContig;
-
-            }
-        });
-        
-        Checkbox param2_clearrows = new Checkbox("Clear Rows", param2_rtGrp, true);
-        param2_clearrows.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Clear Rows Param 2 selected");
-                config_param2 = config.config_paramClearRows;
-
-            }
-        });
-        
-        Checkbox param2_bc = new Checkbox("Block Count", param2_rtGrp, true);
-        param2_bc.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Block count Param 2 selected");
-                config_param2 = config.config_paramBC;
-
-            }
-        });
-        
-        Checkbox param2_smooth = new Checkbox("Aggregate Smoothness", param2_rtGrp, true);
-        param2_smooth.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Aggregate Smoothness Param 1 selected");
-                config_param2 = config.config_paramAgrSmooth;
-
-            }
-        });
-        Checkbox param2_contigOverBC = new Checkbox("Contiguity/BC", param2_rtGrp, true);
-        param2_contigOverBC.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                System.out.println("Contiguity/BC Param 2 selected");
-                config_param2 = config.config_paramContigOverBC;
-
-            }
-        });
-
+        //Set default value
         param2_rtGrp.setSelectedCheckbox(param2_je);
         config_param2 = config.config_paramJE;
         
@@ -491,33 +344,46 @@ public class ExperimentInterface {
         return runtypePanel;
     }
 
-    public JPanel runnamepanel() {
-        JPanel algoPanel = new JPanel();
+    private JPanel runnamepanel() {
+        JPanel runnamePanel = new JPanel();
         JTextField f1 = new JTextField();
         f1.setText("Input name of run batch:");
         f1.setEditable(false);
-        algoPanel.add(f1);
+        runnamePanel.add(f1);
         JTextField f2 = new JTextField();
         f2.setPreferredSize(new Dimension(500, 20));
         f2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 batchRunName = f2.getText();
                 System.out.println("Batch Run Name: " + batchRunName);
-
             }
         });
 
-        algoPanel.add(f1);
-        algoPanel.add(f2);
-        return algoPanel;
+        runnamePanel.add(f1);
+        runnamePanel.add(f2);
+        return runnamePanel;
     }
     
-    public boolean formCompleteValidation() {
+    private boolean formCompleteValidation() {
     	if (Output_Location!=null&&algotype!=null&&config_param1!=null&&config_param2!=null) {
     		return true;
     	}
     	else {
     		return false;
     	}
+    }
+
+    private Checkbox createCheckbox(String boxName, CheckboxGroup rootGroup, String selectionText, Integer paramToSet, Integer paramValue){
+
+        Checkbox checkBox = new Checkbox(boxName, rootGroup, true);
+        checkBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                System.out.println(selectionText);
+                config_param2 = config.config_paramClearRows;
+
+            }
+        });
+
+        return checkBox;
     }
 }

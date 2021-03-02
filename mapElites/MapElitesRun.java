@@ -1,7 +1,10 @@
-package illumsearch;
+package illumsearch.mapElites;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import illumsearch.genericFunc.*;
+import illumsearch.mapElites.ElitesMap;
 
 public class MapElitesRun extends AlgoRun{
 

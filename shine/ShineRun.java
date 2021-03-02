@@ -1,8 +1,11 @@
-package illumsearch;
+package illumsearch.shine;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import illumsearch.genericFunc.*;
+import illumsearch.mapElites.ElitesMap;
 
 public class ShineRun extends AlgoRun {
 
@@ -18,7 +21,6 @@ public class ShineRun extends AlgoRun {
         try {
             levelsToFiles(initPop, "Initial Population" );
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         //System.out.println("Config:" +config);

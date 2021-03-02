@@ -1,4 +1,4 @@
-package illumsearch;
+package illumsearch.genericFunc;
 
 import java.nio.file.Path;
 

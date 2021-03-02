@@ -1,4 +1,4 @@
-package illumsearch;
+package illumsearch.genericFunc;
 
 import engine.core.MarioLevel;
 

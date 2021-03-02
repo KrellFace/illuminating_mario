@@ -1,4 +1,4 @@
-package illumsearch;
+package illumsearch.genericFunc;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -8,6 +8,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import illumsearch.mapElites.*;
 
 public abstract class AlgoRun {
 
@@ -71,7 +73,7 @@ public abstract class AlgoRun {
         return outputArchive;
     }
     //Runs the Duplicate + Remove a column method for every column if odds achieved
-    public void mutate_dupeRemove(LevelWrap inputLevel) {
+    private void mutate_dupeRemove(LevelWrap inputLevel) {
         Random random = new Random();   
         for (int x = 5; x < inputLevel.getWidth() - 1; x++) {
 
@@ -83,7 +85,7 @@ public abstract class AlgoRun {
     }
 
     //Runs the Tile Flip mutation method for every tile in a level if odds achieved
-    public void mutate_tileflip(LevelWrap inputLevel) {
+    private void mutate_tileflip(LevelWrap inputLevel) {
         Random random = new Random();       
         //y=1 to avoid tampering with level ceiling
         for (int y = 1; y < inputLevel.getHeight(); y++) {
@@ -95,7 +97,7 @@ public abstract class AlgoRun {
         }
     }
 
-    public void mapOutput(ElitesMap sMap, ArrayList < String > runHistory, String dataFolder, long runStartT, boolean onlyFit) {
+    protected void mapOutput(ElitesMap sMap, ArrayList < String > runHistory, String dataFolder, long runStartT, boolean onlyFit) {
 
         //System.out.println("MapOutput running with imperfect levels flag: " + impefectLevels);
 
@@ -174,7 +176,7 @@ public abstract class AlgoRun {
         }
     }
 
-    public void printArchive(ArrayList < LevelWrap > archive, String aName, boolean noisy) {
+    protected void printArchive(ArrayList < LevelWrap > archive, String aName, boolean noisy) {
         System.out.println("Total " + aName + " archive size:" + archive.size());
         float totalfitness = 0;
         float totalselectionchance = 0;

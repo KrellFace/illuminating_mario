@@ -1,6 +1,8 @@
-package illumsearch;
+package illumsearch.shine;
 
 import java.util.ArrayList;
+
+import illumsearch.genericFunc.*;
 
 public class ShineTree {
 	

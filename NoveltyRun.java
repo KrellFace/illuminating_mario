@@ -5,6 +5,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+
+import illumsearch.genericFunc.*;
+
 public class NoveltyRun extends AlgoRun{
 
 	public NoveltyRun(List<LevelWrap> initPop, IllumConfig config) {
@@ -23,6 +26,7 @@ public class NoveltyRun extends AlgoRun{
         //Set initial population as current pop
         currentPopulation.addAll(initPop);
 
+        /*
         //Run until we reach max generations
         do {
             System.out.println("STARTING GENERATION " + Gen_Count);
@@ -69,6 +73,7 @@ public class NoveltyRun extends AlgoRun{
         //Create the output from the map
         ElitesMap endMap = new ElitesMap(tree.root.getAllChildLevels(), config.mapSize, param1Min, param1Max, param2Min, param2Max);
         mapOutput(endMap, runHistory, config.getRunName()+" - Final Data", runStartTime, false);
+        */
 	}
 	
 	public void setNovelty(ArrayList<LevelWrap> currentPop, ArrayList<LevelWrap> novelArchive) {
@@ -78,7 +83,7 @@ public class NoveltyRun extends AlgoRun{
 	}
 	
 	public void getNormalisedDistance(LevelWrap l1, LevelWrap l2) {
-		float normFactor = ((config.get))
+		//float normFactor = ((config.get))
 	}
 
 }

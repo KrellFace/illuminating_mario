@@ -1,4 +1,4 @@
-package illumsearch;
+package illumsearch.genericFunc;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package illumsearch;
+package illumsearch.genericFunc;
 
 
 import java.io.File;
@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+
+import illumsearch.shine.*;
+import illumsearch.mapElites.*;
 
 public class ExperimentRun
 {   

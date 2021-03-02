@@ -1,4 +1,4 @@
-package illumsearch;
+package illumsearch.mapElites;
 
 import java.io.FileWriter;
 import java.nio.file.Files;
@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+
+import illumsearch.genericFunc.*;
 
 public class ElitesMap {
     
