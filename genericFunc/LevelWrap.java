@@ -35,6 +35,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
     private float contigScore;
     private float agrSmooth;
     private Integer clearRows;
+    private int totalJumps;
     private float jumpEntropy;
     private float selectionChance;
     private int widthCells;
@@ -73,12 +74,13 @@ public class LevelWrap implements Comparable < LevelWrap > {
     }
 
 	//Constructor used for creating with all parameters, facilitating cloning
-    public LevelWrap(String name, IllumConfig config, IllumMarioLevel level, Float fitness, Integer blockCount, Integer clearRows, Float jumpEntropy, Float selectionChoice, int width, float timeTaken, float marioSpeed) {
+    public LevelWrap(String name, IllumConfig config, IllumMarioLevel level, Float fitness, Integer blockCount, Integer clearRows, Integer totalJumps, Float jumpEntropy, Float selectionChoice, int width, float timeTaken, float marioSpeed) {
         this.config = config;
         this.name = name;
         this.selectionChance = 0;
         this.level = level;
         this.fitness = fitness;
+        this.totalJumps = totalJumps;
         this.jumpEntropy = jumpEntropy;
         this.widthCells = level.tileWidth;
         this.heightCells = level.tileHeight;
@@ -524,6 +526,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
         //System.out.println("Number of jumps: " + result.getNumJumps() + " Number of actions: " + result.getAgentEvents().size());
 
+        totalJumps = result.getNumJumps();
         jumpEntropy = (float) result.getNumJumps() / (float) result.getAgentEvents().size();
         //System.out.println("Time spent (in ticks): " + (ticksPerRun-(result.getRemainingTime()/1000)) + " Completion percentage: " + result.getCompletionPercentage() + " Mario speed: " + result.getCompletionPercentage()/(ticksPerRun-(result.getRemainingTime()/1000)));
         timeTaken = (config.ticksPerRun - (result.getRemainingTime() / 1000));
@@ -563,7 +566,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
     public LevelWrap clone() {
 
-        return new LevelWrap(this.name, this.config, this.level, this.fitness, this.blockCount, this.clearRows, this.jumpEntropy, this.selectionChance, this.widthCells, this.timeTaken, this.marioSpeed);
+        return new LevelWrap(this.name, this.config, this.level, this.fitness, this.blockCount, this.clearRows, this.totalJumps, this.jumpEntropy, this.selectionChance, this.widthCells, this.timeTaken, this.marioSpeed);
 
     }
 
@@ -583,6 +586,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
         lvlwriter.println("Level Fitness: " + getFitness());
         lvlwriter.println("Level Width: " + getWidth());
         lvlwriter.println("Level Jump Entropy: " + getJumpEntropy());
+        lvlwriter.println("Level Total Jumps: " + getTotalJumps());
         lvlwriter.println("Level Block Count: " + getBlockCount());
         lvlwriter.println("Level Contiguity Score: " + getContigScore());
         lvlwriter.println("Level Contig/BC: " + (getContigScore()/getBlockCount()));
@@ -592,10 +596,21 @@ public class LevelWrap implements Comparable < LevelWrap > {
         lvlwriter.println("Level Aggregate Smoothness: " + getAggrSmooth());
         lvlwriter.close();
         
+
         //Print level wrap
         PrintWriter levelrep = new PrintWriter((levelPath + "/" + getName() + "-LevelRep.txt"), "UTF-8");
         levelrep.println(level.getStringRep());
         levelrep.close();
+
+        //Print agent run full action list
+        
+        PrintWriter agentActions = new PrintWriter((levelPath + "/" + getName() + "-AgentActions.txt"), "UTF-8");
+        //ArrayList
+        //agentActions.println(result.getAgentEvents());
+        agentActions.close();
+        
+
+        //System.out.println("Events:" + result.getAgentEvents());
 
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
@@ -676,6 +691,10 @@ public class LevelWrap implements Comparable < LevelWrap > {
         return level;
     }
 
+    public float getTotalJumps(){
+        return totalJumps;
+    }
+
     public float getJumpEntropy() {
         return jumpEntropy;
     }
@@ -734,7 +753,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
     public int compareTo(LevelWrap o) {
     	//Compare levels based on corner distance metric
-    	if (this.config.getAlgoType() == this.config.Algo_ShineCD ) {
+    	if (this.config.getAlgoType() == AlgoType.ShineCD ) {
     		//System.out.println("Comparing CD score of this level: " + this.cdscore + " to " + o.cdscore);
             if (this.cdscore - o.cdscore > 0) {
                 return 1;
@@ -744,7 +763,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
                 return -1;
             }
     	}
-    	else if (this.config.getAlgoType()== this.config.Algo_ShineHybrid) {
+    	else if (this.config.getAlgoType()== AlgoType.ShineHybrid) {
     		//System.out.println("Comparing CD score of this level: " + this.cdscore + " to " + o.cdscore);
     		float thisHybridScore = (float) (this.cdscore*this.fitness);
     		float thatHybridScore = (float) (o.cdscore*o.fitness);

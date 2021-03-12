@@ -4,21 +4,6 @@ import java.nio.file.Path;
 
 public class IllumConfig {
 	
-    public final int Algo_MapElites = 1;
-    public final int Algo_ShineCD = 2;
-    public final int Algo_ShineFit = 3;
-    public final int Algo_ShineHybrid = 4;
-	
-    //Config options for each run
-    public final int config_paramJE	= 0;
-    public final int config_paramWidth	= 1;
-    public final int config_paramSpeed	= 2;
-    public final int config_paramContig	= 3;
-    public final int config_paramBC	= 4;
-    public final int config_paramClearRows = 5;
-    public final int config_paramAgrSmooth = 6;
-    public final int config_paramContigOverBC = 7;
-    
     //Fixed min and max level parameters for map generation (hard coded based around a level width of 100)
     public final float config_map_minBC = 200f;
     public final float config_map_maxBC = 550f; 
@@ -36,8 +21,10 @@ public class IllumConfig {
     public final float config_map_maxClearRows = 16;
     public final float config_map_minAgrSmooth = 0;
     public final float config_map_maxAgrSmooth = 300;
-    public final float config_paramContigOverBCmin = 0.0f;
-    public final float config_paramContigOverBCmax = 2f;
+    public final float config_map_ContigOverBCmin = 0.0f;
+    public final float config_map_ContigOverBCmax = 2f;
+	public final float config_map_TotalJumpsmin = 0;
+	public final float config_map_TotalJumpsmax = 50;
     
     public final float config_map_minWidth = 50f;
     public final float config_map_maxWidth = 150f;
@@ -68,10 +55,10 @@ public class IllumConfig {
     public final int initialSeed = 100;
     
     //Parameters for current run
-    private int algoType;
+    private AlgoType algoType;
     private int numOffspring;
-    private int runParam1;
-    private int runParam2;
+    private BCType runParam1;
+    private BCType runParam2;
     private float param1Min;
     private float param1Max;
     private float param2Min;
@@ -79,7 +66,7 @@ public class IllumConfig {
     private Path runPath;
     private String runName;
     
-    public IllumConfig(int algoType, int numOffspring, int runParam1, int runParam2, Path runPath, String runName) {
+    public IllumConfig(AlgoType algoType, int numOffspring, BCType runParam1, BCType runParam2, Path runPath, String runName) {
     	this.algoType = algoType;
     	this.numOffspring = numOffspring;
     	this.runParam1 = runParam1;
@@ -92,22 +79,24 @@ public class IllumConfig {
     public float getParam1(LevelWrap inputLevel) {
 
         switch(runParam1) {
-    	case config_paramBC:
+    	case BlockCount:
     		return inputLevel.getBlockCount();
-    	case config_paramWidth:
+    	case Width:
     		return inputLevel.getWidth();
-    	case config_paramSpeed:
+    	case Speed:
     		return inputLevel.getSpeed();
-    	case config_paramContig:
+    	case Contig:
     		return inputLevel.getContigScore();
-    	case config_paramJE:
+    	case JE:
     		return (Float) inputLevel.getJumpEntropy();
-    	case config_paramClearRows:
+    	case ClearRows:
     		return inputLevel.getClearRows();
-    	case config_paramAgrSmooth:
+    	case AgrSmooth:
     		return inputLevel.getAggrSmooth();
-    	case config_paramContigOverBC:
-    		return inputLevel.getContigScore()/inputLevel.getBlockCount();					   		
+    	case ContigOverBlockCount:
+    		return inputLevel.getContigScore()/inputLevel.getBlockCount();
+		case TotalJumps:
+			return inputLevel.getTotalJumps();
     	default:
     		return (Float) null;
         }
@@ -117,113 +106,123 @@ public class IllumConfig {
     public float getParam2(LevelWrap inputLevel) {
 
         switch(runParam2) {
-        	case config_paramBC:
-        		return inputLevel.getBlockCount();
-        	case config_paramWidth:
-        		return inputLevel.getWidth();
-        	case config_paramSpeed:
-        		return inputLevel.getSpeed();
-        	case config_paramContig:
-        		return inputLevel.getContigScore();
-        	case config_paramJE:
-        		return (Float) inputLevel.getJumpEntropy();
-        	case config_paramClearRows:
-        		return inputLevel.getClearRows();
-        	case config_paramAgrSmooth:
-        		return inputLevel.getAggrSmooth();
-        	case config_paramContigOverBC:
-        		return inputLevel.getContigScore()/inputLevel.getBlockCount();		
-        	default:
-        		return (Float) null;
+		case BlockCount:
+			return inputLevel.getBlockCount();
+		case Width:
+			return inputLevel.getWidth();
+		case Speed:
+			return inputLevel.getSpeed();
+		case Contig:
+			return inputLevel.getContigScore();
+		case JE:
+			return (Float) inputLevel.getJumpEntropy();
+		case ClearRows:
+			return inputLevel.getClearRows();
+		case AgrSmooth:
+			return inputLevel.getAggrSmooth();
+		case ContigOverBlockCount:
+			return inputLevel.getContigScore()/inputLevel.getBlockCount();
+		case TotalJumps:
+			return inputLevel.getTotalJumps();
+		default:
+			return (Float) null;
         }
     }
     
     private void setParamMinMax() {
     	
         switch(this.runParam1) {
-    	case config_paramBC:
+    	case BlockCount:
     		this.param1Min = this.config_map_minBC;
     		this.param1Max = this.config_map_maxBC;
     		break;
-    	case config_paramWidth:
+    	case Width:
     		this.param1Min = this.config_map_minWidth;
     		this.param1Max = this.config_map_maxWidth;
     		break;
-    	case config_paramSpeed:
+    	case Speed:
     		this.param1Min = this.config_map_minSpeed;
     		this.param1Max = this.config_map_maxSpeed;
     		break;
-    	case config_paramContig:
+    	case Contig:
     		this.param1Min = this.config_map_minContig;
     		this.param1Max = this.config_map_maxContig;
     		break;
-    	case config_paramJE:
+    	case JE:
     		this.param1Min = this.config_map_minJE;
     		this.param1Max = this.config_map_maxJE;
     		break;
-    	case config_paramClearRows:
+    	case ClearRows:
     		this.param1Min = this.config_map_minClearRows;
     		this.param1Max = this.config_map_maxClearRows;
     		break;
-    	case config_paramAgrSmooth:
+    	case AgrSmooth:
     		this.param1Min = this.config_map_minAgrSmooth;
     		this.param1Max = this.config_map_maxAgrSmooth;
     		break;
-    	case config_paramContigOverBC:
-    		this.param1Min = this.config_paramContigOverBCmin;
-    		this.param1Max = this.config_paramContigOverBCmax;
+    	case ContigOverBlockCount:
+    		this.param1Min = this.config_map_ContigOverBCmin;
+    		this.param1Max = this.config_map_ContigOverBCmax;
     		break;
+		case TotalJumps:
+			this.param1Min = this.config_map_TotalJumpsmin;
+			this.param1Max = this.config_map_TotalJumpsmax;
+			break;
     	default:
         }
         switch(this.runParam2) {
-    	case config_paramBC:
+    	case BlockCount:
     		this.param2Min = this.config_map_minBC;
     		this.param2Max = this.config_map_maxBC;
     		break;
-    	case config_paramWidth:
+    	case Width:
     		this.param2Min = this.config_map_minWidth;
     		this.param2Max = this.config_map_maxWidth;
     		break;
-    	case config_paramSpeed:
+    	case Speed:
     		this.param2Min = this.config_map_minSpeed;
     		this.param2Max = this.config_map_maxSpeed;
     		break;
-    	case config_paramContig:
+    	case Contig:
     		this.param2Min = this.config_map_minContig;
     		this.param2Max = this.config_map_maxContig;
     		break;
-    	case config_paramJE:
+    	case JE:
     		this.param2Min = this.config_map_minJE;
     		this.param2Max = this.config_map_maxJE;
     		break;
-    	case config_paramClearRows:
+    	case ClearRows:
     		this.param2Min = this.config_map_minClearRows;
     		this.param2Max = this.config_map_maxClearRows;
     		break;
-    	case config_paramAgrSmooth:
+    	case AgrSmooth:
     		this.param2Min = this.config_map_minAgrSmooth;
     		this.param2Max = this.config_map_maxAgrSmooth;
     		break;
-    	case config_paramContigOverBC:
-    		this.param2Min = this.config_paramContigOverBCmin;
-    		this.param2Max = this.config_paramContigOverBCmax;
+    	case ContigOverBlockCount:
+    		this.param2Min = this.config_map_ContigOverBCmin;
+    		this.param2Max = this.config_map_ContigOverBCmax;
     		break;
+		case TotalJumps:
+			this.param2Min = this.config_map_TotalJumpsmin;
+			this.param2Max = this.config_map_TotalJumpsmax;
+			break;
     	default:
         }
         
     }
     
-    public int getAlgoType() {
+    public AlgoType getAlgoType() {
     	return this.algoType;
     }
     public int getNumOffspring() {
     	return this.numOffspring;
     }
     public int getParam1() {
-    	return this.runParam1;
+    	return this.runParam1.getValue();
     }
     public int getParam2() {
-    	return this.runParam2;
+    	return this.runParam2.getValue();
     }
     public float getParam1Min() {
     	return this.param1Min;

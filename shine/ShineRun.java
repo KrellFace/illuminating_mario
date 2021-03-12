@@ -68,7 +68,7 @@ public class ShineRun extends AlgoRun {
             ElitesMap currMap = new ElitesMap(tree.root.getAllChildLevels(), config.mapSize,config.getParam1Min(), config.getParam1Max(), config.getParam2Min(), config.getParam2Max());
             System.out.println(currMap.toString());
             runHistory.add(Gen_Count + ", " + currMap.getCoverage() + ", " + currMap.getReliability() + ", " + currMap.getAvgFitness());
-            if (Gen_Count % 100 == 0) {
+            if (Gen_Count % 5 == 0) {
                 mapOutput(currMap, runHistory, config.getRunName()+" - Generation "+Gen_Count, runStartTime, true);
             }
 

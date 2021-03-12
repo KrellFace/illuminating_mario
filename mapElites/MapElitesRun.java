@@ -57,13 +57,13 @@ public class MapElitesRun extends AlgoRun{
             
             
             //Add to history 
-            if (iterCount%20==0) {
+            if (iterCount%10==0) {
                 System.out.println("ITERATION " + iterCount);
 
                 System.out.println(map.toString());         
                 runHistory.add(iterCount +", " + map.getCoverage() + ", " + map.getReliability() + ", " + map.getAvgFitness());
                 
-                if (iterCount%1000==0) {
+                if (iterCount%10==0) {
                     mapOutput(map, runHistory, config.getRunName()+" - Snapshot"+iterCount, runStartTime, true);
                 }
             }

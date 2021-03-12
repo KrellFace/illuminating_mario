@@ -24,7 +24,7 @@ public class ExperimentRun
     }
     
     public void run() {
-        if (runConfig.getAlgoType() == runConfig.Algo_MapElites) {
+        if (runConfig.getAlgoType()==AlgoType.MapElites) {
             try {
 				init_mapelites();
 			} catch (Exception e) {
@@ -33,7 +33,7 @@ public class ExperimentRun
 			}
             
         }
-        else if (runConfig.getAlgoType() == runConfig.Algo_ShineCD||runConfig.getAlgoType() == runConfig.Algo_ShineFit||runConfig.getAlgoType() == runConfig.Algo_ShineHybrid) {
+        else if (runConfig.getAlgoType() == AlgoType.ShineCD||runConfig.getAlgoType() == AlgoType.ShineFit||runConfig.getAlgoType() == AlgoType.ShineHybrid) {
             
             try {
 				init_shine();

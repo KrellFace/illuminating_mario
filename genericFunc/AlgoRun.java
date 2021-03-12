@@ -105,6 +105,7 @@ public abstract class AlgoRun {
 
         //In case we havent updated the run name, we dont want to lose the data
         try {
+            System.out.println("Map output try started");
             if (!Files.exists(dataFolderPath)) {
                 //System.out.println("Output folder does not exist when it should");
                 Files.createDirectory(dataFolderPath);
@@ -124,7 +125,7 @@ public abstract class AlgoRun {
             mapwriter.println("Map Avg Fitness: " + sMap.getAvgFitness());
             mapwriter.println("Run Time (hrs): " + ((System.nanoTime() - runStartT) / (1000000000f * 60f * 60f)));
             mapwriter.println("");
-            if (config.getAlgoType() != config.Algo_MapElites) {
+            if (config.getAlgoType() != AlgoType.MapElites) {
                 mapwriter.println("SHINE tree parameters-");
                 mapwriter.println("Max Vertex Reps: " + config.Max_Vertex_Reps);
                 mapwriter.println("Max Tree Depth: " + config.Max_Tree_Depth);
@@ -146,11 +147,14 @@ public abstract class AlgoRun {
             mapwriter.println("Configuration param1: " + config.getParam1() + " param 2: " + config.getParam2());
             mapwriter.close();
 
+            System.out.println("Map writer completed");
+
             //Create output files from each level in map
             sMap.createOutputFiles(dataFolderPath, dataFolder, onlyFit);
 
             //Create CSV output
             //PrintWriter historywriter = new PrintWriter((rootPath + "/" +runName+"-Full History.txt"), "UTF-8");
+            
             FileWriter historywriter = new FileWriter((dataFolderPath + "/" + dataFolder + "-Full History.csv"));
             historywriter.append("Generation");
             historywriter.append(",");
@@ -161,6 +165,8 @@ public abstract class AlgoRun {
             historywriter.append("Avg Fitness");
             historywriter.append("\n");
 
+            System.out.println("History writer completed");
+
             for (int i = 0; i < runHistory.size(); i++) {
                 historywriter.append(runHistory.get(i));
                 historywriter.append("\n");
@@ -168,6 +174,7 @@ public abstract class AlgoRun {
 
             historywriter.flush();
             historywriter.close();
+            
 
         } catch (Exception e) {
             System.out.println("Failed to create output folder struct");
