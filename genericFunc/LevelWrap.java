@@ -92,7 +92,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
     }
 
 
-    public char[][] charRep(String stringRep) {
+    private char[][] charRepFromString(String stringRep) {
 
         String[] lines = stringRep.split("\n");
 
@@ -109,7 +109,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
         return charRep;
     }
 
-    public String stringRep(char[][] levelRep) {
+    private String stringRepFromCharRep(char[][] levelRep) {
 
       String output = "";
 
@@ -134,20 +134,20 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
     }
 
-    public String genNoiseLevel(int size, Random random) {
-
+    //Generate a random level for this LevelWrap resembling random static
+    private String genNoiseLevel(int size, Random random) {
 
         char[][] charRep = new char[14][size];
 
         String space = "-";
         String block = "X";
 
-        //Build ceiling
+        //Build level ceiling
         for (int i = platformSize; i < charRep[0].length; i++) {
             charRep[0][i] = block.charAt(0);
         }
 
-        //Build initial platform
+        //Build level initial platform
         for (int i = 0; i < charRep.length; i++) {
             for (int j = 0; j < platformSize; j++) {
 
@@ -156,11 +156,10 @@ public class LevelWrap implements Comparable < LevelWrap > {
                 } else {
                     charRep[i][j] = space.charAt(0);
                 }
-
             }
         }
 
-        //Randomly tile
+        //Randomly tile level
         float tile_chance = random.nextFloat() * config.max_tile_chance;
 
         for (int i = 1; i < charRep.length; i++) {
@@ -174,15 +173,17 @@ public class LevelWrap implements Comparable < LevelWrap > {
             }
         }
 
-        return stringRep(charRep);
+        return stringRepFromCharRep(charRep);
 
     }
 
 
+    //Function for crossing over two levels 
+    /*
     public LevelWrap[] crossover(LevelWrap inputLevel) {
 
-        char[][] thisLevelRep = charRep(this.level.getStringRep());
-        char[][] inputLevelRep = charRep(inputLevel.getLevel().getStringRep());
+        char[][] thisLevelRep = charRepFromString(this.level.getStringRep());
+        char[][] inputLevelRep = charRepFromString(inputLevel.getLevel().getStringRep());
 
         //Initialise a copy of input level 1 (caller)
         char[][] output1 = new char[thisLevelRep.length][thisLevelRep[0].length];
@@ -210,28 +211,22 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
                 //Only replace cells if we are between the two crossover points
                 if (point1 < x && x < point2) {
-
-                    //System.out.println("This level y,x: " + thisLevelRep[y][x]);
-
                     output1[y][x] = inputLevelRep[y][x];
                     output2[y][x] = thisLevelRep[y][x];
-
-                    //System.out.println("This level y,x: " + thisLevelRep[y][x]);
-
                 }
             }
         }
 
         LevelWrap[] output = new LevelWrap[2];
 
-        //System.out.println("Creating new IllumLevel post crossover:");
-
-        output[0] = new LevelWrap("Output1", this.config, new IllumMarioLevel(stringRep(output1), true));
-        output[1] = new LevelWrap("Output2", this.config, new IllumMarioLevel(stringRep(output2), true));
+        output[0] = new LevelWrap("Output1", this.config, new IllumMarioLevel(stringRepFromCharRep(output1), true));
+        output[1] = new LevelWrap("Output2", this.config, new IllumMarioLevel(stringRepFromCharRep(output2), true));
 
         return output;
     }
+    */
 
+    
     //Remove random column
     public void mutate_removeColumn() {
 
@@ -246,7 +241,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
         //Only run if we are not below our min level size of 146
         int colRemove = toRemove;
 
-        char[][] levelRep = charRep(level.getStringRep());
+        char[][] levelRep = charRepFromString(level.getStringRep());
         char[][] newLevel = new char[levelRep.length][levelRep[0].length - 1];
         for (int y = 0; y < levelRep.length; y++) {
 
@@ -258,13 +253,13 @@ public class LevelWrap implements Comparable < LevelWrap > {
                     newLevel[y][col] = levelRep[y][x];
                     col += 1;
                 }
-
             }
         }
         //Create new level based on updated map
-        level = new IllumMarioLevel(stringRep(newLevel), true);
+        level = new IllumMarioLevel(stringRepFromCharRep(newLevel), true);
         updateLevelFeatures();
     }
+    
 
     public void mutate_addColumn() {
         System.out.println("Mutate add column being run");
@@ -273,7 +268,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
         int colDupe = random.nextInt(widthCells);
         //System.out.println("Duplicating column" + colDupe + ". Values to duplicate:");
 
-        char[][] levelRep = charRep(level.getStringRep());
+        char[][] levelRep = charRepFromString(level.getStringRep());
         char[][] newLevel = new char[levelRep.length][levelRep[0].length + 1];
 
         for (int y = 0; y < levelRep.length; y++) {
@@ -289,7 +284,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
         }
         //Create new level based on updated map
-        level = new IllumMarioLevel(stringRep(newLevel), true);
+        level = new IllumMarioLevel(stringRepFromCharRep(newLevel), true);
         updateLevelFeatures();
         //System.out.println("BC before column add: " + oldBC + ". After: " + level.getBlockCount());
     }
@@ -298,7 +293,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
     public void mutate_addColumn(int toAdd) {
         int colDupe = toAdd;
 
-        char[][] levelRep = charRep(level.getStringRep());
+        char[][] levelRep = charRepFromString(level.getStringRep());
         char[][] newLevel = new char[levelRep.length][levelRep[0].length + 1];
         for (int y = 0; y < levelRep.length; y++) {
 
@@ -313,11 +308,12 @@ public class LevelWrap implements Comparable < LevelWrap > {
         }
         //Create new level based on updated map
         //System.out.println("Creating new IllumLevel post mutation:");
-        level = new IllumMarioLevel(stringRep(newLevel), true);
+        level = new IllumMarioLevel(stringRepFromCharRep(newLevel), true);
         updateLevelFeatures();
     }
 
 
+    //Duplicate a random column in place and remove a random column to keep the size
     public void mutate_dupeColInPlace() {
         Random random = new Random();
         mutate_dupeColInPlace(random.nextInt(level.width));
@@ -326,7 +322,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
     public void mutate_dupeColInPlace(int colDupe) {
         //System.out.println("Dupe in place on column " + colDupe + ". On " + toString());
 
-        char[][] levelRep = charRep(level.getStringRep());
+        char[][] levelRep = charRepFromString(level.getStringRep());
         char[][] newLevel = new char[levelRep.length][levelRep[0].length + 1];
 
 
@@ -355,7 +351,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
         }
         //Create new level based on updated map
-        level = new IllumMarioLevel(stringRep(newLevel), true);
+        level = new IllumMarioLevel(stringRepFromCharRep(newLevel), true);
         //System.out.println("BC before column add: " + oldBC + ". After: " + level.getBlockCount());
         updateLevelFeatures();
     }
@@ -369,7 +365,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
         int x = random.nextInt(level.width);
         int y = random.nextInt(level.height);
 
-        char[][] levelRep = charRep(level.getStringRep());
+        char[][] levelRep = charRepFromString(level.getStringRep());
 
         boolean set = false;
 
@@ -381,12 +377,10 @@ public class LevelWrap implements Comparable < LevelWrap > {
                 set = true;
             }
         }
-        level = new IllumMarioLevel(stringRep(levelRep), true);
+        level = new IllumMarioLevel(stringRepFromCharRep(levelRep), true);
         updateLevelFeatures();
 
     }
-
-
 
     public void mutate_flipCell(int x, int y) {
 
@@ -394,7 +388,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
         Random random = new Random();
 
-        char[][] levelRep = charRep(level.getStringRep());
+        char[][] levelRep = charRepFromString(level.getStringRep());
 
         boolean set = false;
 
@@ -406,7 +400,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
                 set = true;
             }
         }
-        level = new IllumMarioLevel(stringRep(levelRep), true);
+        level = new IllumMarioLevel(stringRepFromCharRep(levelRep), true);
         updateLevelFeatures();
 
     }
@@ -415,7 +409,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
 
         //System.out.println("Mutate blockUnblock being run");
 
-        char[][] levelRep = charRep(level.getStringRep());
+        char[][] levelRep = charRepFromString(level.getStringRep());
 
         String space = "-";
         String block = "X";
@@ -427,7 +421,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
             space.charAt(0);
         }
 
-        level = new IllumMarioLevel(stringRep(levelRep), true);
+        level = new IllumMarioLevel(stringRepFromCharRep(levelRep), true);
         updateLevelFeatures();
 
     }
@@ -441,7 +435,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
     }
     public void updateLevelFeatures() {
         //this.blockCount = level.getBlockCount();
-        char[][] charRep = charRep(level.getStringRep());
+        char[][] charRep = charRepFromString(level.getStringRep());
         
         //Instantiate local feature scores
         int bc = 0;
@@ -736,7 +730,7 @@ public class LevelWrap implements Comparable < LevelWrap > {
     }
 
     public char[][] getCharRep() {
-        return charRep(this.level.getStringRep());
+        return charRepFromString(this.level.getStringRep());
     }
     
     public float getAggrSmooth() {

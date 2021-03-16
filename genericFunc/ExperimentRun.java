@@ -20,7 +20,6 @@ public class ExperimentRun
         this.runConfig = config;
         
         System.out.println(this.runConfig.toString());
-        
     }
     
     public void run() {
@@ -47,7 +46,6 @@ public class ExperimentRun
         }
     }
 
-    
     public void init_shine() throws Exception {
                  
         //List<LevelWrap> init_pop = initPopFromFolder(Input_Files);
@@ -66,7 +64,6 @@ public class ExperimentRun
         
     }
     
-    
     public ArrayList<LevelWrap> initRandomPop(int seed){
     	
     	System.out.println("Init random pop started");
@@ -76,22 +73,12 @@ public class ExperimentRun
         //Initialise the random number generator from seed that will be used to create all levels
         Random fixedRandom = new Random(seed);
                 
-        for (int i = 0; i<runConfig.Generation_Size; i++) {
-            
-            //IllumMarioLevel levelToAdd = genRandLevel(fixed_width, fixedRandom);
+        for (int i = 0; i<runConfig.Generation_Size; i++) {           
             LevelWrap sLevelToAdd = new LevelWrap(("Level " + i),this.runConfig, fixedRandom);
-            //System.out.println("Run agent about to be run in AR");
             sLevelToAdd.runAgent();
-            
-            //System.out.println("Param 2 now : " + sLevelToAdd.getParam2());
-            
-            
-            //System.out.println("Experiment Run - Level Added to init pop: " + sLevelToAdd.toString());
             outputlevels.add(sLevelToAdd.clone());      
-        }
-        
-        return outputlevels;
-        
+        }      
+        return outputlevels;        
     }
     
     public File[] getFiles(String filePath) {
@@ -100,12 +87,9 @@ public class ExperimentRun
         File rootFolder = new File(filePath);
 
         if (rootFolder.isDirectory()) {
-
             outputFiles = rootFolder.listFiles();
-
         } else
             System.err.println("Given file path not valid");
-
         return outputFiles;
     }
     
@@ -120,31 +104,18 @@ public class ExperimentRun
                 line = scanner.nextLine();
                 width = line.length();
                 lines.add(line);
-                //System.out.println(line);
             }
             a = new char[lines.size()][width];
-            //System.out.println("Arrays length (i.e level height): " + a.length);
             for (int y = 0; y < lines.size(); y++) {
-                //System.out.println("Processing line: " + lines.get(y));
                 for (int x = 0; x < width; x++) {
                     a[y][x] = lines.get(y).charAt(x);
                 }
-
-            }
-            //This is just for debugging, check that we have retried the same level
-            /*
-            for (int i = 0; i<a.length;i++) {
-                System.out.println(Arrays.toString(a[i]));
-            }
-            */
-            //System.out.println("Level length:  " + a[0].length + "Level height: " + a.length);
-            
+            }          
             scanner.close();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
         return a;
-    }
-    
+    }   
 }

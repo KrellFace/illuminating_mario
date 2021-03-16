@@ -11,14 +11,16 @@ import java.util.Random;
 
 import illumsearch.mapElites.*;
 
-public abstract class AlgoRun {
+public abstract class AlgoRunManager {
 
     protected List < LevelWrap > initPop;
     protected IllumConfig config;
 
     protected int Num_Generations;
 
-    public AlgoRun(List < LevelWrap > initPop, IllumConfig config) {
+    private GeneticOperators geneticOperators = new GeneticOperators();
+
+    public AlgoRunManager(List < LevelWrap > initPop, IllumConfig config) {
         this.initPop = initPop;
         this.config = config;
         this.Num_Generations = (config.getNumOffspring() / config.Generation_Size);
@@ -39,6 +41,28 @@ public abstract class AlgoRun {
 
     }
 
+        
+    protected ArrayList < LevelWrap > tournamentSelect(ArrayList < LevelWrap > inputArchive) {
+
+        Random random = new Random(10);
+        int iSize = inputArchive.size();
+
+        ArrayList < LevelWrap > outputArchive = new ArrayList < > ();
+
+        while (outputArchive.size() < config.Generation_Size) {
+
+            LevelWrap r1 = inputArchive.get(random.nextInt(iSize));
+            LevelWrap r2 = inputArchive.get(random.nextInt(iSize));
+            if (r1.getSelectionChance() > r2.getSelectionChance()) {
+                outputArchive.add(r1);
+            } else {
+                outputArchive.add(r2);
+            }
+        }
+        return outputArchive;
+    }
+
+    //Run crossover and mutation operators on an entire population
     public ArrayList < LevelWrap > xOverAndMutate(ArrayList < LevelWrap > inputArchive) {
 
         ArrayList < LevelWrap > outputArchive = new ArrayList < LevelWrap > ();
@@ -57,7 +81,8 @@ public abstract class AlgoRun {
             inputArchive.remove(second);
 
             if (random.nextFloat() < config.Crossover_Chance) {
-                selectedPair = selectedPair[0].crossover(selectedPair[1]);
+                //selectedPair = selectedPair[0].crossover(selectedPair[1]);
+                selectedPair = geneticOperators.crossover(selectedPair[0], selectedPair[1], config);
             }
 
             mutate_dupeRemove(selectedPair[0]);
@@ -72,9 +97,11 @@ public abstract class AlgoRun {
 
         return outputArchive;
     }
-    //Runs the Duplicate + Remove a column method for every column if odds achieved
+
+    //Runs the Duplicate + Remove a column method for every column in a level, contingent on odds
     private void mutate_dupeRemove(LevelWrap inputLevel) {
-        Random random = new Random();   
+        Random random = new Random();  
+        
         for (int x = 5; x < inputLevel.getWidth() - 1; x++) {
 
             if (random.nextFloat() < config.Dupe_Remove_Chance) {
@@ -197,7 +224,4 @@ public abstract class AlgoRun {
         }
         System.out.println(aName + " archive average fitness: " + (totalfitness / archive.size()) + ". Archive average selection chance: " + (totalselectionchance / archive.size()));
     }
-
-
-
 }

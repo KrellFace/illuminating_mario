@@ -3,31 +3,6 @@ package illumsearch.genericFunc;
 import java.nio.file.Path;
 
 public class IllumConfig {
-	
-    //Fixed min and max level parameters for map generation (hard coded based around a level width of 100)
-    public final float config_map_minBC = 200f;
-    public final float config_map_maxBC = 550f; 
-    public final float config_map_minLW = 50;
-    public final float config_map_maxLW = 150;
-    public final float config_map_minJE = 0.00f;
-    public final float config_map_maxJE = 0.08f;
-    public final float config_map_minSpeed = 0.1f;
-    public final float config_map_maxSpeed = 0.2f;
-    public final float config_map_minRTime = 0.0f;
-    public final float config_map_maxRTime = 30.0f;
-    public final float config_map_minContig = 0f;
-    public final float config_map_maxContig = 1000f;
-    public final float config_map_minClearRows = -0.1f;
-    public final float config_map_maxClearRows = 16;
-    public final float config_map_minAgrSmooth = 0;
-    public final float config_map_maxAgrSmooth = 300;
-    public final float config_map_ContigOverBCmin = 0.0f;
-    public final float config_map_ContigOverBCmax = 2f;
-	public final float config_map_TotalJumpsmin = 0;
-	public final float config_map_TotalJumpsmax = 50;
-    
-    public final float config_map_minWidth = 50f;
-    public final float config_map_maxWidth = 150f;
         
     public final float config_map_fitnessThresshold = 1.00f;
 
@@ -59,10 +34,8 @@ public class IllumConfig {
     private int numOffspring;
     private BCType runParam1;
     private BCType runParam2;
-    private float param1Min;
-    private float param1Max;
-    private float param2Min;
-    private float param2Max;
+
+
     private Path runPath;
     private String runName;
     
@@ -73,7 +46,6 @@ public class IllumConfig {
     	this.runParam2 = runParam2;
     	this.runPath = runPath;
     	this.runName = runName;
-    	this.setParamMinMax();
     }
     
     public float getParam1(LevelWrap inputLevel) {
@@ -98,7 +70,7 @@ public class IllumConfig {
 		case TotalJumps:
 			return inputLevel.getTotalJumps();
     	default:
-    		return (Float) null;
+    		return -1f;
         }
 
     }
@@ -125,92 +97,10 @@ public class IllumConfig {
 		case TotalJumps:
 			return inputLevel.getTotalJumps();
 		default:
-			return (Float) null;
+			return -1f;
         }
     }
     
-    private void setParamMinMax() {
-    	
-        switch(this.runParam1) {
-    	case BlockCount:
-    		this.param1Min = this.config_map_minBC;
-    		this.param1Max = this.config_map_maxBC;
-    		break;
-    	case Width:
-    		this.param1Min = this.config_map_minWidth;
-    		this.param1Max = this.config_map_maxWidth;
-    		break;
-    	case Speed:
-    		this.param1Min = this.config_map_minSpeed;
-    		this.param1Max = this.config_map_maxSpeed;
-    		break;
-    	case Contig:
-    		this.param1Min = this.config_map_minContig;
-    		this.param1Max = this.config_map_maxContig;
-    		break;
-    	case JE:
-    		this.param1Min = this.config_map_minJE;
-    		this.param1Max = this.config_map_maxJE;
-    		break;
-    	case ClearRows:
-    		this.param1Min = this.config_map_minClearRows;
-    		this.param1Max = this.config_map_maxClearRows;
-    		break;
-    	case AgrSmooth:
-    		this.param1Min = this.config_map_minAgrSmooth;
-    		this.param1Max = this.config_map_maxAgrSmooth;
-    		break;
-    	case ContigOverBlockCount:
-    		this.param1Min = this.config_map_ContigOverBCmin;
-    		this.param1Max = this.config_map_ContigOverBCmax;
-    		break;
-		case TotalJumps:
-			this.param1Min = this.config_map_TotalJumpsmin;
-			this.param1Max = this.config_map_TotalJumpsmax;
-			break;
-    	default:
-        }
-        switch(this.runParam2) {
-    	case BlockCount:
-    		this.param2Min = this.config_map_minBC;
-    		this.param2Max = this.config_map_maxBC;
-    		break;
-    	case Width:
-    		this.param2Min = this.config_map_minWidth;
-    		this.param2Max = this.config_map_maxWidth;
-    		break;
-    	case Speed:
-    		this.param2Min = this.config_map_minSpeed;
-    		this.param2Max = this.config_map_maxSpeed;
-    		break;
-    	case Contig:
-    		this.param2Min = this.config_map_minContig;
-    		this.param2Max = this.config_map_maxContig;
-    		break;
-    	case JE:
-    		this.param2Min = this.config_map_minJE;
-    		this.param2Max = this.config_map_maxJE;
-    		break;
-    	case ClearRows:
-    		this.param2Min = this.config_map_minClearRows;
-    		this.param2Max = this.config_map_maxClearRows;
-    		break;
-    	case AgrSmooth:
-    		this.param2Min = this.config_map_minAgrSmooth;
-    		this.param2Max = this.config_map_maxAgrSmooth;
-    		break;
-    	case ContigOverBlockCount:
-    		this.param2Min = this.config_map_ContigOverBCmin;
-    		this.param2Max = this.config_map_ContigOverBCmax;
-    		break;
-		case TotalJumps:
-			this.param2Min = this.config_map_TotalJumpsmin;
-			this.param2Max = this.config_map_TotalJumpsmax;
-			break;
-    	default:
-        }
-        
-    }
     
     public AlgoType getAlgoType() {
     	return this.algoType;
@@ -218,23 +108,25 @@ public class IllumConfig {
     public int getNumOffspring() {
     	return this.numOffspring;
     }
-    public int getParam1() {
-    	return this.runParam1.getValue();
+	
+    public String getParam1() {
+    	return this.runParam1.name();
     }
-    public int getParam2() {
-    	return this.runParam2.getValue();
+    public String getParam2() {
+    	return this.runParam2.name();
     }
+	
     public float getParam1Min() {
-    	return this.param1Min;
+    	return this.runParam1.getMinValue();
     }
     public float getParam1Max() {
-    	return this.param1Max;
+    	return this.runParam1.getMaxValue();
     }
     public float getParam2Min() {
-    	return this.param2Min;
+    	return this.runParam2.getMinValue();
     }
     public float getParam2Max() {
-    	return this.param2Max;
+    	return this.runParam2.getMaxValue();
     }
     public Path getRunPath() {
     	return this.runPath;
@@ -244,7 +136,7 @@ public class IllumConfig {
     }
     
     public String toString() {
-    	return ("IllumConfig information: AlgoType:  " + this.algoType + "; Param1: " + getParam1() + "; Param2 " + getParam2() + 
+    	return ("IllumConfig information: AlgoType:  " + this.algoType + "; Param1: " + runParam1.name() + "; Param2 " + runParam2.name() + 
     			" Param1 Min/Max: " + this.getParam1Min() + "/" + this.getParam1Max() + " Param2 Min/Max: " + this.getParam2Min() + "/" + this.getParam2Max());
     }
 

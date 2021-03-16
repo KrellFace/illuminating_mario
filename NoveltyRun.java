@@ -8,7 +8,7 @@ import java.util.List;
 
 import illumsearch.genericFunc.*;
 
-public class NoveltyRun extends AlgoRun{
+public class NoveltyRun extends AlgoRunManager{
 
 	public NoveltyRun(List<LevelWrap> initPop, IllumConfig config) {
 		super(initPop, config);

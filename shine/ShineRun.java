@@ -2,12 +2,11 @@ package illumsearch.shine;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import illumsearch.genericFunc.*;
 import illumsearch.mapElites.ElitesMap;
 
-public class ShineRun extends AlgoRun {
+public class ShineRun extends AlgoRunManager {
 
     public ShineRun(List < LevelWrap > initPop, IllumConfig config) {
         super(initPop,config);
@@ -81,26 +80,6 @@ public class ShineRun extends AlgoRun {
         ElitesMap endMap = new ElitesMap(tree.root.getAllChildLevels(), config.mapSize, config.getParam1Min(), config.getParam1Max(), config.getParam2Min(), config.getParam2Max());
         mapOutput(endMap, runHistory, config.getRunName()+" - Final Data", runStartTime, true);
 
-    }
-    
-    public ArrayList < LevelWrap > tournamentSelect(ArrayList < LevelWrap > inputArchive) {
-
-        Random random = new Random(10);
-        int iSize = inputArchive.size();
-
-        ArrayList < LevelWrap > outputArchive = new ArrayList < > ();
-
-        while (outputArchive.size() < config.Generation_Size) {
-
-            LevelWrap r1 = inputArchive.get(random.nextInt(iSize));
-            LevelWrap r2 = inputArchive.get(random.nextInt(iSize));
-            if (r1.getSelectionChance() > r2.getSelectionChance()) {
-                outputArchive.add(r1);
-            } else {
-                outputArchive.add(r2);
-            }
-        }
-        return outputArchive;
     }
 
 }

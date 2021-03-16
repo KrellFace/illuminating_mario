@@ -17,7 +17,6 @@ public class ExperimentInterface {
 	
 	private static String Default_Output_Location = "D:/IllumMarioOutputData/";
 
-	//private IllumConfig config = new IllumConfig(algoType.MapElites, 0, BCType.JE, BCType.JE, 0, 0);
     private IllumConfig config;
 
     //Instantiate objects we'll need
@@ -54,8 +53,7 @@ public class ExperimentInterface {
 
         //Setting the gridlayout of interface
         mainPanel.setLayout(new GridLayout(7, 1));
-
-
+        //Add all individual panels
         mainPanel.add(outLocPanel());
         mainPanel.add(algoPanel());
         mainPanel.add(numrunPanel());
@@ -63,13 +61,12 @@ public class ExperimentInterface {
         mainPanel.add(runtypePanel());
         mainPanel.add(runnamepanel());
 
-
         JButton submitButton = new JButton("Initialize Experiment");
         submitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (formCompleteValidation()) {
 	            	System.out.println("Form submitted. Initialising Experiments");
-	                System.out.println("Algorithm type: " + algoType.getValue() + ". Num Runs: " + numberofruns + " param1: " + config_param1 + " and param2: " + config_param2 );
+	                System.out.println("Algorithm type: " + algoType.name() + ". Num Runs: " + numberofruns + " param1: " + config_param1 + " and param2: " + config_param2 );
 	
 	                mainFrame.dispatchEvent(new WindowEvent(mainFrame, WindowEvent.WINDOW_CLOSING));
 	
@@ -83,8 +80,7 @@ public class ExperimentInterface {
 	                    } catch (IOException e1) {
 	                        // TODO Auto-generated catch block
 	                        e1.printStackTrace();
-	                    }
-	                                  
+	                    }	                                  
 	                    config = new IllumConfig(algoType, numberoffspring, config_param1, config_param2, runPath, runName);
 	
 	                    ExperimentRun currRun = new ExperimentRun(config);
@@ -260,7 +256,8 @@ public class ExperimentInterface {
                 	s+=("\n" + "MAP Elites Iterations: " + Integer.toString(offspringSlider.getValue()/2));
                 }
                 else if (algoType==AlgoType.ShineCD||algoType==AlgoType.ShineFit||algoType==AlgoType.ShineHybrid){
-                	s+=("\n" + "SHINE Gens (Size: " + config.Generation_Size + "): " + Integer.toString(offspringSlider.getValue()/config.Generation_Size));
+                    int genSize = 20;
+                	s+=("\n" + "SHINE Gens (Size: " + genSize + "): " + Integer.toString(offspringSlider.getValue()/genSize));
                 }
                 s+=("\n" + "Estimated runtime: " + Double.toString(offspringSlider.getValue()*minutesPerLevel) + " minutes. Hours: " + String.format("%.2f", (offspringSlider.getValue()*minutesPerLevel)/60));
                 offspringDetailsPanel.setText(s);
@@ -289,59 +286,23 @@ public class ExperimentInterface {
         JPanel f2_param1 = new JPanel();
         GridLayout oneCol = new GridLayout(0,1);
         f2_param1.setLayout(oneCol);
-        CheckboxGroup param1_rtGrp = new CheckboxGroup();
+        //CheckboxGroup param1_rtGrp = new CheckboxGroup();
 
-        Checkbox param1_je = createParamCheckbox("Jump Entropy", param1_rtGrp, "Jump Entropy Param 1 selected", 1, BCType.JE);
-        Checkbox param1_speed = createParamCheckbox("Speed", param1_rtGrp, "Speed Param 1 selected", 1, BCType.Speed);
-        Checkbox param1_contig = createParamCheckbox("Contiguity", param1_rtGrp, "Contiguity Param 1 selected", 1, BCType.Contig);
-        Checkbox param1_clearrows = createParamCheckbox("Clear Rows", param1_rtGrp, "Clear Rows Param 1 selected", 1, BCType.ClearRows);
-        Checkbox param1_bc = createParamCheckbox("Block Count", param1_rtGrp, "Block count Param 1 selected", 1, BCType.BlockCount);
-        Checkbox param1_smooth = createParamCheckbox("Aggregate Smoothness", param1_rtGrp, "Aggregate Smoothness Param 1 selected", 1, BCType.AgrSmooth);
-        Checkbox param1_contigOverBC = createParamCheckbox("Contiguity/BC", param1_rtGrp, "Contiguity/BC Param 1 selected", 1, BCType.ContigOverBlockCount);
-        Checkbox param1_totalJumps = createParamCheckbox("Total Jumps", param1_rtGrp, "Total Jumps Param 1 selected", 1, BCType.TotalJumps);
-        
-        //Set default value
-        param1_rtGrp.setSelectedCheckbox(param1_je);
-        config_param1 = BCType.JE;
-        
-        f2_param1.add(param1_je);
-        f2_param1.add(param1_contig);
-        f2_param1.add(param1_speed);
-        //f2_param1.add(param1_clearrows);
-        f2_param1.add(param1_bc);
-        //f2_param1.add(param1_smooth);
-        //f2_param1.add(param1_contigOverBC);
-        f2_param1.add(param1_totalJumps);
-        f2.add(f2_param1);
-        
         //Initialise selection options for parameter 2
         JPanel f2_param2 = new JPanel();
         f2_param2.setLayout(oneCol);
-        CheckboxGroup param2_rtGrp = new CheckboxGroup();
+        //CheckboxGroup param2_rtGrp = new CheckboxGroup();
 
-        //ArrayList<Checkbox> param1Checkboxes = new ArrayList<Checkbox>();
+        ArrayList<BCType> bcsToAdd = new ArrayList<BCType>();
+        bcsToAdd.add(BCType.JE);
+        bcsToAdd.add(BCType.Speed);
+        bcsToAdd.add(BCType.Contig);
+        bcsToAdd.add(BCType.BlockCount);
+        bcsToAdd.add(BCType.TotalJumps);
 
-        Checkbox param2_je = createParamCheckbox("Jump Entropy", param2_rtGrp, "Jump Entropy Param 2 selected", 2, BCType.JE);
-        Checkbox param2_speed = createParamCheckbox("Speed", param2_rtGrp, "Speed Param 2 selected", 2, BCType.Speed);
-        Checkbox param2_contig = createParamCheckbox("Contiguity", param2_rtGrp, "Contiguity Param 2 selected", 2, BCType.Contig);
-        Checkbox param2_clearrows = createParamCheckbox("Clear Rows", param2_rtGrp, "Clear Rows Param 2 selected", 2, BCType.ClearRows);
-        Checkbox param2_bc = createParamCheckbox("Block Count", param2_rtGrp, "Block count Param 2 selected", 2, BCType.BlockCount);
-        Checkbox param2_smooth = createParamCheckbox("Aggregate Smoothness", param2_rtGrp, "Aggregate Smoothness Param 2 selected", 2, BCType.AgrSmooth);
-        Checkbox param2_contigOverBC = createParamCheckbox("Contiguity/BC", param2_rtGrp, "Contiguity/BC Param 2 selected", 2, BCType.ContigOverBlockCount);
-        Checkbox param2_totalJumps = createParamCheckbox("Total Jumps", param2_rtGrp, "Total Jumps Param 2 selected", 2, BCType.TotalJumps);
+        createBCCheckBoxes(bcsToAdd, f2_param1, f2_param2);
 
-        //Set default value
-        param2_rtGrp.setSelectedCheckbox(param2_je);
-        config_param2 = BCType.JE;
-        
-        f2_param2.add(param2_je);
-        f2_param2.add(param2_contig);
-        f2_param2.add(param2_speed);
-        //f2_param2.add(param2_clearrows);
-        f2_param2.add(param2_bc);
-        //f2_param2.add(param2_smooth);
-        //f2_param2.add(param2_contigOverBC);
-        f2_param2.add(param2_totalJumps);
+        f2.add(f2_param1);
         f2.add(f2_param2);
         
         runtypePanel.add(f2);
@@ -377,6 +338,35 @@ public class ExperimentInterface {
     	}
     }
 
+    
+    private void createBCCheckBoxes(ArrayList<BCType> allBCs, JPanel param1BCs, JPanel param2BCs){
+
+        //Initialise checkbox groups for BC params 1 and 2
+        CheckboxGroup param1_rtGrp = new CheckboxGroup();
+        CheckboxGroup param2_rtGrp = new CheckboxGroup();
+
+        //Initialise storage for all paramCheckboxes
+        //Stored so we can set defaults at the end of loop, bit of a hack
+        ArrayList<Checkbox> param1Boxes = new ArrayList<Checkbox>();
+        ArrayList<Checkbox> param2Boxes = new ArrayList<Checkbox>();
+
+        allBCs.forEach(bct ->{
+            Checkbox cb1 = createParamCheckbox(bct.getBCName(), param1_rtGrp, bct.getBCName() + " Param 1 selected", 1, bct);
+            param1BCs.add(cb1);
+            param1Boxes.add(cb1);
+            Checkbox cb2 = createParamCheckbox(bct.getBCName(), param2_rtGrp, bct.getBCName() + " Param 2 selected", 2, bct);
+            param2BCs.add(cb2);
+            param2Boxes.add(cb2);           
+        });
+
+        //Set Defaults
+        param1_rtGrp.setSelectedCheckbox(param1Boxes.get(0));
+        config_param1 = allBCs.get(0);
+        param2_rtGrp.setSelectedCheckbox(param2Boxes.get(0));
+        config_param2 = allBCs.get(0);
+
+    }
+
     private Checkbox createAlgoCheckbox(String boxName, CheckboxGroup rootGroup, String selectionText, AlgoType val){
 
         Checkbox checkBox = new Checkbox(boxName, rootGroup, true);
@@ -405,7 +395,6 @@ public class ExperimentInterface {
 
             }
         });
-
         return checkBox;
     }
 }

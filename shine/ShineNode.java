@@ -13,7 +13,7 @@ public class ShineNode {
     private ShineTree tree;
     
     //Store whether a node is topleft (TL), topright (TR), bottomleft (BL), bottomright(BR) or root
-    private String nodeType;
+    private ShineNodeType nodeType;
     
     //Storing the parameter ranges for node
     private float param1Min;
@@ -21,17 +21,13 @@ public class ShineNode {
     
     private float param2Min;
     private float param2Max;
-    
-    //Store the min and max values of current representative levels at node
-    private float repBCMin = 10000f;
-    private float repBCMax = 0f;
 
     private ArrayList < ShineNode > children = new ArrayList < > ();
 
     private ShineNode  parent;
 
     //Constructor for creating child nodes
-    public ShineNode(ShineTree tree, int depth, ShineNode parent, String nodeType,  float param1Min, float param1Max, float param2Min, float param2Max) {
+    public ShineNode(ShineTree tree, int depth, ShineNode parent, ShineNodeType nodeType,  float param1Min, float param1Max, float param2Min, float param2Max) {
         this.tree = tree;
         this.depth = depth;
         this.parent = parent;
@@ -46,7 +42,7 @@ public class ShineNode {
     public ShineNode(ShineTree tree, float param1Min, float param1Max, float param2Min, float param2Max) {
         this.tree = tree;
         this.parent = null;
-        this.nodeType = "root";
+        this.nodeType = ShineNodeType.RootNode;
         this.depth = 0;
         this.param1Min = param1Min;
         this.param1Max = param1Max;
@@ -55,13 +51,11 @@ public class ShineNode {
     }
 
     public ShineNode addChild(ShineNode child) {
-        //child.setParent(this);
         this.children.add(child);
         return child;
     }
 
     public void addChildren(List <ShineNode> children) {
-        //children.forEach(each -> each.setParent(this));
         this.children.addAll(children);
     }
     
@@ -98,10 +92,14 @@ public class ShineNode {
                 float windowParam2 = (param2Max - param2Min)/2;
                 
                 //GENERIC
-                ShineNode BL = addChild(new ShineNode(tree, depth+1, this, "BL", param1Min, (param1Min+windowParam1), param2Min, (param2Min+windowParam2)));
-                ShineNode TL = addChild(new ShineNode(tree, depth+1, this, "TL", param1Min, (param1Min+windowParam1), (param2Min+windowParam2), param2Max));
-                ShineNode BR = addChild(new ShineNode(tree, depth+1, this, "BR", (param1Min+windowParam1), param1Max, param2Min, (param2Min+windowParam2)));
-                ShineNode TR = addChild(new ShineNode(tree, depth+1, this, "TR", (param1Min+windowParam1), param1Max, (param2Min+windowParam2), param2Max));
+                //BottomLeft Node
+                addChild(new ShineNode(tree, depth+1, this, ShineNodeType.BottomLeft, param1Min, (param1Min+windowParam1), param2Min, (param2Min+windowParam2)));
+                //TopLeft Node
+                addChild(new ShineNode(tree, depth+1, this, ShineNodeType.TopLeft, param1Min, (param1Min+windowParam1), (param2Min+windowParam2), param2Max));
+                //BottomRight Node
+                addChild(new ShineNode(tree, depth+1, this, ShineNodeType.BottomRight, (param1Min+windowParam1), param1Max, param2Min, (param2Min+windowParam2)));
+                //TopRight Node
+                addChild(new ShineNode(tree, depth+1, this, ShineNodeType.TopRight, (param1Min+windowParam1), param1Max, (param2Min+windowParam2), param2Max));
                 
                 for (int i = 0; i<LevelWraps.size(); i++) {
                     for (int y = 0; y<this.children.size(); y++)
@@ -194,6 +192,7 @@ public class ShineNode {
         return archiveReps;
     }
     
+    /*
     public void setMinMaxRepValues() {
         
         ArrayList<LevelWrap> allLevels = this.getAllChildLevels();
@@ -210,6 +209,7 @@ public class ShineNode {
         //System.out.println("Min BC: " + this.repBCMin + ", Max BC: " + this.repBCMax);
         
     }
+    */
     
     private void setLevelCDscore() {
         
@@ -223,7 +223,7 @@ public class ShineNode {
             //System.out.println(level.toString());
             switch(this.nodeType) {
             
-                case "TL":
+                case TopLeft:
                     
                     /*
                     System.out.println("Cell is in top left with P1Min/Max/P2Min/Max " + this.param1Min + "/"+this.param1Max + "/" + this.param2Min + "/" + this.param2Max);
@@ -234,7 +234,7 @@ public class ShineNode {
                     */
                     level.setCDscore(getPythagC((this.param1Max-level.getParam1()),(level.getParam2()-this.param2Min)*normalisationFactor));
                     break;
-                case "TR":
+                case TopRight:
                     
                     /*
                     System.out.println("Cell is in top right with P1Min/Max/P2Min/Max " + this.param1Min + "/"+this.param1Max + "/" + this.param2Min + "/" + this.param2Max);
@@ -245,7 +245,7 @@ public class ShineNode {
                     */
                     level.setCDscore(getPythagC((level.getParam1()-this.param1Min),(level.getParam2()-this.param2Min)*normalisationFactor));
                     break;
-                case "BL":
+                case BottomLeft:
                     /*
                     System.out.println("Cell is in bottom left with P1Min/Max/P2Min/Max " + this.param1Min + "/"+this.param1Max + "/" + this.param2Min + "/" + this.param2Max);
                     System.out.println("This level has param1: " + level.getParam1()+ " and param2: " + level.getParam2());
@@ -255,7 +255,7 @@ public class ShineNode {
                     */
                     level.setCDscore(getPythagC((this.param1Max-level.getParam1()),this.param2Max-level.getParam2())*normalisationFactor);
                     break;
-                case "BR":
+                case BottomRight:
                     /*
                     System.out.println("Cell is in bottom right with P1Min/Max/P2Min/Max " + this.param1Min + "/"+this.param1Max + "/" + this.param2Min + "/" + this.param2Max);
                     System.out.println("This level has param1: " + level.getParam1()+ " and param2: " + level.getParam2());
