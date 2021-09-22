@@ -1,4 +1,4 @@
-package illumsearch.genericFunc;
+package illuminating_mario.genericFunc;
 
 import java.io.File;
 import java.io.IOException;

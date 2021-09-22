@@ -1,4 +1,4 @@
-package illumsearch.genericFunc;
+package illuminating_mario.genericFunc;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import illumsearch.mapElites.*;
+import illuminating_mario.mapElites.*;
 
 public abstract class AlgoRunManager {
 

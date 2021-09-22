@@ -1,4 +1,4 @@
-package illumsearch.genericFunc;
+package illuminating_mario.genericFunc;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

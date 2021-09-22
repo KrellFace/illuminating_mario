@@ -1,10 +1,10 @@
-package illumsearch.shine;
+package illuminating_mario.shine;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import illumsearch.genericFunc.*;
-import illumsearch.mapElites.ElitesMap;
+import illuminating_mario.genericFunc.*;
+import illuminating_mario.mapElites.ElitesMap;
 
 public class ShineRun extends AlgoRunManager {
 

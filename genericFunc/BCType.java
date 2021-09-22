@@ -1,4 +1,4 @@
-package illumsearch.genericFunc;
+package illuminating_mario.genericFunc;
 
 public enum BCType {
 

@@ -1,8 +1,8 @@
-package illumsearch.shine;
+package illuminating_mario.shine;
 
 import java.util.ArrayList;
 
-import illumsearch.genericFunc.*;
+import illuminating_mario.genericFunc.*;
 
 public class ShineTree {
 	

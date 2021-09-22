@@ -1,4 +1,4 @@
-package illumsearch.genericFunc;
+package illuminating_mario.genericFunc;
 
 
 import java.io.File;
@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
-import illumsearch.shine.*;
-import illumsearch.mapElites.*;
+import illuminating_mario.shine.*;
+import illuminating_mario.mapElites.*;
 
 public class ExperimentRun
 {   

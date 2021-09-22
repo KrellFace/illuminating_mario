@@ -1,9 +1,9 @@
-package illumsearch.mapElites;
+package illuminating_mario.mapElites;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import illumsearch.genericFunc.*;
+import illuminating_mario.genericFunc.*;
 
 public class MapElitesRun extends AlgoRunManager{
 

@@ -1,4 +1,4 @@
-package illumsearch.mapElites;
+package illuminating_mario.mapElites;
 
 import java.io.FileWriter;
 import java.nio.file.Files;
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import illumsearch.genericFunc.*;
+import illuminating_mario.genericFunc.*;
 
 public class ElitesMap {
     

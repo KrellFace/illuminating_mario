@@ -1,4 +1,4 @@
-package illumsearch;
+package illuminating_mario;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import illumsearch.genericFunc.*;
+import illuminating_mario.genericFunc.*;
 
 public class NoveltyRun extends AlgoRunManager{
 

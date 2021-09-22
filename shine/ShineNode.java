@@ -1,10 +1,10 @@
-package illumsearch.shine;
+package illuminating_mario.shine;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import illumsearch.genericFunc.*;
+import illuminating_mario.genericFunc.*;
 
 public class ShineNode {
 

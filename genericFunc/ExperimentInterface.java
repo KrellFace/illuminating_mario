@@ -1,4 +1,4 @@
-package illumsearch.genericFunc;
+package illuminating_mario.genericFunc;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
