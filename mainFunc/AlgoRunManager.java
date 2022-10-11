@@ -1,4 +1,4 @@
-package illuminating_mario.genericFunc;
+package illuminating_mario.mainFunc;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -13,14 +13,14 @@ import illuminating_mario.mapElites.*;
 
 public abstract class AlgoRunManager {
 
-    protected List < LevelWrap > initPop;
+    protected List < IllumLevelWrap > initPop;
     protected IllumConfig config;
 
     protected int Num_Generations;
 
     private GeneticOperators geneticOperators = new GeneticOperators();
 
-    public AlgoRunManager(List < LevelWrap > initPop, IllumConfig config) {
+    public AlgoRunManager(List < IllumLevelWrap > initPop, IllumConfig config) {
         this.initPop = initPop;
         this.config = config;
         this.Num_Generations = (config.getNumOffspring() / config.Generation_Size);
@@ -29,12 +29,12 @@ public abstract class AlgoRunManager {
     public abstract void run() throws Exception;
 
 
-    public void levelsToFiles(List < LevelWrap > init_pop, String folder) throws Exception {
+    public void levelsToFiles(List < IllumLevelWrap > init_pop, String folder) throws Exception {
 
         Path rootPath = Paths.get(config.getRunPath() + "/" + folder);
         Files.createDirectory(rootPath);
 
-        for (LevelWrap level: init_pop) {
+        for (IllumLevelWrap level: init_pop) {
             Path levelFolder = Paths.get(rootPath + "/" + level.getName());
             level.createLevelFiles(levelFolder);
         }
@@ -42,17 +42,17 @@ public abstract class AlgoRunManager {
     }
 
         
-    protected ArrayList < LevelWrap > tournamentSelect(ArrayList < LevelWrap > inputArchive) {
+    protected ArrayList < IllumLevelWrap > tournamentSelect(ArrayList < IllumLevelWrap > inputArchive) {
 
         Random random = new Random(10);
         int iSize = inputArchive.size();
 
-        ArrayList < LevelWrap > outputArchive = new ArrayList < > ();
+        ArrayList < IllumLevelWrap > outputArchive = new ArrayList < > ();
 
         while (outputArchive.size() < config.Generation_Size) {
 
-            LevelWrap r1 = inputArchive.get(random.nextInt(iSize));
-            LevelWrap r2 = inputArchive.get(random.nextInt(iSize));
+            IllumLevelWrap r1 = inputArchive.get(random.nextInt(iSize));
+            IllumLevelWrap r2 = inputArchive.get(random.nextInt(iSize));
             if (r1.getSelectionChance() > r2.getSelectionChance()) {
                 outputArchive.add(r1);
             } else {
@@ -63,15 +63,15 @@ public abstract class AlgoRunManager {
     }
 
     //Run crossover and mutation operators on an entire population
-    public ArrayList < LevelWrap > xOverAndMutate(ArrayList < LevelWrap > inputArchive) {
+    public ArrayList < IllumLevelWrap > xOverAndMutate(ArrayList < IllumLevelWrap > inputArchive) {
 
-        ArrayList < LevelWrap > outputArchive = new ArrayList < LevelWrap > ();
+        ArrayList < IllumLevelWrap > outputArchive = new ArrayList < IllumLevelWrap > ();
 
         Random random = new Random();
 
         //Loop through archive selecting random pairs
         while (inputArchive.size() > 0) {
-            LevelWrap[] selectedPair = new LevelWrap[2];
+            IllumLevelWrap[] selectedPair = new IllumLevelWrap[2];
             int first = random.nextInt(inputArchive.size());
             selectedPair[0] = inputArchive.get(first);
             inputArchive.remove(first);
@@ -99,7 +99,7 @@ public abstract class AlgoRunManager {
     }
 
     //Runs the Duplicate + Remove a column method for every column in a level, contingent on odds
-    private void mutate_dupeRemove(LevelWrap inputLevel) {
+    private void mutate_dupeRemove(IllumLevelWrap inputLevel) {
         Random random = new Random();  
         
         for (int x = 5; x < inputLevel.getWidth() - 1; x++) {
@@ -112,7 +112,7 @@ public abstract class AlgoRunManager {
     }
 
     //Runs the Tile Flip mutation method for every tile in a level if odds achieved
-    private void mutate_tileflip(LevelWrap inputLevel) {
+    private void mutate_tileflip(IllumLevelWrap inputLevel) {
         Random random = new Random();       
         //y=1 to avoid tampering with level ceiling
         for (int y = 1; y < inputLevel.getHeight(); y++) {
@@ -210,7 +210,7 @@ public abstract class AlgoRunManager {
         }
     }
 
-    protected void printArchive(ArrayList < LevelWrap > archive, String aName, boolean noisy) {
+    protected void printArchive(ArrayList < IllumLevelWrap > archive, String aName, boolean noisy) {
         System.out.println("Total " + aName + " archive size:" + archive.size());
         float totalfitness = 0;
         float totalselectionchance = 0;

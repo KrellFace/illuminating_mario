@@ -2,7 +2,7 @@ package illuminating_mario.shine;
 
 import java.util.ArrayList;
 
-import illuminating_mario.genericFunc.*;
+import illuminating_mario.mainFunc.*;
 
 public class ShineTree {
 	
@@ -21,7 +21,7 @@ public class ShineTree {
 		this.maxReps = maxReps;
 	}
 	
-	public ArrayList<LevelWrap> createArchive(){
+	public ArrayList<IllumLevelWrap> createArchive(){
 		return root.archiveReps();
 	}
 }

@@ -1,8 +1,13 @@
-package illuminating_mario.genericFunc;
+package illuminating_mario;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import illuminating_mario.mainFunc.AlgoType;
+import illuminating_mario.mainFunc.BCType;
+import illuminating_mario.mainFunc.ExperimentRun;
+import illuminating_mario.mainFunc.IllumConfig;
 
 import java.awt.*;
 import java.awt.event.*;

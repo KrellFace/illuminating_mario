@@ -10,13 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import illuminating_mario.genericFunc.*;
+import illuminating_mario.mainFunc.*;
 
 public class ElitesMap {
     
     public static final float fitnessThresshold = 1.00f;
     
-    private HashMap<List<Integer>, LevelWrap> map;
+    private HashMap<List<Integer>, IllumLevelWrap> map;
     private float[] param1Intervals;
     private float[] param2Intervals;
     private int mapSize;
@@ -30,7 +30,7 @@ public class ElitesMap {
     private float param2Max;
     
     //Constructor to initialise with levels
-    public ElitesMap (ArrayList<LevelWrap> allLevels, int mapSize, float param1Min, float param1Max, float param2Min, float param2Max){
+    public ElitesMap (ArrayList<IllumLevelWrap> allLevels, int mapSize, float param1Min, float param1Max, float param2Min, float param2Max){
         
     	this(mapSize, param1Min, param1Max, param2Min, param2Max);
         this.addLevels(allLevels);
@@ -45,7 +45,7 @@ public class ElitesMap {
         this.param1Max = param1Max;
         this.param2Min = param2Min;
         this.param2Max = param2Max;
-        this.map  =  new HashMap<List<Integer>, LevelWrap>();
+        this.map  =  new HashMap<List<Integer>, IllumLevelWrap>();
         this.mapSize = mapSize;
         this.param1Intervals = new float[mapSize];
         float param1Iter = param1Min;
@@ -78,7 +78,7 @@ public class ElitesMap {
         //System.out.println("Map size: " + map.size());                
     }
      
-    private void addLevels(ArrayList<LevelWrap> levels) {
+    private void addLevels(ArrayList<IllumLevelWrap> levels) {
         //System.out.println("Param 1 & 2 max: " + this.param1Max + "/" + this.param2Max);
         for (int curLev = 0; curLev<levels.size();curLev++) {
             
@@ -87,7 +87,7 @@ public class ElitesMap {
         }
     }
     
-    public void addLevel(LevelWrap level) {
+    public void addLevel(IllumLevelWrap level) {
         //Locating level within JumpEnt and BlockCount axis
         boolean param1Set = false;
         boolean param2Set = false;
@@ -175,7 +175,7 @@ public class ElitesMap {
                 List<Integer> cell = Arrays.asList(i, j);
                 //If there is a level at the cell, create a level rep in the folder 
                 if (map.get(cell) != null) {
-                    LevelWrap level = map.get(cell);
+                    IllumLevelWrap level = map.get(cell);
                     //Add fitness to heatmap
                     heatMap.append( level.getFitness().toString());
                     
@@ -210,7 +210,7 @@ public class ElitesMap {
         float totalFit = 0;
         
         //System.out.println("Updating fit count");
-        for (LevelWrap value : map.values()) {
+        for (IllumLevelWrap value : map.values()) {
             
             if (value!=null) {
                     //System.out.println("Level " + value.getName() + " with fitness " + value.getFitness());
@@ -227,10 +227,10 @@ public class ElitesMap {
         averageFitness = totalFit/(mapSize*mapSize);
     }
     
-    public LevelWrap getRandomLevel() {
+    public IllumLevelWrap getRandomLevel() {
         
         boolean retrieved = false;
-        LevelWrap level = null;
+        IllumLevelWrap level = null;
         
         //System.out.println("Starting get random level");
         
@@ -253,12 +253,12 @@ public class ElitesMap {
         
     }
     
-    private LevelWrap getMapValue(List<Integer> key) {
-        LevelWrap value = map.get(key);
+    private IllumLevelWrap getMapValue(List<Integer> key) {
+        IllumLevelWrap value = map.get(key);
         return value == null ? null : value;
     }
     
-    public HashMap<List<Integer>, LevelWrap> getMap(){
+    public HashMap<List<Integer>, IllumLevelWrap> getMap(){
         return map;
     }
 

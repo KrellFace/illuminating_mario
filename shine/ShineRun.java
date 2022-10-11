@@ -3,12 +3,12 @@ package illuminating_mario.shine;
 import java.util.ArrayList;
 import java.util.List;
 
-import illuminating_mario.genericFunc.*;
+import illuminating_mario.mainFunc.*;
 import illuminating_mario.mapElites.ElitesMap;
 
 public class ShineRun extends AlgoRunManager {
 
-    public ShineRun(List < LevelWrap > initPop, IllumConfig config) {
+    public ShineRun(List < IllumLevelWrap > initPop, IllumConfig config) {
         super(initPop,config);
 
     }
@@ -42,11 +42,11 @@ public class ShineRun extends AlgoRunManager {
             System.out.println("Total leaf nodes: " + tree.root.countLeaves());
 
             //CREATING ARCHIVE FROM TREE (i.e limit reps at each vertex)
-            ArrayList < LevelWrap > archive = tree.createArchive();
+            ArrayList < IllumLevelWrap > archive = tree.createArchive();
             //printArchive(archive, "Depth weight selected", false);
 
             //SELECTING PARENTS FOR NEXT GENERATION
-            ArrayList < LevelWrap > selectedArchive = tournamentSelect(archive);
+            ArrayList < IllumLevelWrap > selectedArchive = tournamentSelect(archive);
             
             //printArchive(selectedArchive, "Selected Parents before mutation:", true);
 
@@ -57,7 +57,7 @@ public class ShineRun extends AlgoRunManager {
             //ADDING CHILDREN TO TREE
             for (int i = 0; i < selectedArchive.size(); i++) {
 
-                LevelWrap currChild = selectedArchive.get(i);
+                IllumLevelWrap currChild = selectedArchive.get(i);
                 currChild.runAgent();
                 tree.root.addLevel(currChild.clone());
             }

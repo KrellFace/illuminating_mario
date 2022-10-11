@@ -1,4 +1,4 @@
-package illuminating_mario.genericFunc;
+package illuminating_mario.mainFunc;
 
 import engine.core.MarioLevel;
 

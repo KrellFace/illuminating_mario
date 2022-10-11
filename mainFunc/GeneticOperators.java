@@ -1,4 +1,4 @@
-package illuminating_mario.genericFunc;
+package illuminating_mario.mainFunc;
 
 import java.util.Random;
 
@@ -6,12 +6,12 @@ public class GeneticOperators{
 
 
     //Function for crossing over two levels 
-    public LevelWrap[] crossover(LevelWrap inputLevel1, LevelWrap inputLevel2, IllumConfig config) {
+    public IllumLevelWrap[] crossover(IllumLevelWrap inputLevel1, IllumLevelWrap inputLevel2, IllumConfig config) {
 
-        char[][] l1LevelRep = charRep(inputLevel1.getLevel().getStringRep());
-        char[][] l2LevelRep = charRep(inputLevel2.getLevel().getStringRep());
+        char[][] l1LevelRep = HelperMethods.charRepFromString(inputLevel1.getLevel().getStringRep());
+        char[][] l2LevelRep = HelperMethods.charRepFromString(inputLevel2.getLevel().getStringRep());
 
-        LevelWrap[] output = new LevelWrap[2];
+        IllumLevelWrap[] output = new IllumLevelWrap[2];
    
         if (l1LevelRep[0].length == l2LevelRep[0].length && l1LevelRep.length == l2LevelRep.length){
 
@@ -50,8 +50,8 @@ public class GeneticOperators{
                 }
             }
 
-            output[0] = new LevelWrap("Output1", config, new IllumMarioLevel(stringRep(output1), true));
-            output[1] = new LevelWrap("Output2", config, new IllumMarioLevel(stringRep(output2), true));
+            output[0] = new IllumLevelWrap("Output1", config, new IllumMarioLevel(HelperMethods.stringRepFromCharRep(output1), true));
+            output[1] = new IllumLevelWrap("Output2", config, new IllumMarioLevel(HelperMethods.stringRepFromCharRep(output2), true));
         }
         else{
             System.out.println("Level sizes for crossover did not match, returning original levels");
@@ -62,7 +62,7 @@ public class GeneticOperators{
 
         return output;
     }
-    
+    /* 
     public char[][] charRep(String stringRep) {
 
         String[] lines = stringRep.split("\n");
@@ -103,4 +103,5 @@ public class GeneticOperators{
           }
           return output;
       }
+      */
 }

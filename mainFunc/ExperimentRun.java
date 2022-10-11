@@ -1,4 +1,4 @@
-package illuminating_mario.genericFunc;
+package illuminating_mario.mainFunc;
 
 
 import java.io.File;
@@ -49,7 +49,7 @@ public class ExperimentRun
     public void init_shine() throws Exception {
                  
         //List<LevelWrap> init_pop = initPopFromFolder(Input_Files);
-        List<LevelWrap> init_pop = initRandomPop(runConfig.initialSeed);
+        List<IllumLevelWrap> init_pop = initRandomPop(runConfig.initialSeed);
         System.out.println("Population fully initialised");
         //Store initial levels used
         new ShineRun(init_pop, runConfig).run();            
@@ -59,22 +59,22 @@ public class ExperimentRun
     public void init_mapelites() throws Exception {
            
         //List<LevelWrap> init_pop = initPopFromFolder(Input_Files);     
-        List<LevelWrap> init_pop = initRandomPop(runConfig.initialSeed); 
+        List<IllumLevelWrap> init_pop = initRandomPop(runConfig.initialSeed); 
         new MapElitesRun(init_pop, runConfig).run();  
         
     }
     
-    public ArrayList<LevelWrap> initRandomPop(int seed){
+    public ArrayList<IllumLevelWrap> initRandomPop(int seed){
     	
     	System.out.println("Init random pop started");
         
-        ArrayList<LevelWrap> outputlevels = new ArrayList<>();
+        ArrayList<IllumLevelWrap> outputlevels = new ArrayList<>();
         
         //Initialise the random number generator from seed that will be used to create all levels
         Random fixedRandom = new Random(seed);
                 
         for (int i = 0; i<runConfig.Generation_Size; i++) {           
-            LevelWrap sLevelToAdd = new LevelWrap(("Level " + i),this.runConfig, fixedRandom);
+            IllumLevelWrap sLevelToAdd = new IllumLevelWrap(("Level " + i),this.runConfig, fixedRandom);
             sLevelToAdd.runAgent();
             outputlevels.add(sLevelToAdd.clone());      
         }      

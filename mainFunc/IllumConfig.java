@@ -1,4 +1,4 @@
-package illuminating_mario.genericFunc;
+package illuminating_mario.mainFunc;
 
 import java.nio.file.Path;
 
@@ -48,7 +48,7 @@ public class IllumConfig {
     	this.runName = runName;
     }
     
-    public float getParam1(LevelWrap inputLevel) {
+    public float getParam1(IllumLevelWrap inputLevel) {
 
         switch(runParam1) {
     	case BlockCount:
@@ -75,7 +75,7 @@ public class IllumConfig {
 
     }
     
-    public float getParam2(LevelWrap inputLevel) {
+    public float getParam2(IllumLevelWrap inputLevel) {
 
         switch(runParam2) {
 		case BlockCount:

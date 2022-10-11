@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import illuminating_mario.genericFunc.*;
+import illuminating_mario.mainFunc.*;
 
 public class ShineNode {
 
-    private ArrayList<LevelWrap> LevelWraps = new ArrayList<>();
+    private ArrayList<IllumLevelWrap> LevelWraps = new ArrayList<>();
     private Integer depth;
     private ShineTree tree;
     
@@ -64,12 +64,12 @@ public class ShineNode {
         return children;
     }
 
-    public List<LevelWrap> getLevels() {
+    public List<IllumLevelWrap> getLevels() {
         return LevelWraps;
     }
 
     //Method for adding levels to the ShineNode
-    public void addLevel(LevelWrap level) {
+    public void addLevel(IllumLevelWrap level) {
         
     	/*
     	if (checkBelongs(level)) {
@@ -133,9 +133,9 @@ public class ShineNode {
         };
     }
     
-    public ArrayList<LevelWrap> archiveReps(){
+    public ArrayList<IllumLevelWrap> archiveReps(){
         
-        ArrayList<LevelWrap> archiveReps = new ArrayList<>();
+        ArrayList<IllumLevelWrap> archiveReps = new ArrayList<>();
           
         //printNode(true);
         float maxReps = (float) Math.pow(( tree.maxDepth - depth + 1),tree.childNodes);
@@ -164,7 +164,7 @@ public class ShineNode {
             while (archiveReps.size() < maxReps) {
                 //System.out.println("Adding level with fitness" + LevelWraps.get(index).getFitness() + " over " + LevelWraps.get(0).getFitness());
                 //Selection chance algorithm from Shine paper
-                LevelWrap clone = LevelWraps.get(index).clone();
+                IllumLevelWrap clone = LevelWraps.get(index).clone();
             	//System.out.println("Adding level: " + clone.toString());
                 clone.setSelectionChance(tree.maxReps/((tree.maxReps*depth)+maxReps));
                 archiveReps.add(clone);
@@ -178,7 +178,7 @@ public class ShineNode {
             float vPop = LevelWraps.size();
             //System.out.println("MATH: tree.maxReps = "+ tree.maxReps + ", depth = " + depth + ", vPop = " + vPop + ", (tree.maxReps*depth) = " + (tree.maxReps*depth) + ", ((tree.maxReps*depth)+maxReps= " + ((tree.maxReps*depth)+vPop) + ", tree.maxReps/((tree.maxReps*depth)+vPop) = " + tree.maxReps/((tree.maxReps*depth)+vPop));               
             for (int i = 0; i < LevelWraps.size(); i++) {
-                LevelWrap clone = LevelWraps.get(i).clone();
+                IllumLevelWrap clone = LevelWraps.get(i).clone();
                 //System.out.println("Adding level: " + clone.toString());
                 clone.setSelectionChance(tree.maxReps/((tree.maxReps*depth)+vPop));
                 archiveReps.add(clone);
@@ -218,7 +218,7 @@ public class ShineNode {
         //Calculate ratio between two parameters in real terms, feed this into th e corner distance calculation
         float normalisationFactor = (this.param1Max-this.param1Min)/(this.param2Max-this.param2Min);
         
-        for (LevelWrap level : this.LevelWraps) {
+        for (IllumLevelWrap level : this.LevelWraps) {
             
             //System.out.println(level.toString());
             switch(this.nodeType) {
@@ -279,9 +279,9 @@ public class ShineNode {
         
     }
     
-    public ArrayList<LevelWrap> getAllChildLevels(){
+    public ArrayList<IllumLevelWrap> getAllChildLevels(){
         
-        ArrayList<LevelWrap> allLevels = new ArrayList<LevelWrap>();
+        ArrayList<IllumLevelWrap> allLevels = new ArrayList<IllumLevelWrap>();
         if (children.size() == 0) {
             allLevels= this.LevelWraps;
         }
@@ -296,7 +296,7 @@ public class ShineNode {
 
     }
     
-    public boolean checkBelongs(LevelWrap level) {
+    public boolean checkBelongs(IllumLevelWrap level) {
         
         float param1Val = level.getParam1();
         float param2Val = level.getParam2();

@@ -3,11 +3,11 @@ package illuminating_mario.mapElites;
 import java.util.ArrayList;
 import java.util.List;
 
-import illuminating_mario.genericFunc.*;
+import illuminating_mario.mainFunc.*;
 
 public class MapElitesRun extends AlgoRunManager{
 
-	public MapElitesRun(List<LevelWrap> initPop, IllumConfig config) {
+	public MapElitesRun(List<IllumLevelWrap> initPop, IllumConfig config) {
 		super(initPop, config);
 	}
 
@@ -38,7 +38,7 @@ public class MapElitesRun extends AlgoRunManager{
 
             //System.out.println("Beginning iteration " + iterCount);
                 
-            ArrayList<LevelWrap> levelPair = new ArrayList<LevelWrap>();
+            ArrayList<IllumLevelWrap> levelPair = new ArrayList<IllumLevelWrap>();
             
             //Select parent pair for this generation
             levelPair.add(map.getRandomLevel().clone());
