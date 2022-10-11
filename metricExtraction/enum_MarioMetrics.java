@@ -7,6 +7,7 @@ public enum enum_MarioMetrics {
     AdjustedContiguity,
     EnemyCount,
     Linearity,
+    Density,
     EmptySpace,
     BlockCount,
     ClearRows,
