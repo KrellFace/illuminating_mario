@@ -24,7 +24,7 @@ public class HelperMethods {
     //LEVEL IMPORT AND REPRESENTATION PROCESSING METHODS
 
     
-    public static File[] getFiles(String filePath) {
+    public static File[] getFilesFromString(String filePath) {
 
         File[] outputFiles = null;
         File rootFolder = new File(filePath);

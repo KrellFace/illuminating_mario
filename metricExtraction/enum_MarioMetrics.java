@@ -5,18 +5,26 @@ public enum enum_MarioMetrics {
     //Structural Metrics
     Contiguity,
     AdjustedContiguity,
-    EnemyCount,
     Linearity,
     Density,
-    EmptySpace,
-    BlockCount,
     ClearRows,
+    ClearColumns,
+
+    //Block Counts
+    PipeCount,
+    BlockCount,
+    EmptySpace,
+    EnemyCount,
+    RewardCount,
     
     //Agent Extracted Metrics
     Playability,
     JumpCount,
+    JumpCountByPlayability,
     JumpEntropy,
     Speed,
-    TimeTaken
+    TimeTaken,
+    TotalKills,
+    KillsOverEnemies
 
 }

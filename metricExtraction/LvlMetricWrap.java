@@ -22,15 +22,14 @@ public class LvlMetricWrap {
     private int widthCells;
     private int heightCells;
 
-    private int platformSize = 5;
-
     
     //Store floor value
 
-    private static List<Character> solidChars = Arrays.asList('X','#','%','D','S');
+    private static List<Character> solidChars = Arrays.asList('X','#','%','D','S', 't');
+    private static List<Character> rewardChars = Arrays.asList('C','L','U','@','!','2','1');
     private static List<Character> enemyChars = Arrays.asList('y','Y','E','g','G','k','K','r');
     private static List<Character> standableChars = Arrays.asList('-', 'M', 'F', '|','*','B','b');
-
+    private static List<Character> pipeChars = Arrays.asList('t','T');
     //Constructor for creating with a specified unevaluated level
     public LvlMetricWrap(String name, IllumConfig config,  IllumMarioLevel level) {
         this.config = config;
@@ -53,7 +52,10 @@ public class LvlMetricWrap {
         float linearity = 0;
         float density = 0;
         float enemyCount = 0;
+        float pipeCount = 0;
+        float rewardCount = 0;
         float clearRows = 0;
+        float clearColumns = 0;
         float emptySpace = 0;
         //String floor = "X";
         
@@ -61,6 +63,21 @@ public class LvlMetricWrap {
         for (int y = 0; y < charRep.length; y++) {
             Boolean rowClear = true;
             for (int x = 0; x < charRep[y].length; x++) {
+
+                //Finish detected for debugging
+                /*
+                if(charRep[y][x]==(Character)'F'){
+                    System.out.println("Printing finish info for " + name);
+                    //UP
+                    if (y > 0) {
+                        System.out.println("UP from finish: " + charRep[y - 1][x]);
+                    }
+                    //DOWN
+                    if (y < charRep.length - 1 ) {
+                        System.out.println("DOWN from finish: " + charRep[y + 1][x]);
+                    }
+                }
+                */
 
                 //Solid Tile Detected
                 if(solidChars.contains(charRep[y][x])){
@@ -109,21 +126,66 @@ public class LvlMetricWrap {
                 if(standableChars.contains(charRep[y][x])){
                     emptySpace+=1;
                 }
+                //Reward Tile Detected
+                if(rewardChars.contains(charRep[y][x])){
+                    rewardCount+=1;
+                }
+                //Pipe Tile Detected
+                if(pipeChars.contains(charRep[y][x])){
+                    pipeCount+=1;
+                }
+
             }
             if (rowClear) {
                 clearRows += 1;
             }
 
         }
+
+        //Loop through each column
+        for (int x = 0; x < charRep[0].length; x++) {
+            Boolean colClear = true;
+            for (int y = 0; y < charRep.length; y++) {
+
+
+
+                //Finish detected for debugging
+                /*
+                if(charRep[y][x]==(Character)'F'){
+                    System.out.println("Printing finish info for " + name);
+                    //UP
+                    if (y > 0) {
+                        System.out.println("UP from finish: " + charRep[y - 1][x]);
+                    }
+                    //DOWN
+                    if (y < charRep.length - 1 ) {
+                        System.out.println("DOWN from finish: " + charRep[y + 1][x]);
+                    }
+                }
+                */
+                //Empty Space Detected
+                if(!standableChars.contains(charRep[y][x])){
+                    colClear=false;
+                }
+
+            }
+            if (colClear) {
+                clearColumns += 1;
+            }
+
+        }
         
         metricVals.put(enum_MarioMetrics.BlockCount,bc);
         metricVals.put(enum_MarioMetrics.ClearRows,clearRows);
+        metricVals.put(enum_MarioMetrics.ClearColumns, clearColumns);
         metricVals.put(enum_MarioMetrics.Contiguity,contig);
-        metricVals.put(enum_MarioMetrics.AdjustedContiguity,(contig/(float)(charRep.length*charRep[0].length)));
+        metricVals.put(enum_MarioMetrics.AdjustedContiguity,(contig/(float)bc));
         metricVals.put(enum_MarioMetrics.Linearity,linearity);
         metricVals.put(enum_MarioMetrics.Density,(density/(float)charRep[0].length));
         metricVals.put(enum_MarioMetrics.EnemyCount, enemyCount);
         metricVals.put(enum_MarioMetrics.EmptySpace, emptySpace);
+        metricVals.put(enum_MarioMetrics.PipeCount, pipeCount);
+        metricVals.put(enum_MarioMetrics.RewardCount, rewardCount);
 
     }
 
@@ -157,10 +219,14 @@ public class LvlMetricWrap {
         float totJumpEntropy = 0f;
         float totSpeed = 0f;
         float totTimeTaken = 0f;
+        float totEnemiesKilled = 0f;
 
         for (int i = 0; i <n; i++){
             Agent agent = new Agent();
+            //Run with no visuals
             MarioResult result = new MarioGame().runGame(agent, level.getStringRep(), config.ticksPerRun);
+            //Run with visuals
+    	    //MarioResult  result = new MarioGame().runGame(agent, level.getStringRep(), config.ticksPerRun, 0, true);
 
             totPlayability+=(float)result.getCompletionPercentage();
             //System.out.println("Run Playability: " + (float)result.getCompletionPercentage());
@@ -168,13 +234,18 @@ public class LvlMetricWrap {
             totJumpEntropy+=(float) (result.getNumJumps() / (float) result.getAgentEvents().size());
             totSpeed+=(float)((result.getCompletionPercentage()*1000) / ((config.ticksPerRun*1000) - result.getRemainingTime()));
             totTimeTaken+= (float) (config.ticksPerRun - (result.getRemainingTime() / 1000));
+            totEnemiesKilled += (float) (result.getKillsTotal());
         }
         metricVals.put(enum_MarioMetrics.Playability,(float)totPlayability/n);
         //System.out.println("Avg playability from n runs: " + (float)totPlayability/n);
         metricVals.put(enum_MarioMetrics.JumpCount,(float)totJumpCount/n);
+        metricVals.put(enum_MarioMetrics.JumpCountByPlayability,((float)totJumpCount/n)*((float)totPlayability/n));
         metricVals.put(enum_MarioMetrics.JumpEntropy,(float) totJumpEntropy/n);
         metricVals.put(enum_MarioMetrics.Speed,(float)totSpeed/n);
         metricVals.put(enum_MarioMetrics.TimeTaken,(float)totTimeTaken/n);
+        metricVals.put(enum_MarioMetrics.TimeTaken,(float)totTimeTaken/n);
+        metricVals.put(enum_MarioMetrics.TotalKills, (float)totEnemiesKilled/n);
+        metricVals.put(enum_MarioMetrics.KillsOverEnemies, ((float)totEnemiesKilled/n)/(GetMetricValue(enum_MarioMetrics.EnemyCount)));
     }
 
     public IllumMarioLevel getLevel() {
