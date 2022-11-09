@@ -220,6 +220,8 @@ public class LvlMetricWrap {
         float totSpeed = 0f;
         float totTimeTaken = 0f;
         float totEnemiesKilled = 0f;
+        float totKilledByStomp = 0f;
+        float totMaxJumpTime = 0f;
 
         for (int i = 0; i <n; i++){
             Agent agent = new Agent();
@@ -235,6 +237,8 @@ public class LvlMetricWrap {
             totSpeed+=(float)((result.getCompletionPercentage()*1000) / ((config.ticksPerRun*1000) - result.getRemainingTime()));
             totTimeTaken+= (float) (config.ticksPerRun - (result.getRemainingTime() / 1000));
             totEnemiesKilled += (float) (result.getKillsTotal());
+            totKilledByStomp += (float) (result.getKillsByStomp());
+            totMaxJumpTime += (float) (result.getMaxJumpAirTime());
         }
         metricVals.put(enum_MarioMetrics.Playability,(float)totPlayability/n);
         //System.out.println("Avg playability from n runs: " + (float)totPlayability/n);
@@ -245,7 +249,14 @@ public class LvlMetricWrap {
         metricVals.put(enum_MarioMetrics.TimeTaken,(float)totTimeTaken/n);
         metricVals.put(enum_MarioMetrics.TimeTaken,(float)totTimeTaken/n);
         metricVals.put(enum_MarioMetrics.TotalKills, (float)totEnemiesKilled/n);
-        metricVals.put(enum_MarioMetrics.KillsOverEnemies, ((float)totEnemiesKilled/n)/(GetMetricValue(enum_MarioMetrics.EnemyCount)));
+        //Handling for divide by 0 when there are 0 enemies
+        float koe = 0f;
+        if(GetMetricValue(enum_MarioMetrics.EnemyCount)>0){
+            koe = ((float)totEnemiesKilled/n)/(GetMetricValue(enum_MarioMetrics.EnemyCount));
+        }
+        metricVals.put(enum_MarioMetrics.KillsOverEnemies, koe);
+        metricVals.put(enum_MarioMetrics.KillsByStomp, (float)totKilledByStomp/n);
+        metricVals.put(enum_MarioMetrics.MaxJumpAirTime, (float)totMaxJumpTime/n);
     }
 
     public IllumMarioLevel getLevel() {

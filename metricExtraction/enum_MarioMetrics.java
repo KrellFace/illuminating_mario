@@ -25,6 +25,8 @@ public enum enum_MarioMetrics {
     Speed,
     TimeTaken,
     TotalKills,
-    KillsOverEnemies
+    KillsByStomp,
+    KillsOverEnemies,
+    MaxJumpAirTime
 
 }
